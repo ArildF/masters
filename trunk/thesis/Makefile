@@ -23,10 +23,10 @@ showhtml: html
 	-cp $(TOOLS)/styles.css $(CURDIR)/html
 	$(BROWSER) $(CURDIR)/html/generics.html &
 
-html: htmldir html/generics.html
-pdf: pdfdir pdf/generics.pdf
-fo: fodir fo/generics.fo
-ps: psdir ps/generics.ps
+html: htmldir html/description.html
+pdf: pdfdir pdf/description.pdf
+fo: fodir fo/description.fo
+ps: psdir ps/description.ps
 
 htmldir: 
 	-mkdir html

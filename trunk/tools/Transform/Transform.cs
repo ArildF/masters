@@ -39,7 +39,7 @@ namespace Transform
                 transform.Load( config.XslInputFile );
 
                 XPathDocument doc = new XPathDocument( config.XmlInputFile );
-                transform.Transform( doc, new XsltArgumentList(), config.Output, null ); 
+                transform.Transform( doc, new XsltArgumentList(), config.Output, new XmlUrlResolver() ); 
             }
             catch( XmlException ex )
             {

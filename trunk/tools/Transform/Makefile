@@ -1,7 +1,7 @@
 # makefile for building Transform.exe
 
 # are we running on linux?
-ifneq ($(shell uname -o),Cygwin)
+ifeq ($(shell uname -o),Linux)
 	CSC=mcs
 	FLAGS=-g
 else

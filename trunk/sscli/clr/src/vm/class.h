@@ -909,6 +909,7 @@ enum
     VMFLAG_ISSINGLEDELEGATE                = 0x10000000,
     VMFLAG_ISMULTIDELEGATE                 = 0x20000000,
     VMFLAG_PREFER_ALIGN8                   = 0x40000000, // Would like to have 8-byte alignment
+    VMFLAG_REFERENCECOUNTED                = 0x80000000,
 };
 
 
@@ -1604,7 +1605,10 @@ public :
     BOOL   IsConfigChecked();
     void   SetConfigChecked();
     BOOL   IsRemoteActivated();
-    void   SetRemoteActivated();    
+    void   SetRemoteActivated();   
+
+    BOOL   IsReferenceCounted();
+    void   SetReferenceCounted();
     
 
 #if CHECK_APP_DOMAIN_LEAKS
@@ -2299,6 +2303,18 @@ inline void EEClass::SetIsMultiDelegate()
 {
     m_VMFlags |= VMFLAG_ISMULTIDELEGATE;
 }
+
+inline BOOL EEClass::IsReferenceCounted()
+{
+    return (m_VMFlags & VMFLAG_REFERENCECOUNTED);
+}
+
+inline void EEClass::SetReferenceCounted()
+{
+    m_VMFlags |= VMFLAG_REFERENCECOUNTED;
+}
+
+
 
 #if CHECK_APP_DOMAIN_LEAKS
 

@@ -173,6 +173,28 @@ HRESULT HasLayoutMetadata(IMDInternalImport *pInternalImport, mdTypeDef cl, EECl
 #define REDUNDANCYWARNING(when)
 #endif
 
+//=======================================================================
+// This is invoked from the class loader while building a EEClass.
+// This function should check if the class is reference counted
+//
+// Returns:
+//  S_OK    - yes, there's layout metadata
+//  S_FALSE - no, there's no layout.
+//  fail    - couldn't tell because of metadata error
+//=======================================================================
+HRESULT IsReferenceCounted(IMDInternalImport *pInternalImport, mdTypeDef cl )
+{
+    const void *pData;
+    ULONG cbBlob;
+
+    HRESULT hr = pInternalImport->GetCustomAttributeByName( cl, 
+        "System.ReferenceCountedAttribute", &pData, &cbBlob );
+    if (FAILED(hr))
+        return S_FALSE;
+    else
+        return S_OK;
+}
+
 
 
 HRESULT ParseNativeType(Module *pModule,

@@ -1851,6 +1851,16 @@ HRESULT ClassLoader::LoadTypeHandleFromToken(Module *pModule, mdTypeDef cl, EECl
     hr = GetEnclosingClass(pInternalImport, pModule, cl, &tdEnclosing, pThrowable);
     if(FAILED(hr)) return hr;
 
+    // is the type reference counted?    
+    hr = IsReferenceCounted(pInternalImport, cl);
+    
+    BOOL fIsReferenceCounted = (hr == S_OK);
+    if(FAILED(hr) && hr != S_FALSE) 
+    {
+        m_pAssembly->PostTypeLoadException(pInternalImport, cl, IDS_CLASSLOAD_BADFORMAT, pThrowable);
+        return hr;
+    }
+
     BYTE nstructPackingSize, nstructNLT;
     BOOL fExplicitOffsets;
     hr = HasLayoutMetadata(pInternalImport, cl, pParentClass, &nstructPackingSize, &nstructNLT, &fExplicitOffsets);
@@ -1859,6 +1869,9 @@ HRESULT ClassLoader::LoadTypeHandleFromToken(Module *pModule, mdTypeDef cl, EECl
         m_pAssembly->PostTypeLoadException(pInternalImport, cl, IDS_CLASSLOAD_BADFORMAT, pThrowable);
         return hr;
     }
+
+    
+
 
     BOOL        fHasLayout;
     fHasLayout = (hr == S_OK);
@@ -1872,6 +1885,9 @@ HRESULT ClassLoader::LoadTypeHandleFromToken(Module *pModule, mdTypeDef cl, EECl
     hr = EEClass::CreateClass(pModule, cl, fHasLayout, fIsAnyDelegateClass, fIsEnum, &pClass);
     if(FAILED(hr)) 
         return hr;
+
+    if (fIsReferenceCounted) 
+        pClass->SetReferenceCounted();
 
     pClass->SetParentClass (pParentClass);  
     if (pParentClass)

@@ -60,7 +60,21 @@ class MethodTable;
 HRESULT HasLayoutMetadata(IMDInternalImport *pInternalImport, mdTypeDef cl, EEClass *pParentClass, BYTE *pPackingSize, BYTE *pNLTType, BOOL *pfExplicitOffsets);
 
 
-
+//=======================================================================
+// This is invoked from the class loader while building a EEClass.
+// This function should check if the class is reference counted
+//
+// Returns:
+//  S_OK    - yes, the class is reference counted
+//  S_FALSE - no, the class is not reference counted
+//  fail    - couldn't tell because of metadata error
+//
+// If S_OK,
+//   *pNLType            gets set to nltAnsi or nltUnicode
+//   *pPackingSize       declared packing size
+//   *pfExplicitoffsets  offsets explicit in metadata or computed?
+//=======================================================================
+HRESULT IsReferenceCounted(IMDInternalImport *pInternalImport, mdTypeDef cl);
 
 
 

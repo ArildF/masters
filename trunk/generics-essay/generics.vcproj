@@ -36,8 +36,18 @@ make html"
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="html"
+			Filter="">
+			<File
+				RelativePath=".\html\generics.html">
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\generics.xml">
+		</File>
+		<File
+			RelativePath=".\Makefile">
 		</File>
 	</Files>
 	<Globals>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.10"
+	Name="description"
+	ProjectGUID="{2C289A66-8AC3-4587-A592-2EA16F1E5550}"
+	Keyword="MakeFileProj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
+			ConfigurationType="0">
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="make html"
+				ReBuildCommandLine="make clean
+make html"
+				CleanCommandLine="make clean"
+				Output="html\generics.html"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="0">
+			<Tool
+				Name="VCNMakeTool"
+				Output="generics.exe"/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<Filter
+			Name="html"
+			Filter="">
+			<File
+				RelativePath=".\html\description.html">
+			</File>
+		</Filter>
+		<File
+			RelativePath=".\description.xml">
+		</File>
+		<File
+			RelativePath=".\Makefile">
+		</File>
+		<File
+			RelativePath=".\Makefile.Transform">
+		</File>
+		<File
+			RelativePath=".\Makefile.xsltproc">
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

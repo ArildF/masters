@@ -1,0 +1,13 @@
+PROC=xsltproc
+
+html/%.html: %.xml
+	$(PROC) --docbook --output $@ $(HTMLXSLT) $< 
+fo/%.fo: %.xml
+	$(PROC) --docbook --output $@ $(FOXSLT) $< 
+
+pdf/%.pdf: %.xml
+	$(PROC) --docbook --output $@ $(FOXSLT) $< 
+
+ps/%.ps: %.xml
+	$(PROC) --docbook --output $@ $(FOXSLT) $< 
+

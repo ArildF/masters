@@ -1632,6 +1632,10 @@ PRECOMPILED=
 PRECOMPILED_CXX=
 !ENDIF
 
+!if "$(VS71COMNTOOLS)" != ""
+LINKER_FLAGS = $(LINKER_FLAGS) /SAFESEH:NO
+!endif
+
 #
 # Set linker options
 #

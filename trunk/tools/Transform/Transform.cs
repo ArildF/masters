@@ -19,7 +19,7 @@ namespace Transform
 			
 		}
 
-        public static void Main( string[] args )
+        public static int Main( string[] args )
         {
             if ( args.Length < 1 )
             {
@@ -45,12 +45,21 @@ namespace Transform
             {
                 Console.Error.WriteLine( "Error encountered during XML parsing: ");
                 ShowError( ex );
+                return 1;
             }
             catch ( XsltException ex )
             {
                 Console.Error.WriteLine( "Error encountered during XSL transformation: " );
                 ShowError( ex );
+                return 1;
             }
+            catch( Exception ex )
+            {
+                ShowError( ex );
+                return 1;
+            }
+            
+            return 0;
         }
 
         private static void ShowError( Exception ex )

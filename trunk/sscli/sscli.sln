@@ -27,30 +27,37 @@ Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
 		Release = Release
+		run = run
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{F9383923-B0D1-4592-A226-EE38AE7662FF}.Debug.ActiveCfg = Debug|Win32
 		{F9383923-B0D1-4592-A226-EE38AE7662FF}.Debug.Build.0 = Debug|Win32
 		{F9383923-B0D1-4592-A226-EE38AE7662FF}.Release.ActiveCfg = Release|Win32
 		{F9383923-B0D1-4592-A226-EE38AE7662FF}.Release.Build.0 = Release|Win32
+		{F9383923-B0D1-4592-A226-EE38AE7662FF}.run.ActiveCfg = run|Win32
 		{C61E4E81-AB1C-4212-BD94-92DB5BAD2B5A}.Debug.ActiveCfg = Debug
 		{C61E4E81-AB1C-4212-BD94-92DB5BAD2B5A}.Release.ActiveCfg = Debug
+		{C61E4E81-AB1C-4212-BD94-92DB5BAD2B5A}.run.ActiveCfg = Debug
 		{FF8033E9-57BA-47DA-B80C-91BAC2C27D7F}.Debug.ActiveCfg = Debug|Win32
 		{FF8033E9-57BA-47DA-B80C-91BAC2C27D7F}.Debug.Build.0 = Debug|Win32
 		{FF8033E9-57BA-47DA-B80C-91BAC2C27D7F}.Release.ActiveCfg = Release|Win32
 		{FF8033E9-57BA-47DA-B80C-91BAC2C27D7F}.Release.Build.0 = Release|Win32
+		{FF8033E9-57BA-47DA-B80C-91BAC2C27D7F}.run.ActiveCfg = run|Win32
 		{500152A5-9D40-4A57-AE79-B24A0C065FAD}.Debug.ActiveCfg = Debug|.NET
 		{500152A5-9D40-4A57-AE79-B24A0C065FAD}.Debug.Build.0 = Debug|.NET
 		{500152A5-9D40-4A57-AE79-B24A0C065FAD}.Release.ActiveCfg = Release|.NET
 		{500152A5-9D40-4A57-AE79-B24A0C065FAD}.Release.Build.0 = Release|.NET
+		{500152A5-9D40-4A57-AE79-B24A0C065FAD}.run.ActiveCfg = run|.NET
 		{07AF78CC-8DD0-4AB9-8906-DB04A359ADE6}.Debug.ActiveCfg = Debug|Win32
 		{07AF78CC-8DD0-4AB9-8906-DB04A359ADE6}.Debug.Build.0 = Debug|Win32
 		{07AF78CC-8DD0-4AB9-8906-DB04A359ADE6}.Release.ActiveCfg = Release|Win32
 		{07AF78CC-8DD0-4AB9-8906-DB04A359ADE6}.Release.Build.0 = Release|Win32
+		{07AF78CC-8DD0-4AB9-8906-DB04A359ADE6}.run.ActiveCfg = run|Win32
 		{3FC13177-0615-455E-B679-04D4A801834A}.Debug.ActiveCfg = Debug|Win32
 		{3FC13177-0615-455E-B679-04D4A801834A}.Debug.Build.0 = Debug|Win32
 		{3FC13177-0615-455E-B679-04D4A801834A}.Release.ActiveCfg = Release|Win32
 		{3FC13177-0615-455E-B679-04D4A801834A}.Release.Build.0 = Release|Win32
+		{3FC13177-0615-455E-B679-04D4A801834A}.run.ActiveCfg = run|Win32
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		notes.txt = notes.txt

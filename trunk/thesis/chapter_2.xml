@@ -1,4 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <chapter id="chapter_2">
   <title>Garbage collection in the CLR</title>
+  <sect1 id="chapter_1-sect-1">
+    <para></para>
+  </sect1>
+  
+  <sect1 id="chapter_1-sect-2">
+    <title>Finalization</title>
+    <para>A large number of .NET classes hold onto resources beyond the actual 
+    memory they occupy in the managed heap. For example, the .NET 
+    <type>System.IO.FileStream</type> class owns an operating system file 
+    handle. Likewise, the <type>System.Windows.Forms.Control</type> class
+    (with descendants) holds onto a window handle (a <type>HWND</type>).
+    The <type>System.Drawing.Brush</type> class keeps a reference to a Windows
+    brush object (a <type>HBRUSH</type>).</para>
+    
+    <para>These resources are not available in infinite supply. The operating 
+    system has a limited number of them, and it is important that code that
+    acquires such a resource also releases it in a timely fashion.</para>    
+    
+    <sect2 id="chapter_1-sect-2-1">
+      <title><function>Finalize()</function></title>
+      <para>To ensure these kinds of resources can be released, the CLR 
+      <type>Object</type> type declares a virtual method called 
+      <function>Finalize()</function>. Types can override this method and 
+      use it to release whatever unmanaged resources they are holding on to.
+      The garbage collector will call this method before the object is finally 
+      destroyed and its memory released back to the managed heap. A typical 
+      Finalize() implementation might look like this:</para>
+      
+      <programlisting><![CDATA[
+
+public class Brush
+{
+   public Brush()
+   {
+      this.handle = Win32.CreateBrush();
+   }   
+   
+   protected override void Finalize()
+   {
+      Win32.CloseHandle( this.handle );
+   }
+   
+   // implementation omitted
+   
+   private IntPtr handle;
+}      
+      ]]>      
+      </programlisting>
+      
+      <para>In C# and C++, two of the languages that run on the CLR, the 
+      <function>Finalize()</function> method is declared using the same syntax
+      as C++ destructors. The finalizer from the above example could then look
+      like this:</para>
+      
+      <programlisting><![CDATA[
+    ~Brush()
+    {
+      Win32.CloseHandle( this.handle );
+    }      
+      ]]>
+      </programlisting>
+    </sect2>
+    
+    <sect2>
+      <title>The finalizer queue</title>
+      
+    </sect2>
+  </sect1>
+  
+ 
 </chapter>

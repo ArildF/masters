@@ -8,7 +8,7 @@ else
 endif
 
 
-Transform: Transform.cs AssemblyInfo.cs App.ico
+Transform.exe: Transform.cs AssemblyInfo.cs App.ico
 	$(CSC) -r:System.Xml.dll -r:System.dll -out:$@ -target:exe $<
 
 clean:

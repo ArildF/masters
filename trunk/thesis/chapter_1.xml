@@ -278,10 +278,71 @@
       </varlistentry>
       
       <varlistentry>
-        <term></term>
+        <term>Unpredictable runtime behavior</term>
+        <listitem>
+          <para>A tracing garbage collector is not entirely predictable; it 
+          might decide to stop and perform a collection at any time. 
+          Furthermore, a full collection might take a relatively long time to 
+          perform, causing the program to pause while it is running. Although
+          faster hardware and better garbage collection algorithms have gone a 
+          long way in mitigating this factor in later years, there is still a 
+          widespread perception (justified or not) of this being a major issue.
+          </para>
+        </listitem>
       </varlistentry>
     </variablelist>
     
+    <para>The benefits of reference counting are the same as the drawbacks of
+    tracing collectors:</para>
+    
+    <variablelist>
+    
+      <varlistentry>
+        <term>Deterministic destruction</term>
+        <listitem>
+          <para>Given the source code of a program using a reference counted
+          memory management solution, one can determine the exact sequence 
+          point in execution where an object is destroyed. This ensures the
+          timely destruction of external resources held onto by these objects.
+         </para>
+        </listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term>Predictable runtime behavior</term>
+        <listitem>
+          <para>A reference counted mechanism has predictable execution time;
+          there are no long nondeterministic pauses. An object is removed at 
+          the exact moment it becomes garbage.</para>
+        </listitem>
+      </varlistentry>
+      
+    </variablelist>
+    
+    <para>Of course, nothing is perfect:</para>
+    
+    <variablelist>
+    
+      <varlistentry>
+        <term>Reference counts take up space</term>
+        <listitem>
+          <para>Every reference counted object needs to have a field
+          containing the reference count. In most cases this implies an 
+          overhead of 4 bytes per object.</para>
+        </listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term>Reference counting takes time</term>
+        <listitem>
+          <para>For every time a reference counted object is assigned to 
+          another reference variable or passed to a function, the reference 
+          count needs to be updated. The time spent doing this kind of 
+          housekeeping is likely to be greater than the amortized time spent 
+          doing collections in a tracing collector.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
   </sect1>
     
     

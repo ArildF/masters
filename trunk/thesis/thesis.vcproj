@@ -2,8 +2,8 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="description"
-	ProjectGUID="{2C289A66-8AC3-4587-A592-2EA16F1E5550}"
+	Name="thesis"
+	ProjectGUID="{AAF9CF8F-A91A-4FB6-A274-9B449497A752}"
 	Keyword="MakeFileProj">
 	<Platforms>
 		<Platform
@@ -16,12 +16,7 @@
 			IntermediateDirectory="Debug"
 			ConfigurationType="0">
 			<Tool
-				Name="VCNMakeTool"
-				BuildCommandLine="make html"
-				ReBuildCommandLine="make clean
-make html"
-				CleanCommandLine="make clean"
-				Output="html\generics.html"/>
+				Name="VCNMakeTool"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -29,23 +24,19 @@ make html"
 			IntermediateDirectory="Release"
 			ConfigurationType="0">
 			<Tool
-				Name="VCNMakeTool"
-				Output="generics.exe"/>
+				Name="VCNMakeTool"/>
 		</Configuration>
 	</Configurations>
 	<References>
 	</References>
 	<Files>
 		<Filter
-			Name="html"
-			Filter="">
+			Name="docbook"
+			Filter="*.xml">
 			<File
-				RelativePath=".\html\description.html">
+				RelativePath=".\description.xml">
 			</File>
 		</Filter>
-		<File
-			RelativePath=".\description.xml">
-		</File>
 		<File
 			RelativePath=".\Makefile">
 		</File>

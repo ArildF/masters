@@ -49,6 +49,12 @@ make html"
 		<File
 			RelativePath=".\Makefile">
 		</File>
+		<File
+			RelativePath=".\Makefile.Transform">
+		</File>
+		<File
+			RelativePath=".\Makefile.xsltproc">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -119,7 +119,7 @@
         hypothetical - CIL is designed to be compiled to native machine code
         before it is executed. This in contrast to the bytecodes of the JVM,
         which were originally designed to be executed directly by such a stack
-        machine, implemented on top of the real machine.</para>
+        machine, implemented on top of the real hardware.</para>
 
         <para>CIL is described in Partition III of the <link
         linkend="ecma335">ECMA standard</link> </para>
@@ -174,10 +174,17 @@ list.Add( new Bar() ); // ERROR: Bar is not a Foo
         
         <sect2>
            <title>What exactly is <quote>polymorphism</quote>, and what does it
-            have to do with generics?</title> <para>The term polymorphism
+            have to do with generics?</title> 
+            
+            <para>The term polymorphism
             derives from the Greek words <quote>poly</quote>, meaning
             <quote>many</quote>, and <quote>morphos</quote>, meaning <quote>
-            shape.</quote> In other words, it describes an entity that can take
+            shape.</quote><footnote><para>Similarly, the word
+            <quote>politics</quote> derives from <quote>poly</quote>, meaning 
+            <quote>many</quote> and the word <quote>ticks</quote>, meaning
+            <quote>nasty little bugs.</quote>.</para> </footnote> 
+            
+            In other words, it describes an entity that can take
             on many shapes. The most common application of the term in computer
             science is to describe the way most object oriented programming
             languages dispatch method calls on a type. However, it applies
@@ -207,13 +214,13 @@ list.Add( new Bar() ); // ERROR: Bar is not a Foo
                 items of type <type>Object</type>. Using these containers for
                 value types had certain performance implications since it
                 incurred the cost of <firstterm>boxing</firstterm>. It also
-                relinguished compile-time type safety, since the compiler had
+                relinquished compile-time type safety, since the compiler had
                 no way of checking that only objects of one type were inserted
                 into the container. Additionally, retrieving objects from the
                 container required a cast operation. This cast was not entirely
                 free, since the compiler had to insert code to do a runtime
                 type check and potentially cast an exception if the real object
-                type didn't match the type casted to.</para></listitem>
+                type didn't match the type cast to.</para></listitem>
             </varlistentry>
             
             <varlistentry>
@@ -235,7 +242,7 @@ list.Add( new Bar() ); // ERROR: Bar is not a Foo
                 </listitem>                
             </varlistentry>
             <varlistentry>
-                <term>Using a code generator.</term>
+                <term>Use a code generator.</term>
                 <listitem><para>Of course, since writing a custom container
                 from scratch is <quote>extremely dull gruntwork</quote>, it is
                 a perfect candidate for automation by a computer. There are
@@ -289,19 +296,153 @@ list.Add( new Bar() ); // ERROR: Bar is not a Foo
         <para>Comments made by Microsoft employees involved with the language
         design on C# and .NET newsgroups and blogs indicated that generics
         was a feature they had wished to include in the very first release of C#,
-        but time did not permit it. Taking the time to do it properly is 
-        understandable, considering what a mess templates in C++ have been
-        <footnote><quote>C++: An octopus made by nailing extra legs
-        onto a dog.</quote></footnote>.</para>
+        but that time did not permit it. Taking the time to do it properly is 
+        understandable, considering what a mess templates in C++ have turned out to 
+        be. <footnote><para><quote>C++: An octopus made by nailing extra legs
+        onto a dog.</quote></para></footnote>.</para>
         
         <para>The C#/.NET implementation of generics is based on work done
         by Don Syme and Andrew Kennedy at Microsoft Research in the UK.
-        They released a prototype called <firstterm>Gyro</firstterm> as a 
-        patch to Microsoft's <firstterm><link linkend="rotor">Shared Source</link>
-        </firstterm> versionvof the .NET Framework. <linklinkend="pldi2001>
-        Their work</link> was presented at
-        2001's Programming Language Design and Implementation (PLDI) convention.
-        </para>
+        They released a prototype of their implementation codenamed
+        <firstterm>Gyro</firstterm> as a set of files to be extracted over the
+        source to to Microsoft's <firstterm><link linkend="rotor">Shared Source</link> 
+        </firstterm> version of the .NET Framework. <link linkend="pldi2001"> 
+        Their work</link> was presented at 2001's Programming Language Design
+        and Implementation (PLDI) convention. </para>
+        
+        <sect2>
+            <title>Generics in action.</title>
+            
+            <para>In mid-2004, Microsoft shipped the first beta of .NET 2.0, 
+            ïncluding generics support for both VB.NET and C#, as well as 
+            additional classes in the BCL taking advantage of this support.</para>
+            
+            <para>More specifically, it shipped with a new namespace: 
+            <type>System.Collections.Generic</type> In this namespace, classes
+            and interfaces taking advantage of the generics functionality to 
+            provide typesafe containers can be found. Here's an example of
+            how one could use <type>Dictionary&lt;V, K&gt;</type>:</para>
+            <programlisting>
+        <![CDATA[   
+Dictionary<string, int> myMap = new Dictionary<int>();
+myMap["answer"] = 42;
+myMap["airspeed velocity of an unladen European Swallow"] = 10;
+]]></programlisting>     
+            <para>What we are witnessing here is the
+            <emphasis>instantiation</emphasis> of a generic type. A
+            <type>Dictionary&lt;V, K&gt;</type> cannot be used directly - type
+            parameters have to be specified for K and V.</para> 
+        
+            <para>In this case, there is no boxing involved even though a 
+            value type(int) is stored in the collection. Also, since the types
+            involved are known at compile time, there is no need for a runtime
+            type check such as that involved in a cast. The instantiation
+            of the dictionary is specialized for the types used, just as if 
+            you(or a code generator) had written it yourself. This lack of
+            boxing when storing value types is what differentiates the Java
+            implementation of generics from the .NET one, as we shall see 
+            later on.</para>  
+            
+            <para>Further, here is an example of an implementation of a 
+            linked list using generics(this example is <link linkend="linklistexample">
+            taken from the .NET 2.0 documentation</link>):</para>
+            <programlisting>
+        <![CDATA[
+  
+using System;
+using System.Collections.Generic;
+
+public class MyList<T>//type parameter T in angle brackets
+{
+        private Node head;
+        // The nested type is also generic on T.
+        private class Node          
+        {
+            private Node next;
+            //T as private member data type:
+            private T data;          
+            //T used in non-generic constructor:
+            public Node(T t)         
+            {
+                next = null;
+                data = t;
+            }
+            public Node Next
+            {
+                get { return next; }
+                set { next = value; }
+            }
+            //T as return type of property:
+            public T Data            
+            {
+                get { return data; }
+                set { data = value; }
+            }
+        }
+        public MyList()
+        {
+            head = null;
+        }
+        //T as method parameter type:
+        public void AddHead(T t)     
+        {
+            Node n = new Node(t);
+            n.Next = head;
+            head = n;
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            Node current = head;
+
+            while (current != null)
+            {
+                yield return current.Data;
+                current = current.Next;
+            }
+        }
+    }
+]]></programlisting>
+            <para>When you instantiate a <type>List&lt;T&gt;</type>, the T will
+            be substituted with the type you provide for T.</para>
+            
+            <para>Although we won't explore it further, it is worth mentioning
+            that the <function>GetEnumerator()</function> method is an example
+            of one of the other three prominent new features of C# 2.0: 
+            Iterators.</para>   
+        </sect2>   
+        
+        <sect2>
+            <title>Application of generics</title>
+            <para>Generics are not restricted to being used on classes. You can
+            also have generic methods, generic interfaces and generic delegates.
+            The BCL provides several generic delegates, of which this one is a 
+            good example:</para>
+<programlisting>
+public sealed delegate bool Predicate&lt;T&gt;(
+	T obj
+);
+</programlisting>
+            <para>Combined with anonymous methods, you can use the above delegate
+            type like this:</para><programlisting>
+            <![CDATA[
+
+int[] arr = new int[100];
+
+// fill the array with integers
+
+int[] evenNumbers = Array.FindAll<int>( arr, delegate(val)
+{
+    return (val % 2) == 0;
+}
+]]>         
+            </programlisting>
+            
+            <para>In this case, the second parameter to <function>FindAll</function>
+            is a <function>Predicate&lt;T&gt;</function>.</para>
+                        
+        </sect2>
+            
                         
 
         <!-- examples -->
@@ -314,8 +455,62 @@ list.Add( new Bar() ); // ERROR: Bar is not a Foo
 
         <sect2>
             <title>Performance of generics</title>
-            <!-- matching hand written specializations of a type -->
+            <para>
+                Since casts and boxing has been eliminated, generic types
+                will outperform their non-generic counterparts by a 
+                significant factor. The following(rather unscientific) benchmark
+                gives a perspective on the differences:                
+            </para>
+<programlisting>
+<![CDATA[
+#region Using directives
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Collections;
+
+#endregion
+
+namespace ConsoleApplication5
+{
+    class Program
+    {
+        static void Main( string[] args )
+        {
+            Random rand = new Random();
+            ArrayList arrayList = new ArrayList( 1000000 );
+
+            int ticks = Environment.TickCount;
+            for ( int i = 0; i < arrayList.Capacity; i++ )
+                arrayList.Add( rand.Next() );
+
+            arrayList.Sort();
+            Console.WriteLine( "ArrayList: {0}", Environment.TickCount - ticks );
+
+            ticks = Environment.TickCount;
+            List<int> genericList = new List<int>( 1000000 );
+            for ( int i = 0; i < genericList.Capacity; i++ )
+                genericList.Add( rand.Next() );
+            genericList.Sort();
+            Console.WriteLine( "List<int>: {0}", Environment.TickCount - ticks );
+
+        }
+    }
+}
+]]>
+</programlisting>
         </sect2>
+        <para>On the author's machine, the above gives the following output:</para>
+            <screen>
+<![CDATA[
+T:\ConsoleApplication5\ConsoleApplication5\bin\Release>ConsoleApplication5.exe 
+ArrayList: 5207                                                                
+List<int>: 1402   
+]]>                                                                   
+        </screen>
+        <para>Although this test is rather contrived, it gives a good rough image
+        of the performance differences.</para>       
     </sect1>
     <sect1>
         <title>The implementation.</title>
@@ -410,6 +605,14 @@ generated x86, where MyClass1 and MyClass2 are ref types.<o:p></o:p></SPAN> -->
             <title>
                 <ulink url="http://download.microsoft.com/download/8/1/6/81682478-4018-48fe-9e5e-f87a44af3db9/SpecificationVer2.doc">'
                     C# 2.0 Specification
+                </ulink>
+            </title>
+        </biblioentry>
+        
+        <biblioentry id="linklistexample" xreflabel="LINKLISTEXAMPLE">
+            <title>
+                <ulink url="http://msdn2.microsoft.com/library/0x6a29h6.aspx">'
+                    Generic linked list example
                 </ulink>
             </title>
         </biblioentry>

@@ -39,6 +39,9 @@ make html"
 			Name="docbook"
 			Filter="*.xml">
 			<File
+				RelativePath=".\bibliography.xml">
+			</File>
+			<File
 				RelativePath=".\chapter_1.xml">
 			</File>
 			<File

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<bibliography>
+
+
+  <biblioentry id="brooks-1975">
+    <title>The Mythical Month: Essays on software engineering</title>
+    
+    <author>
+      <firstname>Frederick</firstname>
+      <surname>Brooks</surname>
+    </author>
+    
+    <pubdate>1975</pubdate>    
+  </biblioentry>
+  
+  <biblioentry id="mccarthy-1960">
+    <title><ulink url="http://www-formal.stanford.edu/jmc/recursive.html">
+    Recursive Functions of Symbolic Expressions and 
+    Their Computation by Machine, Part I</ulink></title>
+    
+    <pubdate>April 1960</pubdate> 
+    <publisher>
+      <publishername>Communications of the ACM</publishername>
+    </publisher>
+  </biblioentry>
+
+</bibliography>

@@ -3,6 +3,7 @@
 [
 
 <!ENTITY chapter_1 SYSTEM "chapter_1.xml">
+<!ENTITY bibliography SYSTEM "bibliography.xml">
 ]>
 <book id="thesis">
   <title>Introducing reference counting into the Common Language Runtime</title>
@@ -23,5 +24,7 @@
   </bookinfo>
     
   &chapter_1;
+  
+  &bibliography;
     
 </book>

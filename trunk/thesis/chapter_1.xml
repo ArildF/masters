@@ -1,4 +1,108 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <chapter id="chapter_1">
-    <title>Title</title>
+
+  <title>Automatic memory management</title>
+  
+  <sect1 id="chapter_1-sect-1">
+    <para>Computer software is getting more and more complex. Software 
+    projects of today, while equal in actual scope, are far more ambitious
+    in their goals than those of the IBM OS/360 project to which Frederick 
+    Brooks relates in his seminal work 
+    "The Mythical Man-Month"<xref linkend="brooks-1975"/>. While software 
+    engineering as a field is better understood now than it was in the
+    mid-sixties, you will find few researchers in the field claiming that this
+    understanding has kept up with the growth in the complexity of software 
+    projects.</para>
+    
+    <para>In fact, in a world where Visual Basic is one of the most popular
+    programming languages, one can easily argue that the developer pool has a 
+    larger portion of relatively unskilled programmers now than ever. Yet, 
+    some of the software even from this segment has complexity requirements
+    that would left the Fred Brooks anno 1965 dumbfounded. And while not all
+    this software will stand as shiny examples of software engineering, 
+    it is hard to deny the fact that software written by unskilled 
+    developers plays an important part in our society. </para>
+    
+    <para>While software engineering hasn't quite been able to meet
+    the expectations once held for it (one constantly sees figures of up
+    to 80% failure in software projects TODO), it is obvious that something
+    has enabled programmers to build more and more complex software. And if
+    this "something" isn't a vastly increased understanding of the art and 
+    science of software engineering, what is it?</para>
+    
+    <para>The answer is simple: the tools and languages we use today
+    are orders of magnitude better than what the developers under Brooks
+    had available. OS/360 was written wholly in assembly code, which was
+    (and still is) hard to write and debug, mainly because of its lack of
+    abstraction and its conceptual distance from the problem domain.</para>
+    
+    <para>In contrast, we have today at our disposal a vast array
+    of very high level languages. Languages like Visual Basic, Python, Java
+    and C# maintain a high level of abstraction from the actual hardware, and
+    often come with massive standard libraries that enables the developer
+    to focus on the core functionality of his application, rather than 
+    constantly having to reinvent the wheel. 
+    </para>
+    
+    <para>While the availability of high quality standard libraries go a long
+    way in explaining the increased productivity of todays' developers, it is 
+    hardly the only reason. One other feature the aforementioned languages all
+    have in common is that they free the developer from the responsibility of
+    manually managing memory. Memory related bugs are all too common in
+    traditional lower-level languages (who has never accessed a pointer whose
+    backing memory has been freed<footnote><para>This is commonly referred
+    to as a "dangling" pointer.</para></footnote>?), and tracking down these
+    bugs can take up an inordinate amount of developer time, especially in more
+    complex software. The newer languages basically makes this a non-issue by
+    handling the allocation and de-allocation of memory in the language
+    runtime, thus relieving the developer of this rather tedious burden.</para> 
+    
+    <para>And while hard core C/C++ developers still maintain, in some kind of 
+     misunderstood machismo, that memory management "is too important to be 
+     left too the computer"<footnote><para>It is a long-standing joke:
+     C programmers have long understood that memory management is so critical
+     it can't be left up to the system, and Lisp programmers have long understood
+     that memory management is so critical, it can't be left up to the 
+     programmers. TODO-source</para></footnote> it is becoming more and more
+     clear that automatic memory management, in various implementations, is
+     here to stay. The past couple of years have seen a steady shift towards
+     the use of higher level programming languages and tools for all but the 
+     most low-level of development tasks (operating systems, drivers, 3D graphics 
+     engines etc.) And the higher level languages all invariably support 
+     automatic memory management.</para>       
+  </sect1>
+  
+  <sect1 id="chapter_1-sect-2">
+    <title>Garbage collection</title>
+    <para>Automatic memory management is commonly referred to as <firstterm>garbage 
+    collection</firstterm>, referring to how the mechanism automatically picks
+    up the garbage after the programmer. The word "garbage" in this context refers
+    to objects that are no longer in use by the program.</para>
+    
+    <para>While the previous section portrayed garbage collection as a new trend
+    in programming languages, it actually has a history almost as long as that 
+    of high level programming itself. In fact, the second high level programming
+    language ever created, Lisp, sported a garbage collector already in its
+    initial specification in 1960<xref linkend="mccarthy-1960"/>. Subsequent
+    versions of Lisp, including Scheme and Common Lisp, have all included
+    various forms of garbage collectors. It is hard to conceive of a language
+    in the extended Lisp family (functional languages) featuring manual memory
+    management, due to the dynamic nature of their runtime environments.</para>
+    
+    <para>The language Smalltalk, developed by Alan Kay and others in the 70s,
+    also included garbage collection as a central element. Again, this was
+    necessitated by a highly dynamice runtime environment. </para>   
+    
+    
+    <para>Garbage collectors have long had a bad reputation among developers
+    focussing on raw performance as the primary goal, and they were mostly
+    considered an unneeded luxury by programmers developing in languages like
+    C and C++. Garbage collection by the system would often be a 
+    time-consuming operation, and would cause noticeable pauses during 
+    program execution. </para>
+  
+  </sect1>
+    
+    
+  
 </chapter>

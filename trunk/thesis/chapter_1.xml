@@ -120,7 +120,7 @@
     
     <para>There are two major forms of garbage collection. </para>
     
-    <sect2>
+    <sect2 id="chapter_1-sect-2.1">
       <title>Tracing garbage collectors</title>
       
       <para>A tracing garbage collector operates on the principle that
@@ -143,7 +143,7 @@
       large enough to fit the new object even if the total available amount of
       memory far exceeds the demands.</para>
       
-      <sect3>
+      <sect3 id="chapter_1-sect-2.1.1">
       
       <title>Compacting garbage collectors</title>
       
@@ -165,7 +165,7 @@
       
       </sect3>
       
-      <sect3>
+      <sect3 id="chapter_1-sect-2.1.2">
       
         <title>Generational garbage collectors</title> 
         
@@ -187,7 +187,7 @@
       </sect3>
     </sect2>
     
-    <sect2>
+    <sect2 id="chapter_1-sect-2.2">
       <title>Reference counting</title>
       <para>Another form of garbage collection, although not commonly referred
       to as such, is <firstterm>reference counting.</firstterm> In this scheme, 
@@ -209,8 +209,79 @@
       incremented and decremented automatically as a side effect of variable
       assignments. Explicit reference counting requires the programmer to 
       explicitly call functions or methods that adjust the reference count.</para>
+      
+      <para>The choice of implicit or reference counting is not necessarily an 
+      either/or, even within a single language/technology. Some languages 
+      accessing COM objects (which are reference counted) use implicit 
+      reference counting, while others again use explicit. Languages like
+      Visual Basic 6 are examples of the former, while C/C++ are the most 
+      common examples of the latter.</para>      
+      
     </sect2>
+      
+  </sect1>
   
+  <sect1 id="chapter_1-sect-3">
+  
+    <title>Advantages and disadvantages of the two models</title>
+    <para>Obviously, the two schemes of automatic memory management both have 
+    their benefits and disadvantages (otherwise, there wouldn't be two 
+    disparate models in the first place!).</para>
+    
+    <para>Advantages of tracing garbage collectors include:</para>
+    
+    <variablelist>
+    
+      <varlistentry>
+        <term>Programming simplicity</term>
+        <listitem>
+          <para>Programming in an environment that provides a tracing garbage
+          collector is very simple; usually you can just allocate objects and 
+          forget about them. The garbage collector will deal with unreachable
+          objects.</para>
+        </listitem>
+      </varlistentry>    
+      
+      <varlistentry>
+        <term>Locality of reference</term>
+        <listitem>
+          <para>The allocation strategies of most implementations of garbage 
+          collectors (allocating a new object is often just a matter of 
+          incrementing a pointer) will usually lead to related objects being
+          located close to one another in memory. This leads to a greater 
+          chance of objects being in the CPU's cache when accessing them from
+          methods of other objects, as well as reducing the program's working 
+          set and reducing the number of page faults associated with the 
+          program.</para>
+        </listitem>
+      </varlistentry>
+    
+    </variablelist>
+    
+    <para>Among the disadvantages, we find:</para>
+    
+    <variablelist>
+      
+      <varlistentry>
+        <term>No deterministic destruction</term>
+        <listitem>
+          <para>It is not possible to determine <emphasis>when</emphasis> an
+          object under the control of a garbage collector is destroyed. In
+          quite a few cases, such objects hold onto external resources such as
+          files, operating system synchronization primitives, window handles
+          etc... Some of these resources are in short supply, and should be
+          disposed of as soon as possible. It is then obvious that we cannot 
+          rely on the garbage collector to release these for us in a timely 
+          fashioon, necessitating an explicit <function>Close()</function> or
+          <function>Dispose()</function> method.</para>
+        </listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term></term>
+      </varlistentry>
+    </variablelist>
+    
   </sect1>
     
     

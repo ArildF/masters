@@ -18,6 +18,10 @@ cmd /c make pdf
 mkdir %targdir%
 copy /y html\thesis.html %targdir%
 copy /y pdf\thesis.pdf %targdir%
+
+date /t >> index.html
+time /t >> index.html
+echo '</p> </body></html>' >> index.html
 copy /y index.html %targdir%
 
 cd ..

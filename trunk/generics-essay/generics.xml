@@ -1,6 +1,9 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" 
     "file:///t:/docbook-dtd/docbookx.dtd">
+<!--  
+    vim:et ts=4 tw=78
+-->
 <article>
     <artheader>
         <title>Generics in C#</title>
@@ -12,25 +15,153 @@
     <abstract>
         <para>
             This essay will discuss a new mechanism that will be introduced in
-            version 2.0 of the Common Language Runtime(CLR), known as
-            <firstterm>generics</firstterm>. We will take a look at how
-            generics will be used when programming in various programming
-            languages targetting the CLR, with an emphasis on the
-            <firstterm>C#</firstterm> programming language. We will review how
-            the CLR implements generics, and compare the implementation with
-            the way other environments, such as the Java and to a lesser degree
-            C++, performs the same task.
+            version 2.0 of the <firstterm>Common Language
+            Runtime</firstterm>(CLR), known as <firstterm>generics</firstterm>.
+            We will take a look at how generics will be used when programming in
+            various programming languages targetting the CLR, with an emphasis
+            on the <firstterm>C# programming language</firstterm>. We will
+            review how the CLR implements generics, and compare the
+            implementation of generics in .NET with the way other environments,
+            such as the Java Virtual Machine and to a lesser degree, C++,
+            perform the same task.
         </para>
     </abstract>
     <sect1>
-        <title>What are generics?</title>
+        <title>What is the Common Language Runtime?</title>
+        <para>The Common Language Runtime(CLR) is the central component of
+        Microsoft's new development initiative <firstterm>.NET</firstterm>. It
+        encompasses a runtime environment with rich support for a variety of
+        modern object-oriented programming languages, allowing them to
+        interoperate on a binary level. Components written in one language can
+        be consumed directly by components written in another language as long
+        as they both target the CLR.</para>
+
+        <para>Accompanying the first release of .NET was a new programming
+        language, C#, which takes full advantage of the features available in
+        the CLR.</para>
         
-        <sect2>Alternatives to generics</sect2>
-        In versions of the CLR prior to 2.0, developers have had to 
-        <!-- use explicit interface implementation, derive from CollectionBase, use ArrayList-->
+        <para>The .NET initiative in general was intended to replace Microsoft's
+        component technology known as COM/DCOM as the premier choice for
+        enterprise development on the Microsoft Windows platform, and has been
+        marketed aggressively to compete against Sun Microsystem's Java
+        programming language and the J2EE architecture.</para>
+
+        <para>Microsoft's flagship development environment <firstterm>Visual
+        Studio</firstterm> has a broad range of support for programming against
+        the CLR. The current version of Visual Studio, Visual Studio 2003, lets
+        developers target the CLR using 4 different languages: C++, Visual
+        Basic, C# and Visual J#. It also allows third party compiler writers to
+        integrate their compilers into the environment through the<link
+        linkend="vsip"> <firstterm>Visual Studio Industry Partner
+        Program</firstterm></link>.</para>
+
+        <para>The CLI has been standardized through the <firstterm>European Computer
+        Manufacturers Association</firstterm>(ECMA) and the <firstterm>International
+        Standards Organization</firstterm>(ISO) under the designations <link
+        linkend="ecma335">ECMA-335</link> and
+        <link linkend="iso23271">ISO/IEC 23271</link>, respectively.</para>
+        
+        <sect2>
+        <title>The CLR's type system</title>
+       <para> The CLR's type system reflects the fact that it is targetted
+        primarily(but not exclusively) towards object-oriented languages. It
+        supports two main categories of types:</para>
+        <variablelist>
+            <varlistentry><term>objects</term>
+                <listitem>object types are always allocated on the heap. They
+                support polymorphism.<!-- TODO: more here --></listitem>
+            </varlistentry>
+            <varlistentry><term>value types</term>
+                <listitem>value types are essentially nothing more than a
+                sequence of bytes. They are allocated either on the runtime
+                stack or inline in objects that contain them. They support
+                methods, but not inheritance, although they can implement one or
+                more interfaces. All primitive types, such as integers and
+                floats, are represented in the CLR type system as value
+                types</listitem>
+            </varlistentry>
+        </variablelist>
+
+        <para>The inherent impedance between these two categories is one of the things
+        that make a mechanism like generics desirable.</para>
+
+        <para>The CLR also has support for a wide variety of other useful types,
+        such as pointers, arrays and <firstterm>delegates</firstterm>(type safe
+        function pointers), but they are implemented in terms of one of the
+        above types.</para>
+        
+        <para>In the CLR, the <type>Object</type> type serves as the root of its
+        single inheritance hierarchy. Objects are not allowed to have more
+        than one superclass, but they can implement any number of
+        interfaces.</para>
+        
+        <!-- structs/valuetypes vs heap objects -->
+        <!-- delegates -->
+
+            <sect3>
+            <title>The Common Type System(CTS)</title>
+            <para>The <firstterm>Common Type System</firstterm> is a specification
+            which represents the minimum of types a language targetting the CLR
+            should be able to consume and produce. It is a subset of the full
+            type system. Partition II of the <link linkend="ecma335">ECMA
+            standard</link> describes the CTS.</para>
+
+            </sect3>
+        </sect2>
+        
+        <sect2> <title>Common Intermediate Language(IL)</title>
+        <para>The <firstterm>Common Intermediate Language</firstterm>(CIL) is
+        the language output by a compiler targetting the CLR. The language
+        consists of a series of instructions manipulating a virtual stack based
+        machine. However, this stack machine is intended to be purely
+        hypothetical - CIL is designed to be compiled to native machine code
+        before it is executed. This in contrast to the bytecodes of the JVM,
+        which were originally designed to be executed directly by such a stack
+        machine, implemented on top of the real machine.</para>
+
+        <para>CIL is described in Partition III of the <link
+        linkend="ecma335">ECMA standard</link> </para>
+        
+        <para>The term MSIL(Microsoft
+        Intermediate Language) describes Microsoft's implementation of CIL. This
+        abbreviation is often (incorrectly) used interchangeably with CIL and/or
+        IL.</para> 
+        </sect2>
+        
     </sect1>
     <sect1>
-        <title>How are generics used?</title>
+        <title>What are generics?</title>
+        <para>
+        <!-- C# programmers coming from C++ - miss templates -->
+        <!-- define "polymorphism" -->
+        <!-- parametric polymorphism vs dynamic/virtual approaches 
+        advantages of pp -->
+        <!-- other languages supporting 'generics'(in a broad sense) -->
+
+        </para> 
+        <sect2>Alternatives to generics in .NET</sect2>
+        In versions of the CLR prior to (the not yet released)2.0, developers
+        have had to 
+        <!-- use explicit interface implementation, derive from CollectionBase, use ArrayList-->
+        <!-- boxing, unboxing -->
+        <!-- code generation -->
+        <!-- examples -->
+    </sect1>
+    <sect1>
+        <title>.NET generics</title>
+
+        <!-- examples -->
+        <!-- type inference -->
+        <!-- type constraints -->
+        <!-- restrictions - Type variables cannot be used to specify a base
+        class. No con -->
+        <!-- Generics in the BCL -->
+        <!-- Reflecting on generic instantiations -->
+
+        <sect2>
+            <title>Performance of generics</title>
+            <!-- matching hand written specializations of a type -->
+        </sect2>
     </sect1>
     <sect1>
         <title>The implementation.</title>
@@ -48,14 +179,18 @@ generated x86, where MyClass1 and MyClass2 are ref types.<o:p></o:p></SPAN> -->
     </sect1>
     <sect1>
         <title>C# Generics - How do they compare to Java generics?</title>
+        <!-- reflectability of generic types -->
+        <!-- primitives and generic types - boxing/unboxing -->
     </sect1>
     <sect1>
         <title>Comparisons to similar constructs in other programming languages</title>
         <sect2>C++ templates</sect2>
+        <!-- runtime vs compile/link time -->
+        <!-- code sharing -->
         <sect2><phrase>"Duck typing"</phrase> in dynamic languages</sect2>
     </sect1>
     <bibliography>
-        <biblioentry xreflabel="pldi2001">
+        <biblioentry id="pldi2001" xreflabel="pldi2001">
             <authorgroup>
                 <author>
                     <firstname>Don</firstname>
@@ -69,5 +204,38 @@ generated x86, where MyClass1 and MyClass2 are ref types.<o:p></o:p></SPAN> -->
             <title>The Design and Implementation of Generics for the .NET Common Language Runtime</title>
             <pubdate>May 02, 2001</pubdate>
         </biblioentry>
+
+        <biblioentry id="csgenericsintro" xreflabel="csgenericsintro">
+            <authorgroup>
+                <author>
+                    <firstname>Juval</firstname>
+                    <surname>Lowry</surname>
+                </author>
+            </authorgroup>
+            <title>
+                <ulink url="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnvs05/html/csharp_generics.asp">
+                An Introduction to C# Generics</ulink></title>
+            <pubdate>August 2003</pubdate>
+        </biblioentry>
+         <biblioentry id="vsip" xreflabel="vsip">
+            <title>
+                Visual Studio Industry Partner Program
+                <ulink url="www.vsipdev.com">
+                www.vsipdev.com</ulink></title>
+            <pubdate>August 2003</pubdate>
+        </biblioentry>
+        <biblioentry id="ecma335" xreflabel="ECMA335">
+            <title>
+                <ulink url="http://www.ecma-international.org/publications/standards/Ecma-335.htm">
+                     http://www.ecma-international.org/publications/standards/Ecma-335.htm</ulink>
+            </title>
+        </biblioentry>
+        <biblioentry id="iso23271" xreflabel="ISO23271">
+            <title>
+                <ulink url="http://www.iso.org/iso/en/CatalogueDetailPage.CatalogueDetail?CSNUMBER=36769">
+                     http://www.iso.org/iso/en/CatalogueDetailPage.CatalogueDetail?CSNUMBER=36769</ulink>
+            </title>
+        </biblioentry>
     </bibliography>
 </article>
+

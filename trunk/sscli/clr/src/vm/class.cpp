@@ -7183,6 +7183,10 @@ HRESULT EEClass::SetupMethodTable(bmtVtable* bmtVT,
 
     if (IsShared())
         m_pMethodTable->SetShared();
+
+    // we need to keep this information both in the EEClass and the MethodTable
+    if (IsReferenceCounted())
+        m_pMethodTable->SetReferenceCounted();
     
     if (IsValueClass()) 
     {

@@ -274,6 +274,7 @@ public:
         enum_flag_NotTightlyPacked      =  0x4000000, // the fields of the valuetype are not tightly packed (not valid for classes)
 
         enum_CtxProxyMask               = 0x10000000, // class is a context proxy
+        enum_flag_ReferenceCounted    = 0x40000000, // class is reference counted
         enum_InterfaceMask              = 0x80000000, // class is a interface
     };
 
@@ -372,6 +373,8 @@ public:
     BOOL            HasSharedMethodTable() { return(m_wFlags & enum_flag_Shared); }
     DWORD           ContainsPointers()  { return(m_wFlags & enum_flag_ContainsPointers); }
     BOOL            IsNotTightlyPacked(){ return (m_wFlags & enum_flag_NotTightlyPacked); }
+    BOOL            IsReferenceCounted(){ return (m_wFlags & enum_flag_ReferenceCounted); }
+    void            SetReferenceCounted(){ m_wFlags |= enum_flag_ReferenceCounted; }
 
         // This is what would be used in a signature for this type.  One exception is enumerations,
         // for those the type is the underlying type.  

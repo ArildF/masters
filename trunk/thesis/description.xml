@@ -1,1 +1,80 @@
 <?xml version="1.0" encoding="utf-8" ?> 
+<!--<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" 
+    "file:///t:/docbook-dtd/docbookx.dtd">-->
+<!--  
+    vim:et ts=4 tw=78
+-->
+
+<article>
+    <artheader>
+        <title>Introducing reference counting into the Common Language Runtime</title>
+        <author>
+            <firstname>Arild</firstname>
+            <surname>Fines</surname>
+        </author>        
+    </artheader>
+    
+    <sect1>
+       <para>The <firstterm>Microsoft Common Language Runtime</firstterm>
+       <xref linkend="clr"/> is a multilanguage environment providing runtime
+       services to a wide variety of supported languages. These services
+       include memory/resource management, support for interoperability between
+       the different languages supporting the CLR, versioning and support for
+       software components that are self-describing through metadata.</para>
+        
+        <para>The <firstterm>Shared Source Common Language Infrastructure
+        </firstterm><xref linkend="rotor"/> is an implementation of the 
+        CLR made available with source for the purposes of academic research
+        and hobbyist experimentation.</para>
+        
+        <para>Current implementations of the CLR provide memory management
+        services through a traditional <firstterm>mark and sweep</firstterm>
+        garbage collector. While this approach relieves the developer
+        from worrying about life time management, it also does not provide
+        any guarantees as to when resources will be finalized or when memory
+        will be released.</para>
+        
+        <para>This thesis will seek to examine the effects of introducing a
+        reference counting mechanism into the CLR, in addition to or in
+        combination with the current mark and sweep mechanism. The purpose of
+        this is to make memory management and finalization of resources a more
+        deterministic experience for the developer.</para>
+        
+        <para>The thesis will have several parts:</para>
+        
+        <itemizedlist>
+           <listitem>An implementation of reference counting in the Microsoft
+            CLR Shared Source Implementation<xref linkend="rotor"/> (henceforth
+            known as <firstterm>Rotor</firstterm>. An attempt will be made to 
+            investigate both hybrid and pure reference counted strategies.
+            </listitem>
+            
+            <listitem>Research into various programming idioms and
+            -restrictions that will give, in combination with reference
+            counting, the developer more control over memory management and the
+            finalization of resources. </listitem>
+            
+           <listitem>An examination of the efficiency implications of a
+            reference counted implementation of the CLR, particularly in the
+            context of commonly encountered real life programming scenarios.
+            </listitem>
+            
+        </itemizedlist>        
+    </sect1>
+    
+    <bibliography>
+        <biblioentry id="clr">
+            <title>
+                <ulink url="http://msdn.microsoft.com/netframework/">.NET Framework Developer Center</ulink>
+            </title>
+        </biblioentry>
+        
+        <biblioentry id="rotor">
+            <title>
+                <ulink url="http://msdn.microsoft.com/net/sscli/">Shared Source Common Language Infrastructure</ulink>
+            </title>                
+        </biblioentry>
+    
+    </bibliography>
+    
+</article>

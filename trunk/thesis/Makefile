@@ -9,11 +9,11 @@ FOP=cmd.exe /k fop.bat
 
 # are we running on linux?
 ifeq ($(shell uname -s),Linux)
-    SUBMAKEFILE=Makefile.Transform
-	BROWSER=opera	
+	SUBMAKEFILE=Makefile.xsltproc
+	BROWSER=opera	    
 else
-    SUBMAKEFILE=Makefile.xsltproc
-	BROWSER=opera	
+	SUBMAKEFILE=Makefile.Transform
+	BROWSER=opera	    
 endif
 
 

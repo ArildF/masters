@@ -1,17 +1,73 @@
-﻿<?xml version="1.0" encoding="utf-8" ?> 
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" 
     "file:///t:/docbook-dtd/docbookx.dtd">
 <article>
     <artheader>
-        <title>My Article</title>
+        <title>Generics in C#</title>
         <author>
             <firstname>Arild</firstname>
             <surname>Fines</surname>
         </author>
     </artheader>
-    <para> ... </para>
+    <abstract>
+        <para>
+            This essay will discuss a new mechanism that will be introduced in
+            version 2.0 of the Common Language Runtime(CLR), known as
+            <firstterm>generics</firstterm>. We will take a look at how
+            generics will be used when programming in various programming
+            languages targetting the CLR, with an emphasis on the
+            <firstterm>C#</firstterm> programming language. We will review how
+            the CLR implements generics, and compare the implementation with
+            the way other environments, such as the Java and to a lesser degree
+            C++, performs the same task.
+        </para>
+    </abstract>
     <sect1>
-        <title>On the foobarness</title>
+        <title>What are generics?</title>
+        
+        <sect2>Alternatives to generics</sect2>
+        In versions of the CLR prior to 2.0, developers have had to 
+        <!-- use explicit interface implementation, derive from CollectionBase, use ArrayList-->
     </sect1>
-    
+    <sect1>
+        <title>How are generics used?</title>
+    </sect1>
+    <sect1>
+        <title>The implementation.</title>
+        <sect2>Code sharing</sect2>
+        <!-- <SPAN style="COLOR: black">In the case of generics, code sharing is when two or 
+more “compatible” method instantiations point to the same x86 code. An example 
+of this is Foo.M&lt;MyClass1&gt; and Foo.M&lt;MyClass2&gt; sharing the same 
+generated x86, where MyClass1 and MyClass2 are ref types.<o:p></o:p></SPAN> -->
+    </sect1>
+    <sect1>
+        <title>Generics in other .NET languages</title>
+        <sect2>
+            <title>VB.NET</title>
+        </sect2>
+    </sect1>
+    <sect1>
+        <title>C# Generics - How do they compare to Java generics?</title>
+    </sect1>
+    <sect1>
+        <title>Comparisons to similar constructs in other programming languages</title>
+        <sect2>C++ templates</sect2>
+        <sect2><phrase>"Duck typing"</phrase> in dynamic languages</sect2>
+    </sect1>
+    <bibliography>
+        <biblioentry xreflabel="pldi2001">
+            <authorgroup>
+                <author>
+                    <firstname>Don</firstname>
+                    <surname>Sym</surname>
+                </author>
+                <author>
+                    <firstname>Andrew</firstname>
+                    <surname>Kennedy</surname>
+                </author>
+            </authorgroup>
+            <title>The Design and Implementation of Generics for the .NET Common Language Runtime</title>
+            <pubdate>May 02, 2001</pubdate>
+        </biblioentry>
+    </bibliography>
 </article>

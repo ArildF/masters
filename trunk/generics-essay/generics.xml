@@ -407,9 +407,9 @@ public class MyList<T>//type parameter T in angle brackets
             be substituted with the type you provide for T.</para>
             
             <para>Although we won't explore it further, it is worth mentioning
-            that the <function>GetEnumerator()</function> method is an example
-            of one of the other three prominent new features of C# 2.0: 
-            Iterators.</para>   
+            that the <function>GetEnumerator()</function> method with its
+            <function>yield</function> keyword is an example of one of the other
+            three prominent new features of C# 2.0: Iterators.</para>   
         </sect2>   
         
         <sect2>
@@ -420,7 +420,7 @@ public class MyList<T>//type parameter T in angle brackets
             good example:</para>
 <programlisting>
 public sealed delegate bool Predicate&lt;T&gt;(
-	T obj
+    T obj
 );
 </programlisting>
             <para>Combined with anonymous methods, you can use the above delegate
@@ -510,34 +510,362 @@ List<int>: 1402
 ]]>                                                                   
         </screen>
         <para>Although this test is rather contrived, it gives a good rough image
-        of the performance differences.</para>       
+        of the performance differences involved when choosing a generic
+        approach over an object-based one.</para>       
     </sect1>
     <sect1>
-        <title>The implementation.</title>
-        <sect2>Code sharing</sect2>
-        <!-- <SPAN style="COLOR: black">In the case of generics, code sharing is when two or 
-more “compatible” method instantiations point to the same x86 code. An example 
-of this is Foo.M&lt;MyClass1&gt; and Foo.M&lt;MyClass2&gt; sharing the same 
-generated x86, where MyClass1 and MyClass2 are ref types.<o:p></o:p></SPAN> -->
+        <title>The implementation.</title>        
+        <para>In .NET, the generics design pervades the entire runtime and the
+        .NET type system. This in contrast to, as we shall investigate later,
+        the approach taken by the implementation of generics in the JVM. The
+        .NET runtime natively understands generic types and knows that they are
+        different from non-generic types.</para>
+
+        <para>To show that the CLR natively understands generics, let's take a
+        look at an example:</para>
+        <programlisting>
+<![CDATA[
+
+using System;
+
+namespace Test
+{
+    class Generic<T>
+    {
+        public Generic( T t )
+        {
+            this.t = t;
+        }
+
+        public string Value()
+        {
+            return this.t.ToString();
+        }
+        private T t;
+    }
+
+    class NonGeneric
+    {
+        public NonGeneric( object o )
+        {
+            this.o = o;
+        }
+
+        public string Value()
+        {
+            return this.o.ToString();
+        }
+
+        private object o;
+    }
+    class Test
+    {
+        public static void Main()
+        {
+            string s = "42";
+            Generic<string> g = new Generic<string>( s );
+            string res = g.Value();
+            Console.WriteLine( res );
+
+            Generic<object> g2 = new Generic<object>( s );
+            res = g2.Value();
+            Console.WriteLine( res );
+
+            NonGeneric ng = new NonGeneric( s );
+            res = ng.Value();
+            Console.WriteLine( res );
+        }
+    }
+}
+
+]]>
+        </programlisting>
+        <para>Now let's look at the CIL generated from the generic class
+        definition:</para>
+        <programlisting>
+<![CDATA[
+
+
+// =============== CLASS MEMBERS DECLARATION ===================
+
+.class private auto ansi beforefieldinit Test.'Generic`1'<([mscorlib]System.Object) T>
+       extends [mscorlib]System.Object
+{
+  .field private !T t
+  .method public hidebysig specialname rtspecialname 
+          instance void  .ctor(!T t) cil managed
+  {
+    // Code size       16 (0x10)
+    .maxstack  8
+    IL_0000:  ldarg.0
+    IL_0001:  call       instance void [mscorlib]System.Object::.ctor()
+    IL_0006:  nop
+    IL_0007:  ldarg.0
+    IL_0008:  ldarg.1
+    IL_0009:  stfld      !0 class Test.'Generic`1'<!T>::t
+    IL_000e:  nop
+    IL_000f:  ret
+  } // end of method 'Generic`1'::.ctor
+
+  .method public hidebysig instance string 
+          Value() cil managed
+  {
+    // Code size       22 (0x16)
+    .maxstack  1
+    .locals init (string V_0)
+    IL_0000:  ldarg.0
+    IL_0001:  ldflda     !0 class Test.'Generic`1'<!T>::t
+    IL_0006:  constrained. !T
+    IL_000c:  callvirt   instance string [mscorlib]System.Object::ToString()
+    IL_0011:  stloc.0
+    IL_0012:  br.s       IL_0014
+
+    IL_0014:  ldloc.0
+    IL_0015:  ret
+  } // end of method 'Generic`1'::Value
+
+} // end of class Test.'Generic`1'
+
+]]>
+        </programlisting>
+        <para>The `1 syntax means that we are dealing with a generic
+        type. Additionally,, the <function>constrained.</function> instruction
+        is specific to generic types.</para> 
+        
+        <para>Let's compare with the code emitted for a non-generic
+        type:</para>
+        
+        <programlisting>
+        <![CDATA[
+.class private auto ansi beforefieldinit Test.NonGeneric
+       extends [mscorlib]System.Object
+{
+  .field private object o
+  .method public hidebysig specialname rtspecialname 
+          instance void  .ctor(object o) cil managed
+  {
+    // Code size       16 (0x10)
+    .maxstack  8
+    IL_0000:  ldarg.0
+    IL_0001:  call       instance void [mscorlib]System.Object::.ctor()
+    IL_0006:  nop
+    IL_0007:  ldarg.0
+    IL_0008:  ldarg.1
+    IL_0009:  stfld      object Test.NonGeneric::o
+    IL_000e:  nop
+    IL_000f:  ret
+  } // end of method NonGeneric::.ctor
+
+  .method public hidebysig instance string 
+          Value() cil managed
+  {
+    // Code size       16 (0x10)
+    .maxstack  1
+    .locals init (string V_0)
+    IL_0000:  ldarg.0
+    IL_0001:  ldfld      object Test.NonGeneric::o
+    IL_0006:  callvirt   instance string [mscorlib]System.Object::ToString()
+    IL_000b:  stloc.0
+    IL_000c:  br.s       IL_000e
+
+    IL_000e:  ldloc.0
+    IL_000f:  ret
+  } // end of method NonGeneric::Value
+
+} // end of class Test.NonGeneric
+]]>
+    </programlisting>
+    <para>Here, for a non-generic class,  there is no use of the `1 construct.</para>
+
+    <para>Unfortunately, the current beta release of the Microsoft 2.0
+    Framework does not contain a specification for the instructions and the
+    associated syntax used to implement generics in CIL. This will probably be
+    fixed in future releases. At the very least, documentation will be
+    provided when the generics mechanism has been included in the ECMA and ISO
+    standards.</para>
+
+    <sect2>
+        <title>Instantiating a generic type</title> <para>Instantiation of
+        generic types happen at runtime. When the Just In Time(JIT) compiler
+        encounters a generic type, it will create native code for that
+        instantiation. Of course, if there is a previous instantiation of that
+        particular generic type for that specific set of type parameters, the
+        implementation will be reused.</para>
+    </sect2>
+    <sect2>
+        <title>Code sharing</title>
+
+        <para>Additionally, if the native code emitted for a previous
+        instantiation of a type is considered <quote>compatible</quote> with
+        another type, this instantiation can be reused as well. All
+        instantiations of a generic type parameterized on a class type(not a
+        value type) can share the same native code. For example, the
+        instantiations of <function>List&lt;string&gt;</function> and
+        <function>List&lt;Button&gt;</function> will typically be identical,
+        since neither <type>string</type> nor <type>Button</type> are value
+        types, and the lists merely have to store references to the objects. A
+        reference is typically represented as a native pointer type in machine
+        code(Occupying 4 bytes on a 32 bit architecture like the x86). </para>
+
+        <para>Instantiations for value types cannot so easily be shared, since
+        value types typically have different sizes. For example, for a
+        <type>List&lt;int&gt;</type>, the list contains items that each occupy 4
+        bytes. For a <type>List&lt;double&gt;, however, each item occupies 8
+        bytes. This means that the binary layout of the list and its
+        implementation will differ.  Although it is conceivable that an advanced
+        JIT could do some degree of code sharing also in this case, this is not
+        currently implemented.</para>
+
+    </sect2>        
     </sect1>
+    
     <sect1>
-        <title>Generics in other .NET languages</title>
+        <title>.NET generics versus Java generics</title>
+        <para>When Sun Microsystems released Java 2, Standard Edition 5.0
+        earlier this year, generics support was one of the big advancements
+        over earlier versions. With this release, they beat .NET by having a
+        working, non-beta, implementation of generics out on the market. The 
+        .NET release featuring generics is still in beta.</para>
+
+        <para>The Java implementation of generics was based on a research
+        project named <link linkend="pizzacompiler">Pizza</link>, which was
+        later turned into a Java Specification Request(JSR).</para>
+
+        <para>While the syntax of generics in Java looks pretty similar to
+        that of C#, the underlying implementation is vastly different. Let us
+        look at an example:</para>
+        <programlisting>
+        <![CDATA[
+
+public class List<T>
+{
+    public void add( T t )
+    {
+        // ...
+    }
+
+    public T getAt( int i )
+    {
+        // ...
+    }
+
+    // ...
+
+    private T[] list;
+}
+
+public class Test
+{
+    public static void main( String[] args )
+    {
+        List<String> stringList = new List<String>();
+        stringList.add( "The answer is " );
+        stringList.add( "42" );
+
+        String s = stringList.getAt( 1 );
+        System.out.println( s );
+    }
+}
+]]>
+        </programlisting>
+        <para>Except for the camelCase vs PascalCase issues, this syntax is
+        pretty much identical to that of C#. However, what happens under the
+        hood when the code is compiled is different.</para>
+
+        <para>If the C# compiler had encountered the above example, it would
+        have emitted CIL that indicated that the <type>List</type> class was
+        a generic type, and it would have inserted CIL in the
+        <function>main()</function> to instantiate a specialization of the
+        List parameterized on the <type>String</type> class. The Java compiler
+        does no such thing.</para>
+
+        <para>In Java, the runtime(the JVM) does not have a concept of generic
+        types at all. The JVM bytecode instruction set has not been modified
+        to accommodate generics. The compiler is therefore limited to emitting
+        the same bytecode as for a non-generic class. It has been speculated
+        that this approach was chosen so that generic classes would run on
+        downlevel JVMs(pre 5.0), but it has later turned out that this isn't
+        true. A compiled generic class file will not run on downlevel JVMs.</para>
+
+        <para>When the Java compiler encounters a generic class, it performs
+        an operation on the generic class called <firstterm>type
+        erasure</firstterm>. Type erasure basically means that the compiler
+        strips out all the parametric types and replaces them with
+        <type>Object</type>. The compiler would turn the above example into
+        this:</para>
+        <programlisting>
+        <![CDATA[
+
+public class List
+{
+    public void add( Object t )
+    {
+        // ...
+    }
+
+    public Object getAt( int i )
+    {
+        // ...
+    }
+
+    // ...
+
+    private Object[] list;
+}
+
+public class Test
+{
+    public static void main( String[] args )
+    {
+        List stringList = new List();
+        stringList.add( "The answer is " );
+        stringList.add( "42" );
+
+        String s = (String)stringList.getAt( 1 );
+        System.out.println( s );
+    }
+}
+]]>
+        </programlisting>
+        <para>Here, all parametric type information has been stripped out and
+        the result resembles the implementation of a <type>List</type> class
+        prior to the introduction of generics. It is worth noting that the
+        compiler actually inserts casts for invocations of the
+        <function>getAt</function> method. After performing the type erasure,
+        the class is compiled just like a regular non-generic class, and the
+        bytecode emitted bears no mark of being the end result from a generic
+        type.</para>
+
         <sect2>
-            <title>VB.NET</title>
+        <title>Implications of the Java approach</title>
+            <para>The Java approach has some advantages: It is rather simple
+            to implement, and it requires no changes to the JVM or the Java
+            bytecodes. However, these advantages are far outweighed by the
+            disadvantages. As one can see, when using generics in Java, the
+            runtime casts are merely hidden, and you lose the performance
+            benefit gained by using generics in .NET. If you parameterize a
+            generic Java type on a value type, the Java compiler will actually
+            <emphasis>insert</emphasis> the same kind of boxing and unboxing
+            operations that are some of the motivation for introducing
+            generics in .NET. The end result is that a Java generic container
+            class gives you no performance benefit over an equivalent
+            <type>Object</type>-based container.</para>
+
+            <para>Another consequence of the Java implementation is that no
+            information about the genericity of a class is available at
+            runtime. Any attempt to perform reflection against our
+            <type>List</type> class will reveal nothing more than that it's a
+            class of type <type>List</type>. There is no way to retrieve
+            information about which type it was parameterized on, or that it
+            is in fact a generic type. All that information has been thrown
+            away by the compiler. The .NET implementation, on the other hand,
+            supports full reflection of generic types at runtime. The central
+            class in .NET reflection, the <type>Type</type> class, contains a
+            wide range of methods and properties that allow you to retrieve
+            information about a generic type and the types it has been
+            parameterized on.</para>
+        
         </sect2>
-    </sect1>
-    <sect1>
-        <title>C# Generics - How do they compare to Java generics?</title>
-        <!-- reflectability of generic types -->
-        <!-- primitives and generic types - boxing/unboxing -->
-    </sect1>
-    <sect1>
-        <title>Comparisons to similar constructs in other programming languages</title>
-        <sect2>C++ templates</sect2>
-        <!-- runtime vs compile/link time -->
-        <!-- code sharing -->
-        <sect2><phrase>"Duck typing"</phrase> in dynamic languages</sect2>
-    </sect1>
     <bibliography>
         <biblioentry id="pldi2001" xreflabel="pldi2001">
             <authorgroup>
@@ -616,6 +944,12 @@ generated x86, where MyClass1 and MyClass2 are ref types.<o:p></o:p></SPAN> -->
                 </ulink>
             </title>
         </biblioentry>
+
+        <biblioentry id="pizzacompiler" xreflabel="PIZZACOMPILER">
+            <title>
+                <ulink
+                url="http://pizzacompiler.sourceforge.net/">http://pizzacompiler.sourceforge.net/</ulink>
+            </title>
     </bibliography>
 </article>
 

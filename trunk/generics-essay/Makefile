@@ -15,6 +15,7 @@ endif
 html: htmldir html/generics.html
 pdf: pdfdir pdf/generics.pdf
 fo: fodir fo/generics.fo
+ps: psdir ps/generics.ps
 
 htmldir: 
 	-mkdir html
@@ -25,9 +26,15 @@ pdfdir:
 fodir:
 	-mkdir fo
 
+psdir:
+	-mkdir ps
+
+
 clean:
 	-rm -rf html
 	-rm -rf fo
+	-rm -rf ps
+	-rm -rf pdf
 
 
 html/%.html: %.xml

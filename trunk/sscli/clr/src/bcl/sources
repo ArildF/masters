@@ -208,6 +208,7 @@ RUNTIME_SOURCES = \
     system\platformnotsupportedexception.cs \
     system\random.cs \
     system\rankexception.cs \
+    system\referencecountedattribute.cs \
     system\resid.cs \
     system\runtimeargumenthandle.cs \
     system\runtimefieldhandle.cs \

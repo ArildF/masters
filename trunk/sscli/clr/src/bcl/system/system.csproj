@@ -83,7 +83,23 @@
                     WarningLevel = "1"
                 />
             </Settings>
-            <References/>
+            <References>
+                <Reference
+                    Name = "System"
+                    AssemblyName = "System"
+                    HintPath = "D:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
+                />
+                <Reference
+                    Name = "System.Data"
+                    AssemblyName = "System.Data"
+                    HintPath = "D:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
+                />
+                <Reference
+                    Name = "System.XML"
+                    AssemblyName = "System.XML"
+                    HintPath = "D:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
+                />
+            </References>
         </Build>
         <Files>
             <Include>
@@ -644,6 +660,11 @@
                 />
                 <File
                     RelPath = "rankexception.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "referencecountedattribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

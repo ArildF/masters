@@ -8,7 +8,6 @@ svn checkout http://10.0.0.3/svn/masters/trunk/tools \tmp\thesis\tools
 pushd
 
 cd \tmp\thesis\tools\Transform
-echo %PATH%
 make
 
 cd ..\..\thesis\

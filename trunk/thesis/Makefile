@@ -8,7 +8,7 @@ FOP=cmd.exe /k fop.bat
 
 
 # are we running on linux?
-ifeeq ($(shell uname -s),Linux)
+ifeq ($(shell uname -s),Linux)
     SUBMAKEFILE=Makefile.Transform
 	BROWSER=opera	
 else

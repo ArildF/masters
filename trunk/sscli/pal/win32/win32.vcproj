@@ -61,6 +61,9 @@
 				RelativePath=".\makefile.inc">
 			</File>
 			<File
+				RelativePath="..\rotor_pal.h">
+			</File>
+			<File
 				RelativePath=".\win32pal.h">
 			</File>
 		</Filter>

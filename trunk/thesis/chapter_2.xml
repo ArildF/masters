@@ -66,6 +66,159 @@ public class Brush
     
     <sect2>
       <title>The finalizer queue</title>
+      <para>When a GC heap is collected, objects that have a finalizer are
+      <emphasis>not</emphasis> collected right away. Instead they are put in a
+      special data structure called the <firstterm>finalizer queue</firstterm>. 
+      A background thread, the <firstterm>finalizer thread</firstterm>, starts
+      up and visits all the objects in the queue, invoking their 
+      <function>Finalize</function> methods. If the act of finalizing them 
+      doesn't revive them (make them accessible again from some other object),
+      they are again marked for garbage collection and picked up by the 
+      collector on its next run.</para>
+      
+      <para>The behavior just described causes objects with a finalizer to 
+      have a longer life than objects without one. If you have a large number
+      of finalizable objects in your system, performance will obviously 
+      suffer, since these objects will have a much longer lifespan; i.e. 
+      they will always survive at least one garbage collection. The external
+      resources these objects hold on to will also be held for a longer time
+      than necessary, since the finalizer won't necessarily be run instantly
+      after the object has been collected.      
+      </para>
+      
+      <para>One other thing about finalization is that there is no 100%
+      guarantee that it will happen. In some cases, the program might
+      exit without having run all of its finalizers. When a program is exitting,
+      the runtime gives a certain amount of time for remaining finalizers to 
+      run. When the time runs out, the finalizer thread is killed off and the
+      runtime (and the program with it) is shut down anyway). There is only a
+      single finalizer thread, so any one of the finalizers could prevent the
+      remaining ones from running by taking too long to execute. </para>      
+    </sect2>
+    
+    <sect2>
+      <title>The IDisposable pattern</title>      
+      <para>As the previous section describes, relying on the finalizer to 
+      take care of your external resources has some drawbacks: it is 
+      non-deterministic in that you never know when (or even if) it will run, 
+      and it causes objects to linger and hold onto memory for a longer time
+      than necessary. To support a more deterministic way of releasing said
+      resources, the designers of the .NET framework provided the 
+      <firstterm>IDisposable pattern.</firstterm></para>
+      
+      <para><type>System.IDisposable</type> is an interface defining a single
+      method, <function>Dispose()</function>:</para>
+      <programlisting><![CDATA[
+namespace System
+{
+  public interface IDisposable
+  {
+    void Dispose();
+  }
+}]]></programlisting>
+      <para>Types that own unmanaged resources will implement this interface.
+      The user of such a type can then call <function>Dispose()</function> 
+      explicitly when he is done with the object, causing the resource to be
+      freed instantaneously. For types where another name for this method would
+      be more semantically correct, one can provide another method with the
+      appropriate name and have it call <function>Dispose()</function> (or the 
+      other way around). For example, the <type>FileStream</type> class 
+      implements <type>IDisposable</type>, but provides a <function>Close()
+      </function> method intended for the consumer to use.</para>
+      
+      <para>A strategy of implementing <emphasis>only </emphasis>
+      <type>IDisposable</type> can be a bit dangerous, though. You have no 
+      guarantees that the user will ever bother calling 
+      <function>Dispose() </function>, even if you write it in bold red type in
+      the documentation (programmers can't read, and even if they could, they 
+      wouldn't want to). Most such types will therefore also implement a 
+      finalizer, in case the <function>Dispose()</function> method is 
+      never called.</para>
+      
+      <para>Obviously, having 
+      <emphasis>both</emphasis> <function>Dispose()</function> and 
+      <function>Close()</function> being called would be 
+      pretty wasteful. Yes, you would dispose of the unmanaged resource, but
+      the problem of having finalizable objects linger for a much longer time
+      than necessary would remain. Fortunately, you can tell the garbage 
+      collector <emphasis>not</emphasis> to finalize a specific object if it's
+      already been disposed. The most common implementation of <type>
+      IDisposable</type> will call the <function>GC.SuppressFinalize()
+      </function> method once it has disposed of the unmanaged resource: 
+      </para>
+      
+      <programlisting><![CDATA[ 
+public class Foo : IDisposable
+{
+    public Foo()
+    {
+        this.resource = CreateResource();              
+    }
+    
+    ~Foo()
+    {
+        DoDispose();
+    }
+    
+    public void Dispose()
+    {
+       DoDispose();
+       GC.SuppressFinalize( this );
+    }
+    
+    protected virtual void DoDispose()
+    {
+        FreeResource( this.resource );
+    }
+    
+    // ...
+    // implementation omitted
+    // ...
+      
+      
+    [DllImport( "os.dll")]
+    private extern IntPtr CreateResource();
+      
+    [DllImport( "os.dll")]
+    private extern void FreeResource( IntPtr resource );
+   
+   private IntPtr resource;  
+   
+}      
+      
+      ]]>
+      </programlisting>
+      
+      <para>One could then use this object like this:</para>
+      <programlisting><![CDATA[
+
+Foo foo;
+try
+{
+    foo = new Foo();
+    
+    // use foo here
+}
+finally
+{
+    foo.Dispose();
+}
+]]></programlisting>
+      <para>Putting the <function>Dispose()</function> call in a finally 
+      ensures that the object will be cleaned up even if the code in the try 
+      block throws an exception.</para>
+      
+      <para>The <function>using</function> construct in C# makes the 
+      IDisposable pattern even easier to use. The following C# code is 
+      equivalent to the above example:</para>
+<programlisting><![CDATA[
+using( Foo foo = new Foo() )
+{
+    // use foo here
+}
+]]>  </programlisting>   
+      
+      
       
     </sect2>
   </sect1>

@@ -7,17 +7,17 @@ using System.IO;
 
 namespace Transform
 {
-	/// <summary>
-	/// Summary description for Transform.
-	/// </summary>
-	/// 
+    /// <summary>
+    /// Summary description for Transform.
+    /// </summary>
+    /// 
 
-	public class Transform
-	{
-		public Transform()
-		{
-			
-		}
+    public class Transform
+    {
+        public Transform()
+        {
+            
+        }
 
         public static int Main( string[] args )
         {
@@ -35,11 +35,11 @@ namespace Transform
             {
 
                 XslTransform transform = new XslTransform();
-            
+
                 transform.Load( config.XslInputFile );
-       
+
                 XPathDocument doc = new XPathDocument( config.XmlInputFile );
-                transform.Transform( doc, new XsltArgumentList(), config.Output ); 
+                transform.Transform( doc, new XsltArgumentList(), config.Output, null ); 
             }
             catch( XmlException ex )
             {
@@ -58,12 +58,15 @@ namespace Transform
                 ShowError( ex );
                 return 1;
             }
-            
+
             return 0;
         }
 
         private static void ShowError( Exception ex )
         {
+            Console.WriteLine( ex.GetType() );
+            Console.WriteLine( ex.Source );
+            Console.WriteLine( ex.StackTrace );
             Console.Error.WriteLine ( ex.Message );
             if ( ex.InnerException != null )
                 ShowError( ex.InnerException );
@@ -152,6 +155,6 @@ Usage: transform -xml xmlfile -xsl xslfile [-out outfile]" );
                 Output = Console.Out;
             }
         }
-	}
+    }
 }
 

@@ -1,4 +1,4 @@
-# makefile for building generics essay
+# makefile for building thesis
 
 TOOLS=../tools
 DOCBOOK=$(TOOLS)/docbook-xsl
@@ -22,11 +22,13 @@ include $(SUBMAKEFILE)
 showhtml: html
 	-cp $(TOOLS)/styles.css $(CURDIR)/html
 	$(BROWSER) $(CURDIR)/html/generics.html &
+	
+all: html pdf fo ps
 
-html: htmldir html/description.html
-pdf: pdfdir pdf/description.pdf
-fo: fodir fo/description.fo
-ps: psdir ps/description.ps
+html: htmldir html/thesis.html
+pdf: pdfdir pdf/thesis.pdf
+fo: fodir fo/thesis.fo
+ps: psdir ps/thesis.ps
 
 htmldir: 
 	-mkdir html

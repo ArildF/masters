@@ -16,7 +16,12 @@
 			IntermediateDirectory="Debug"
 			ConfigurationType="0">
 			<Tool
-				Name="VCNMakeTool"/>
+				Name="VCNMakeTool"
+				BuildCommandLine="make html"
+				ReBuildCommandLine="make clean
+make html"
+				CleanCommandLine="make clean"
+				Output="html\thesis.html"/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -34,7 +39,13 @@
 			Name="docbook"
 			Filter="*.xml">
 			<File
+				RelativePath=".\chapter_1.xml">
+			</File>
+			<File
 				RelativePath=".\description.xml">
+			</File>
+			<File
+				RelativePath=".\thesis.xml">
 			</File>
 		</Filter>
 		<File

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE book SYSTEM "../tools/dtd/dblite.dtd"
+[
+
+<!ENTITY chapter_1 SYSTEM "chapter_1.xml">
+]>
+
+<book id="thesis">
+    <title>Introducing reference counting into the Common Language Runtime</title>
+    
+    <subtitle>Memory management strategies in a managed world</subtitle>
+    
+    <bookinfo>    
+    
+    
+        <authorgroup>
+            <author>
+                <firstname>Arild</firstname>
+                <surname>Fines</surname>
+            </author>
+        </authorgroup>
+        
+        <copyright>
+            <year>2005</year>
+            <holder>Arild Fines</holder>
+        </copyright>
+        
+        
+    </bookinfo>
+    
+    &chapter_1;
+    
+</book>
+
+

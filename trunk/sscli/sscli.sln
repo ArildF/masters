@@ -7,6 +7,14 @@ Project("{8BC9CEB9-8B4A-11D0-8D11-00A0C91BC942}") = "clix.exe", "build\v1.x86fst
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vm", "clr\src\vm\vm.vcproj", "{FF8033E9-57BA-47DA-B80C-91BAC2C27D7F}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "system", "clr\src\bcl\system\system.csproj", "{500152A5-9D40-4A57-AE79-B24A0C065FAD}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -19,6 +27,14 @@ Global
 		{F9383923-B0D1-4592-A226-EE38AE7662FF}.Release.Build.0 = Release|Win32
 		{C61E4E81-AB1C-4212-BD94-92DB5BAD2B5A}.Debug.ActiveCfg = Debug
 		{C61E4E81-AB1C-4212-BD94-92DB5BAD2B5A}.Release.ActiveCfg = Debug
+		{FF8033E9-57BA-47DA-B80C-91BAC2C27D7F}.Debug.ActiveCfg = Debug|Win32
+		{FF8033E9-57BA-47DA-B80C-91BAC2C27D7F}.Debug.Build.0 = Debug|Win32
+		{FF8033E9-57BA-47DA-B80C-91BAC2C27D7F}.Release.ActiveCfg = Release|Win32
+		{FF8033E9-57BA-47DA-B80C-91BAC2C27D7F}.Release.Build.0 = Release|Win32
+		{500152A5-9D40-4A57-AE79-B24A0C065FAD}.Debug.ActiveCfg = Debug|.NET
+		{500152A5-9D40-4A57-AE79-B24A0C065FAD}.Debug.Build.0 = Debug|.NET
+		{500152A5-9D40-4A57-AE79-B24A0C065FAD}.Release.ActiveCfg = Release|.NET
+		{500152A5-9D40-4A57-AE79-B24A0C065FAD}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

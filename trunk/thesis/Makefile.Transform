@@ -1,12 +1,12 @@
 PROC=..\tools\Transform\Transform.exe
 
-html/thesis.html: thesis.xml chapter_1.xml bibliography.xml
+html/thesis.html: thesis.xml chapter_1.xml chapter_2.xml bibliography.xml
 	$(PROC) -xsl $(HTMLXSLT) -xml thesis.xml -out $@  
 	
 fo/%.fo: %.xml
 	$(PROC) -xsl $(FOXSLT) -xml $< -pdf $@  
 
-pdf/thesis.pdf: thesis.xml chapter_1.xml bibliography.xml
+pdf/thesis.pdf: thesis.xml chapter_1.xml chapter_2.xml bibliography.xml
 	$(FOP) -xsl $(FOXSLT) -xml thesis.xml -pdf $@  
 
 ps/%.ps: %.xml

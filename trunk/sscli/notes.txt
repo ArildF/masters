@@ -1,0 +1,11 @@
+* Logging defined thusly:
+	set COMPlus_LogEnable=1    
+	set COMPlus_LogToConsole=1
+	set COMPlus_LogFacility=0x100
+* Last value is a bitfield. Values defined in \clr\src\inc\loglf.h
+* An ini file in the Rotor directory for the build can also be used
+
+Runtime objects represented by c++ classes Object(vm/object.cpp|h) and 
+ObjHeader(vm/syncblk.cpp|h). Object contains pointer to a MethodTable, 
+ObjHeader has an index into a global sync block table, which is used
+for various things.

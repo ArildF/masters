@@ -8,12 +8,12 @@ FOP=cmd.exe /k fop.bat
 
 
 # are we running on linux?
-ifneq ($(shell uname -o),Cygwin)
-	SUBMAKEFILE=Makefile.xsltproc
-	BROWSER=opera
+ifeeq ($(shell uname -s),Linux)
+    SUBMAKEFILE=Makefile.Transform
+	BROWSER=opera	
 else
-	SUBMAKEFILE=Makefile.Transform
-	BROWSER=opera
+    SUBMAKEFILE=Makefile.xsltproc
+	BROWSER=opera	
 endif
 
 

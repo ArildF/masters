@@ -3,10 +3,10 @@ PROC=..\tools\Transform\Transform.exe
 html/%.html: %.xml
 	$(PROC) -xsl $(HTMLXSLT) -xml $< -out $@  
 fo/%.fo: %.xml
-	$(PROC) -xsl $(FOXSLT) -xml $< -out $@  
+	$(PROC) -xsl $(FOXSLT) -xml $< -pdf $@  
 
 pdf/%.pdf: %.xml
-	$(PROC) -xsl $(FOXSLT) -xml $< -out $@  
+	$(FOP) -xsl $(FOXSLT) -xml $< -pdf $@  
 
 ps/%.ps: %.xml
 	$(PROC) -xsl $(FOXSLT) -xml $< -out $@   

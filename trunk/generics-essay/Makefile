@@ -3,7 +3,7 @@
 TOOLS=../tools
 DOCBOOK=$(TOOLS)/docbook-xsl
 HTMLXSLT=$(TOOLS)/html-stylesheet.xsl
-FOXSLT=$(DOCBOOK)/fo/docbook.xsl
+FOXSLT=$(TOOLS)/fo-stylesheet.xsl
 FOP=cmd.exe /k fop.bat
 
 

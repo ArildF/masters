@@ -68,12 +68,14 @@
         supports two main categories of types:</para>
         <variablelist>
             <varlistentry><term>objects</term>
-                <listitem>object types are always allocated on the heap. They
-                support polymorphism.<!-- TODO: more here --></listitem>
+                <listitem>Object types are always allocated on the heap. Any
+                representation of an object as a local variable merely consists
+                of a pointer to the object.</listitem>
             </varlistentry>
             <varlistentry><term>value types</term>
                 <listitem>value types are essentially nothing more than a
-                sequence of bytes. They are allocated either on the runtime
+                sequence of bytes, and are represented as such on a program's
+                stack. They are allocated either on the runtime
                 stack or inline in objects that contain them. They support
                 methods, but not inheritance, although they can implement one or
                 more interfaces. All primitive types, such as integers and
@@ -171,19 +173,18 @@ list.Add( new Bar() ); // ERROR: Bar is not a Foo
         <type>Foo</type>, the insertion would be allowed by the compiler.</para>
         
         <sect2>
-            <title>What exactly is <quote>polymorphism</quote>, and what does
-            it have to do with generics?</title>
-            <para>The term polymorphism derives from the Greek words
-            <term>poly</term>, meaning <term>many</term>, and
-            <term>morphos</term>, meaning <term> shape.</term> In other words, 
-            it describes an entity that can take on many shapes. The most
-            common application of the term in computer science is to describe
-            the way most object oriented programming languages dispatch method
-            calls on a type. However, it applies equally well to <term>function
-            overloading</term>(several functions having the same name, but 
-            different argument lists) and <term>generics</term>. In generics,
-            the generic type takes on a different 'shape' for each different
-            type it is parameterized on.
+           <title>What exactly is <quote>polymorphism</quote>, and what does it
+            have to do with generics?</title> <para>The term polymorphism
+            derives from the Greek words <quote>poly</quote>, meaning
+            <quote>many</quote>, and <quote>morphos</quote>, meaning <quote>
+            shape.</quote> In other words, it describes an entity that can take
+            on many shapes. The most common application of the term in computer
+            science is to describe the way most object oriented programming
+            languages dispatch method calls on a type. However, it applies
+            equally well to <quote>function overloading</quote>(several
+            functions having the same name, but different argument lists) and
+            <quote>generics</quote>. In generics, the generic type takes on a
+            different 'shape' for each different type it is parameterized on.
             </para>
         </sect2>
         
@@ -193,16 +194,115 @@ list.Add( new Bar() ); // ERROR: Bar is not a Foo
         advantages of pp -->
         <!-- other languages supporting 'generics'(in a broad sense) -->
 
-        <sect2>Alternatives to generics in .NET</sect2>
+        <sect2>
+        <title>The motivation for generics in .NET</title>
         In versions of the CLR prior to (the not yet released)2.0, developers
-        have had to 
+        have had certain options when it came to storing their custom types in 
+        containers:
+        <variablelist>
+            <varlistentry>
+                <term>Use the standard object-based containers.</term>
+                <listitem><para>The .NET Framework Base Class Library(BCL)
+                ships with an adequate set of container classes, all storing
+                items of type <type>Object</type>. Using these containers for
+                value types had certain performance implications since it
+                incurred the cost of <firstterm>boxing</firstterm>. It also
+                relinguished compile-time type safety, since the compiler had
+                no way of checking that only objects of one type were inserted
+                into the container. Additionally, retrieving objects from the
+                container required a cast operation. This cast was not entirely
+                free, since the compiler had to insert code to do a runtime
+                type check and potentially cast an exception if the real object
+                type didn't match the type casted to.</para></listitem>
+            </varlistentry>
+            
+            <varlistentry>
+                <term>Write custom containers from scratch.</term>
+                <listitem><para>You could, of course, always write your
+                IntegerList class from scratch. This would avoid the boxing
+                problem associated with the use of the standard containers and
+                value types(described above), and there would be no need for a
+                cast when retrieving an object from the list.</para>
+                
+                <para>The obvious downside is of course that writing such
+                custom containers is extremely dull gruntwork. Additionally,
+                you would rarely need only a single specialized container,
+                leading to the explosion of <type>IntegerList</type>,
+                <type>FloatList</type> and <type>FooList</type> objects all
+                over the place. If you wanted to change the algorithm used or
+                the interface of these classes, you needed to ensure that the
+                changes were made in all of them.</para>
+                </listitem>                
+            </varlistentry>
+            <varlistentry>
+                <term>Using a code generator.</term>
+                <listitem><para>Of course, since writing a custom container
+                from scratch is <quote>extremely dull gruntwork</quote>, it is
+                a perfect candidate for automation by a computer. There are
+                several tools out there that take as input the types the
+                container should store, and spits out a perfect custom
+                container that requires no casting or boxing, even for primitives.
+                </para></listitem>
+            </varlistentry>
+        </variablelist>
         <!-- use explicit interface implementation, derive from CollectionBase, use ArrayList-->
         <!-- boxing, unboxing -->
         <!-- code generation -->
         <!-- examples -->
+        </sect2>
+        <sect2>
+            <title>Uhh... what's this <quote>boxing</quote> thing?</title>
+            <para>Essentially, boxing is a mechanism that allows you to store
+            value types on the heap as a regular object. As the reader may
+            remember, value types as local variables or member variables are
+            stored merely as the sequence of bytes which they represent,
+            instead of as a pointer to a heap object as with reference types.</para>
+            
+            <para>In order to store a value type in a container class that holds
+            only <type>Object</type>s, you therefore need to copy it to a heap
+            object so you can pass that heap object's reference to the container's
+            <function>Add()</function> method.</para>
+            
+            <para>When the value type is retrieved from the container, the reverse
+            operation, called <firstterm>unboxing</firstterm>, is needed. This 
+            extracts the bytes for the value type and recreates it on the stack
+            as a local variable.</para>
+            
+            <para>While boxing and unboxing are conceptually very elegant ways
+            of solving the heap object/value type impedance problem, there is 
+            little question that there is a performance cost inherent in it.
+            </para>
+        </sect2>
+       
     </sect1>
     <sect1>
         <title>.NET generics</title>
+        <para>A preliminary specification for version 2.0 of the C# programming
+        language was released in October 2003. It contained, as everyone had
+        expected, a proposal for a generics mechanism, in addition to other new
+        features as <firstterm>anonymous methods</firstterm>,
+        <firstterm>iterators</firstterm> and <firstterm>partial types.</firstterm>
+        While the other three features are exciting in their own right, they will 
+        not be discussed any further here.
+        </para>
+        
+        <para>Comments made by Microsoft employees involved with the language
+        design on C# and .NET newsgroups and blogs indicated that generics
+        was a feature they had wished to include in the very first release of C#,
+        but time did not permit it. Taking the time to do it properly is 
+        understandable, considering what a mess templates in C++ have been
+        <footnote><quote>C++: An octopus made by nailing extra legs
+        onto a dog.</quote></footnote>.</para>
+        
+        <para>The C#/.NET implementation of generics is based on work done
+        by Don Syme and Andrew Kennedy at Microsoft Research in the UK.
+        They released a prototype called <firstterm>Gyro</firstterm> as a 
+        patch to Microsoft's <firstterm><link linkend="rotor">Shared Source</link>
+        </firstterm> versionvof the .NET Framework. <linklinkend="pldi2001>
+        Their work</link> was presented at
+        2001's Programming Language Design and Implementation (PLDI) convention.
+        </para>
+                        
 
         <!-- examples -->
         <!-- type inference -->
@@ -295,6 +395,22 @@ generated x86, where MyClass1 and MyClass2 are ref types.<o:p></o:p></SPAN> -->
             <title>
                 <ulink url="http://en.wikipedia.org/wiki/Generic_programming">
                      http://en.wikipedia.org/wiki/Generic_programming</ulink>
+            </title>
+        </biblioentry>
+        
+        <biblioentry id="rotor" xreflabel="Rotor">
+            <title> 
+                <ulink url="http://sscli.net">
+                    Microsoft Shared Source CLI
+                </ulink>
+            </title>
+        </biblioentry>
+        
+        <biblioentry id="csspec" xreflabel="CSSPEC">
+            <title>
+                <ulink url="http://download.microsoft.com/download/8/1/6/81682478-4018-48fe-9e5e-f87a44af3db9/SpecificationVer2.doc">'
+                    C# 2.0 Specification
+                </ulink>
             </title>
         </biblioentry>
     </bibliography>

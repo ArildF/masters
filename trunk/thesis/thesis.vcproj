@@ -52,6 +52,9 @@ make html"
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\index.html">
+		</File>
+		<File
 			RelativePath=".\Makefile">
 		</File>
 		<File

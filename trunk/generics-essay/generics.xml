@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?> 
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" 
+    "file:///t:/docbook-dtd/docbookx.dtd">
+<article>
+    <artheader>
+        <title>My Article</title>
+        <author>
+            <firstname>Arild</firstname>
+            <surname>Fines</surname>
+        </author>
+    </artheader>
+    <para> ... </para>
+    <sect1>
+        <title>On the foobarness</title>
+    </sect1>
+    
+</article>

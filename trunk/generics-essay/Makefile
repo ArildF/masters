@@ -1,16 +1,27 @@
 # makefile for building generics essay
 
-XSLT=../tools/docbook-xsl
-HTMLXSLT=$(XSLT)/xhtml/docbook.xsl
-FOXSLT=$(XSLT)/fo/docbook.xsl
+TOOLS=../tools
+DOCBOOK=$(TOOLS)/docbook-xsl
+HTMLXSLT=$(TOOLS)/html-stylesheet.xsl
+FOXSLT=$(DOCBOOK)/fo/docbook.xsl
 FOP=cmd.exe /k fop.bat
+
 
 # are we running on linux?
 ifneq ($(shell uname -o),Cygwin)
-	TRANSFORM=mono ../tools/Transform/Transform.exe
+	SUBMAKEFILE=Makefile.xsltproc
+	BROWSER=opera
 else
-	TRANSFORM=../tools/Transform/Transform.exe
+	SUBMAKEFILE=Makefile.Transform
+	BROWSER=opera
 endif
+
+
+include $(SUBMAKEFILE)
+
+showhtml: html
+	-cp $(TOOLS)/styles.css $(CURDIR)/html
+	$(BROWSER) $(CURDIR)/html/generics.html &
 
 html: htmldir html/generics.html
 pdf: pdfdir pdf/generics.pdf
@@ -37,11 +48,5 @@ clean:
 	-rm -rf pdf
 
 
-html/%.html: %.xml
-	$(TRANSFORM) -xml $< -xsl $(HTMLXSLT) -out $@
 
-fo/%.fo: %.xml
-	$(TRANSFORM) -xml $< -xsl $(FOXSLT) -out $@
 
-pdf/%.pdf: %.xml
-	$(FOP) -xml $< -xsl $(FOXSLT) -out $@

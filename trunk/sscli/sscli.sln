@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "system", "clr\src\bcl\syste
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "win32", "pal\win32\win32.vcproj", "{07AF78CC-8DD0-4AB9-8906-DB04A359ADE6}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -35,6 +39,10 @@ Global
 		{500152A5-9D40-4A57-AE79-B24A0C065FAD}.Debug.Build.0 = Debug|.NET
 		{500152A5-9D40-4A57-AE79-B24A0C065FAD}.Release.ActiveCfg = Release|.NET
 		{500152A5-9D40-4A57-AE79-B24A0C065FAD}.Release.Build.0 = Release|.NET
+		{07AF78CC-8DD0-4AB9-8906-DB04A359ADE6}.Debug.ActiveCfg = Debug|Win32
+		{07AF78CC-8DD0-4AB9-8906-DB04A359ADE6}.Debug.Build.0 = Debug|Win32
+		{07AF78CC-8DD0-4AB9-8906-DB04A359ADE6}.Release.ActiveCfg = Release|Win32
+		{07AF78CC-8DD0-4AB9-8906-DB04A359ADE6}.Release.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection

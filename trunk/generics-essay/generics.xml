@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" 
-    "file:///t:/docbook-dtd/docbookx.dtd">
+<!--<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook V3.1//EN" 
+    "file:///t:/docbook-dtd/docbookx.dtd">-->
 <!--  
     vim:et ts=4 tw=78
 -->
@@ -16,19 +16,18 @@
         <para>
             This essay will discuss a new mechanism that will be introduced in
             version 2.0 of the <firstterm>Common Language
-            Runtime</firstterm>(CLR), known as <firstterm>generics</firstterm>.
+            Runtime</firstterm> (CLR), known as <firstterm>generics</firstterm>.
             We will take a look at how generics will be used when programming in
-            various programming languages targetting the CLR, with an emphasis
+            various programming languages targeting the CLR, with an emphasis
             on the <firstterm>C# programming language</firstterm>. We will
             review how the CLR implements generics, and compare the
-            implementation of generics in .NET with the way other environments,
-            such as the Java Virtual Machine and to a lesser degree, C++,
-            perform the same task.
+            implementation of generics in .NET with the way the Java Virtual 
+            Machine performs the same task.
         </para>
     </abstract>
     <sect1>
         <title>What is the Common Language Runtime?</title>
-        <para>The Common Language Runtime(CLR) is the central component of
+        <para>The Common Language Runtime (CLR) is the central component of
         Microsoft's new development initiative <firstterm>.NET</firstterm>. It
         encompasses a runtime environment with rich support for a variety of
         modern object-oriented programming languages, allowing them to
@@ -56,15 +55,15 @@
         Program</firstterm></link>.</para>
 
         <para>The CLI has been standardized through the <firstterm>European Computer
-        Manufacturers Association</firstterm>(ECMA) and the <firstterm>International
-        Standards Organization</firstterm>(ISO) under the designations <link
+        Manufacturers Association</firstterm> (ECMA) and the <firstterm>International
+        Standards Organization</firstterm> (ISO) under the designations <link
         linkend="ecma335">ECMA-335</link> and
         <link linkend="iso23271">ISO/IEC 23271</link>, respectively.</para>
         
         <sect2>
         <title>The CLR's type system</title>
        <para> The CLR's type system reflects the fact that it is targetted
-        primarily(but not exclusively) towards object-oriented languages. It
+        primarily (but not exclusively) towards object-oriented languages. It
         supports two main categories of types:</para>
         <variablelist>
             <varlistentry><term>objects</term>
@@ -88,7 +87,7 @@
         that make a mechanism like generics desirable.</para>
 
         <para>The CLR also has support for a wide variety of other useful types,
-        such as pointers, arrays and <firstterm>delegates</firstterm>(type safe
+        such as pointers, arrays and <firstterm>delegates</firstterm> (type safe
         function pointers), but they are implemented in terms of one of the
         above types.</para>
         
@@ -111,7 +110,7 @@
             </sect3>
         </sect2>
         
-        <sect2> <title>Common Intermediate Language(IL)</title>
+        <sect2> <title>Common Intermediate Language(CIL)</title>
         <para>The <firstterm>Common Intermediate Language</firstterm>(CIL) is
         the language output by a compiler targetting the CLR. The language
         consists of a series of instructions manipulating a virtual stack based
@@ -134,14 +133,14 @@
     <sect1>
         <title>What are generics?</title>
         <para>Wikipedia <link linkend="wikipgen">defines</link> generics as
-        <quote> technique that allows one value to take different datatypes
+        <quote>a technique that allows one value to take different datatypes
         (so-called polymorphism) as long as certain contracts such as subtypes
         and signature are kept.</quote> It further defines <firstterm>generic
         programming</firstterm> as <quote>the programming style emphasizing use
         of this technique.</quote></para>
         
         <para>This is a rather abstract definition, but the concept of generics 
-        eventually boil down to the ability to parameterize a custom datatype
+        eventually boils down to the ability to parameterize a custom datatype
         on one or more types. The canonical example of a parameterized type is
         a collection class that can be parameterized on the types it holds. For
         example, a <type>List</type> class can be configured to hold either 
@@ -156,8 +155,9 @@ list.Add( new Foo(84) );
 Foo foo = list[0]; // get the first item in the list
         ]]>        
         </programlisting>
-        <para>Since this list is parameterized on the <type>Foo</type>, any attempt to insert
-        objects of another type would generate a compile-time error:</para>
+        <para>Since this list is parameterized on the <type>Foo</type>, any
+        attempt to insert objects of another type would generate a compile-time
+        error:</para>
         <programlisting>
         <![CDATA[
         
@@ -232,13 +232,14 @@ list.Add( new Bar() ); // ERROR: Bar is not a Foo
                 cast when retrieving an object from the list.</para>
                 
                 <para>The obvious downside is of course that writing such
-                custom containers is extremely dull gruntwork. Additionally,
-                you would rarely need only a single specialized container,
-                leading to the explosion of <type>IntegerList</type>,
-                <type>FloatList</type> and <type>FooList</type> objects all
-                over the place. If you wanted to change the algorithm used or
-                the interface of these classes, you needed to ensure that the
-                changes were made in all of them.</para>
+                custom containers is extremely dull gruntwork that incurs
+                development and maintenance costs. Additionally, you would
+                rarely need only a single specialized container, leading to the
+                explosion of <type>IntegerList</type>, <type>FloatList</type>
+                and <type>FooList</type> objects all over the place. If you
+                wanted to change the algorithm used or the interface of these
+                classes, you needed to ensure that the changes were made in all
+                of them.</para>
                 </listitem>                
             </varlistentry>
             <varlistentry>
@@ -334,17 +335,17 @@ myMap["airspeed velocity of an unladen European Swallow"] = 10;
             parameters have to be specified for K and V.</para> 
         
             <para>In this case, there is no boxing involved even though a 
-            value type(int) is stored in the collection. Also, since the types
+            value type (int) is stored in the collection. Also, since the types
             involved are known at compile time, there is no need for a runtime
             type check such as that involved in a cast. The instantiation
             of the dictionary is specialized for the types used, just as if 
-            you(or a code generator) had written it yourself. This lack of
+            you (or a code generator) had written it yourself. This lack of
             boxing when storing value types is what differentiates the Java
             implementation of generics from the .NET one, as we shall see 
             later on.</para>  
             
             <para>Further, here is an example of an implementation of a 
-            linked list using generics(this example is <link linkend="linklistexample">
+            linked list using generics (this example is <link linkend="linklistexample">
             taken from the .NET 2.0 documentation</link>):</para>
             <programlisting>
         <![CDATA[
@@ -434,7 +435,7 @@ int[] arr = new int[100];
 int[] evenNumbers = Array.FindAll<int>( arr, delegate(val)
 {
     return (val % 2) == 0;
-}
+});
 ]]>         
             </programlisting>
             
@@ -458,7 +459,7 @@ int[] evenNumbers = Array.FindAll<int>( arr, delegate(val)
             <para>
                 Since casts and boxing has been eliminated, generic types
                 will outperform their non-generic counterparts by a 
-                significant factor. The following(rather unscientific) benchmark
+                significant factor. The following (rather unscientific) benchmark
                 gives a perspective on the differences:                
             </para>
 <programlisting>
@@ -629,7 +630,7 @@ namespace Test
 ]]>
         </programlisting>
         <para>The `1 syntax means that we are dealing with a generic
-        type. Additionally,, the <function>constrained.</function> instruction
+        type. Additionally, the <function>constrained.</function> instruction
         is specific to generic types.</para> 
         
         <para>Let's compare with the code emitted for a non-generic
@@ -686,7 +687,7 @@ namespace Test
 
     <sect2>
         <title>Instantiating a generic type</title> <para>Instantiation of
-        generic types happen at runtime. When the Just In Time(JIT) compiler
+        generic types happen at runtime. When the Just In Time (JIT) compiler
         encounters a generic type, it will create native code for that
         instantiation. Of course, if there is a previous instantiation of that
         particular generic type for that specific set of type parameters, the
@@ -698,19 +699,19 @@ namespace Test
         <para>Additionally, if the native code emitted for a previous
         instantiation of a type is considered <quote>compatible</quote> with
         another type, this instantiation can be reused as well. All
-        instantiations of a generic type parameterized on a class type(not a
+        instantiations of a generic type parameterized on a class type (not a
         value type) can share the same native code. For example, the
         instantiations of <function>List&lt;string&gt;</function> and
         <function>List&lt;Button&gt;</function> will typically be identical,
         since neither <type>string</type> nor <type>Button</type> are value
         types, and the lists merely have to store references to the objects. A
         reference is typically represented as a native pointer type in machine
-        code(Occupying 4 bytes on a 32 bit architecture like the x86). </para>
+        code (Occupying 4 bytes on a 32 bit architecture like the x86). </para>
 
         <para>Instantiations for value types cannot so easily be shared, since
         value types typically have different sizes. For example, for a
         <type>List&lt;int&gt;</type>, the list contains items that each occupy 4
-        bytes. For a <type>List&lt;double&gt;, however, each item occupies 8
+        bytes. For a <type>List&lt;double&gt;</type>, however, each item occupies 8
         bytes. This means that the binary layout of the list and its
         implementation will differ.  Although it is conceivable that an advanced
         JIT could do some degree of code sharing also in this case, this is not
@@ -729,7 +730,7 @@ namespace Test
 
         <para>The Java implementation of generics was based on a research
         project named <link linkend="pizzacompiler">Pizza</link>, which was
-        later turned into a Java Specification Request(JSR).</para>
+        later turned into a Java Specification Request (JSR).</para>
 
         <para>While the syntax of generics in Java looks pretty similar to
         that of C#, the underlying implementation is vastly different. Let us
@@ -779,12 +780,12 @@ public class Test
         List parameterized on the <type>String</type> class. The Java compiler
         does no such thing.</para>
 
-        <para>In Java, the runtime(the JVM) does not have a concept of generic
+        <para>In Java, the runtime (the JVM) does not have a concept of generic
         types at all. The JVM bytecode instruction set has not been modified
         to accommodate generics. The compiler is therefore limited to emitting
         the same bytecode as for a non-generic class. It has been speculated
         that this approach was chosen so that generic classes would run on
-        downlevel JVMs(pre 5.0), but it has later turned out that this isn't
+        downlevel JVMs (pre 5.0), but it has later turned out that this isn't
         true. A compiled generic class file will not run on downlevel JVMs.</para>
 
         <para>When the Java compiler encounters a generic class, it performs
@@ -866,6 +867,7 @@ public class Test
             parameterized on.</para>
         
         </sect2>
+    </sect1>
     <bibliography>
         <biblioentry id="pldi2001" xreflabel="pldi2001">
             <authorgroup>
@@ -950,6 +952,7 @@ public class Test
                 <ulink
                 url="http://pizzacompiler.sourceforge.net/">http://pizzacompiler.sourceforge.net/</ulink>
             </title>
+        </biblioentry>
     </bibliography>
 </article>
 

@@ -18,6 +18,7 @@ cmd /c make pdf
 mkdir %targdir%
 copy /y html\thesis.html %targdir%
 copy /y pdf\thesis.pdf %targdir%
+copy /y index.html %targdir
 
 cd ..
 

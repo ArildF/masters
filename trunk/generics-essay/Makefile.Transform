@@ -1,0 +1,12 @@
+PROC=..\tools\Transform\Transform.exe
+
+html/%.html: %.xml
+	$(PROC) -xsl $(HTMLXSLT) -xml $< -out $@  
+fo/%.fo: %.xml
+	$(PROC) -xsl $(FOXSLT) -xml $< -out $@  
+
+pdf/%.pdf: %.xml
+	$(PROC) -xsl $(FOXSLT) -xml $< -out $@  
+
+ps/%.ps: %.xml
+	$(PROC) -xsl $(FOXSLT) -xml $< -out $@   

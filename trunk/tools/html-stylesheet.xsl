@@ -3,6 +3,7 @@
   <xsl:import href="docbook-xsl/html/docbook.xsl"/>
 
   <xsl:param name="html.stylesheet">styles.css</xsl:param>
+  <xsl:param name="bibliography.numbered">1</xsl:param>
   <!--<xsl:param name="toc.section.depth">3</xsl:param>
   <xsl:param name="annotate.toc">0</xsl:param>
 

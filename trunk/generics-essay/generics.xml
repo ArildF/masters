@@ -131,14 +131,68 @@
     </sect1>
     <sect1>
         <title>What are generics?</title>
-        <para>
+        <para>Wikipedia <link linkend="wikipgen">defines</link> generics as
+        <quote> technique that allows one value to take different datatypes
+        (so-called polymorphism) as long as certain contracts such as subtypes
+        and signature are kept.</quote> It further defines <firstterm>generic
+        programming</firstterm> as <quote>the programming style emphasizing use
+        of this technique.</quote></para>
+        
+        <para>This is a rather abstract definition, but the concept of generics 
+        eventually boil down to the ability to parameterize a custom datatype
+        on one or more types. The canonical example of a parameterized type is
+        a collection class that can be parameterized on the types it holds. For
+        example, a <type>List</type> class can be configured to hold either 
+        integers or<type>Foo</type> objects, but not at the same time. With
+        .NET generics in C#, the use of such a class would look like this:</para>
+        <programlisting>
+        <![CDATA[        
+List<Foo> list = new List<Foo>();
+list.Add( new Foo(42) );
+list.Add( new Foo(84) );
+
+Foo foo = list[0]; // get the first item in the list
+        ]]>        
+        </programlisting>
+        <para>Since this list is parameterized on the <type>Foo</type>, any attempt to insert
+        objects of another type would generate a compile-time error:</para>
+        <programlisting>
+        <![CDATA[
+        
+list.Add( 42 ); // ERROR: int is not a Foo
+list.Add( new Bar() ); // ERROR: Bar is not a Foo
+
+        ]]>        
+        
+        </programlisting>
+        
+        <para>Of course, normal polymorphic substitutability rules apply. If,
+        in the above example, <type>Bar</type> was a class deriving from
+        <type>Foo</type>, the insertion would be allowed by the compiler.</para>
+        
+        <sect2>
+            <title>What exactly is <quote>polymorphism</quote>, and what does
+            it have to do with generics?</title>
+            <para>The term polymorphism derives from the Greek words
+            <term>poly</term>, meaning <term>many</term>, and
+            <term>morphos</term>, meaning <term> shape.</term> In other words, 
+            it describes an entity that can take on many shapes. The most
+            common application of the term in computer science is to describe
+            the way most object oriented programming languages dispatch method
+            calls on a type. However, it applies equally well to <term>function
+            overloading</term>(several functions having the same name, but 
+            different argument lists) and <term>generics</term>. In generics,
+            the generic type takes on a different 'shape' for each different
+            type it is parameterized on.
+            </para>
+        </sect2>
+        
         <!-- C# programmers coming from C++ - miss templates -->
         <!-- define "polymorphism" -->
         <!-- parametric polymorphism vs dynamic/virtual approaches 
         advantages of pp -->
         <!-- other languages supporting 'generics'(in a broad sense) -->
 
-        </para> 
         <sect2>Alternatives to generics in .NET</sect2>
         In versions of the CLR prior to (the not yet released)2.0, developers
         have had to 
@@ -234,6 +288,13 @@ generated x86, where MyClass1 and MyClass2 are ref types.<o:p></o:p></SPAN> -->
             <title>
                 <ulink url="http://www.iso.org/iso/en/CatalogueDetailPage.CatalogueDetail?CSNUMBER=36769">
                      http://www.iso.org/iso/en/CatalogueDetailPage.CatalogueDetail?CSNUMBER=36769</ulink>
+            </title>
+        </biblioentry>
+        
+         <biblioentry id="wikipgen" xreflabel="wikipgen">
+            <title>
+                <ulink url="http://en.wikipedia.org/wiki/Generic_programming">
+                     http://en.wikipedia.org/wiki/Generic_programming</ulink>
             </title>
         </biblioentry>
     </bibliography>

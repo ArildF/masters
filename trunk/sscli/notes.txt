@@ -9,3 +9,12 @@ Runtime objects represented by c++ classes Object(vm/object.cpp|h) and
 ObjHeader(vm/syncblk.cpp|h). Object contains pointer to a MethodTable, 
 ObjHeader has an index into a global sync block table, which is used
 for various things.
+
+(inc/corhdr.h):
+typedef ULONG32 mdToken;                // Generic token
+
+typedef mdToken mdTypeRef;              // TypeRef reference (this or other scope)
+typedef mdToken mdTypeDef;              // TypeDef in this scope
+
+Need to figure out how attributes like StructLayout.Explicit make it into the 
+metadata. The .NET compiler cheats somehow, injecting 

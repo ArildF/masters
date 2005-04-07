@@ -30,33 +30,13 @@
 		</Configuration>
 		<Configuration
 			Name="run|Win32"
-			ConfigurationType="1">
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="0">
 			<Tool
-				Name="VCCLCompilerTool"/>
-			<Tool
-				Name="VCCustomBuildTool"/>
-			<Tool
-				Name="VCLinkerTool"/>
-			<Tool
-				Name="VCMIDLTool"/>
-			<Tool
-				Name="VCPostBuildEventTool"/>
-			<Tool
-				Name="VCPreBuildEventTool"/>
-			<Tool
-				Name="VCPreLinkEventTool"/>
-			<Tool
-				Name="VCResourceCompilerTool"/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"/>
-			<Tool
-				Name="VCWebDeploymentTool"/>
-			<Tool
-				Name="VCManagedWrapperGeneratorTool"/>
-			<Tool
-				Name="VCAuxiliaryManagedWrapperGeneratorTool"/>
+				Name="VCNMakeTool"
+				BuildCommandLine="J:\masters\sscli\clr\src\vm\buildvm.bat
+"/>
 		</Configuration>
 	</Configurations>
 	<References>
@@ -68,420 +48,837 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}">
 			<File
 				RelativePath=".\appdomain.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\appdomainhelper.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\appdomainnative.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\array.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\assembly.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\assemblyname.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\assemblynative.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\assemblysink.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\assemblyspec.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\binder.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\cachelinealloc.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\ceeload.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\ceemain.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\class.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\clsload.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\codeman.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comarrayhelpers.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comarrayinfo.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comcallwrapper.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comclass.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comcodeaccesssecurityengine.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comcurrency.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comdatetime.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comdecimal.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comdelegate.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comdynamic.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comevent.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comisolatedstorage.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\commember.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\commethodrental.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\commodule.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\common.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\commutex.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comndirect.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comnumber.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comobject.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comreflectioncommon.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comsecurityconfig.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comsecurityruntime.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comstreams.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comstring.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comstringbuffer.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comsynchronizable.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comsystem.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comthreadpool.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comutilnative.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comvarargs.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comvariant.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comwaithandle.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\confighelper.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\contexts.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\corhost.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\cormap.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\crst.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\customattribute.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\customerdebughelper.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\custommarshalerinfo.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\debugdebugger.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\debughelp.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\dump-tables.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\ecall.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\eeconfig.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\eeconfigfactory.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\eehash.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\ejitmgr.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\eventstore.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\excep.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\expandsig.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\fcall.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\field.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\fjit_eetwain.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\frames.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\fusionwrap.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gcee.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gchost.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gcscan.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gcsmp.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gmheap.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\handletable.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\handletablecache.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\handletablecore.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\handletablescan.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\hash.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\interopconverter.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\interoputil.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\invokeutil.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\jitinterface.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\list.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\listlock.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\memorypool.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\message.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\method.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\methodimpl.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\ml.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\mlcache.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\mlgen.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\mlinfo.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\nativeoverlapped.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\ndirect.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\nexport.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\nstruct.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\object.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\objecthandle.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\olevariant.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\pefile.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\permset.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\peverifier.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\prestub.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\proftoeeinterfaceimpl.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\rangetree.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\reflectclasswriter.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\reflectutil.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\reflectwrap.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\remoting.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\rwlock.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\security.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\securitydb.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\sigformat.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\siginfo.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\simplerwlock.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\spinlock.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stackbuildersink.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stackingallocator.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stackwalk.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stringliteralmap.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stublink.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stubmgr.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\syncblk.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\syncclean.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\threads.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\tls.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\tpoolwrap.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\typehash.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\util.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\validator.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\vars.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\verifier.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\versig.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\win32threadpool.cpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -490,522 +887,1041 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}">
 			<File
 				RelativePath=".\appdomain.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\appdomain.inl">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\appdomainhelper.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\appdomainnative.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\argslot.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\array.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\assembly.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\assemblyname.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\assemblynative.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\assemblysink.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\assemblyspec.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\binarysearchilmaps.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\binder.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\cachelinealloc.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\ceeload.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\ceemain.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\cgensys.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\class.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\classnames.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\clsload.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\codeman.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comarrayhelpers.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comarrayinfo.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comcallwrapper.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comclass.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comcodeaccesssecurityengine.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comcurrency.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comdatetime.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comdecimal.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comdelegate.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comdynamic.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comevent.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comisolatedstorage.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\commember.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\commethodrental.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\commodule.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\common.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\commutex.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comndirect.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comnumber.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comobject.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comreflectioncache.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comreflectioncommon.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comsecurityconfig.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comsecurityruntime.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comstreams.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comstring.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comstringbuffer.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comstringcommon.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comsynchronizable.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comsystem.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comthreadpool.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comutilnative.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comvarargs.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comvariant.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\comwaithandle.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\confighelper.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\context.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\cormap.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\crst.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\customattribute.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\customerdebughelper.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\custommarshalerinfo.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\dbginterface.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\debugdebugger.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\delegateinfo.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\ecall.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\eecallconv.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\eeconfig.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\eeconfigfactory.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\eedbginterface.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\eedbginterfaceimpl.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\eehash.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\eeprofinterfaces.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\ejitmgr.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\encee.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\eventstore.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\excep.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\exceptmacros.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\expandsig.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\fcall.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\field.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\fjit_eetwain.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\frames.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\fusionwrap.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gc.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gcdesc.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gcscan.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gcsmppriv.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gmheap.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gms.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\handletable.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\handletablepriv.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\hash.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\interopconverter.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\interoputil.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\intfhelper.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\invokeutil.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\jitinterface.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\list.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\listlock.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\listlock.inl">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\makefile.inc">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\marshaler.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\memorypool.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\message.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\metasig.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\method.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\methodimpl.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\ml.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\mlcache.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\mlgen.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\mlinfo.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\mlopdef.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\mscorlib.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\mtypes.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\namespace.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\nativeoverlapped.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\ndirect.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\new.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\nexport.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\nsenums.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\nstruct.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\object.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\object.inl">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\objecthandle.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\olevariant.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\pefile.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\permset.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\peverifier.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\proftoeeinterfaceimpl.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\rangetree.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\reflectclasswriter.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\reflectutil.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\reflectwrap.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\remoting.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\rexcep.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\runtimeexceptionkind.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\rwlock.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\security.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\securitydb.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\sigformat.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\siginfo.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\simplerwlock.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\sources.inc">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\specialstatics.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\spinlock.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stackbuildersink.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stackingallocator.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stackprobe.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stackwalk.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stackwalktypes.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stringliteralmap.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stublink.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\stubmgr.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\syncblk.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\syncclean.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\threads.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\threads.inl">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\tls.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\tpoolwrap.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\typehandle.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\typehash.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\util.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\vars.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\verbblock.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\verifier.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\veritem.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\veropcodes.hpp">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\versig.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\vertable.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\win32threadpool.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\wrappers.h">
+				<FileConfiguration
+					Name="run|Win32">
+				</FileConfiguration>
 			</File>
 		</Filter>
 		<Filter
@@ -1015,6 +1931,9 @@
 		</Filter>
 		<File
 			RelativePath=".\readme.txt">
+			<FileConfiguration
+				Name="run|Win32">
+			</FileConfiguration>
 		</File>
 	</Files>
 	<Globals>

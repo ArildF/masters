@@ -188,7 +188,7 @@ HRESULT IsReferenceCounted(IMDInternalImport *pInternalImport, mdTypeDef cl )
     ULONG cbBlob;
 
     // we only need to know if there is such an attribute on the type
-    hr = pInternalImport->GetCustomAttributeByName( cl, 
+    HRESULT hr = pInternalImport->GetCustomAttributeByName( cl, 
         "System.ReferenceCountedAttribute", &pData, &cbBlob );
 
     return hr;

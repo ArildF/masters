@@ -1358,7 +1358,8 @@ BOOL InitJITHelpers1()
     COMPLUS_TRY 
     {
 #ifdef PROFILING_SUPPORTED
-        if (!((CORProfilerTrackAllocationsEnabled()) || (LoggingOn(LF_GCALLOC, LL_INFO10))))
+        // TODO: Support this case as well
+        if (FALSE && !((CORProfilerTrackAllocationsEnabled()) || (LoggingOn(LF_GCALLOC, LL_INFO10))))
 #else
         if (!LoggingOn(LF_GCALLOC, LL_INFO10))
 #endif

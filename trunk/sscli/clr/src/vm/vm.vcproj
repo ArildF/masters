@@ -996,6 +996,46 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 		</Filter>
+		<Filter
+			Name="x86"
+			Filter="">
+			<File
+				RelativePath=".\i386\asmconstants.h">
+			</File>
+			<File
+				RelativePath=".\i386\asmhelpers.asm">
+			</File>
+			<File
+				RelativePath=".\i386\cgencpu.h">
+			</File>
+			<File
+				RelativePath=".\i386\cgenx86.cpp">
+			</File>
+			<File
+				RelativePath=".\i386\excepcpu.h">
+			</File>
+			<File
+				RelativePath=".\i386\excepx86.cpp">
+			</File>
+			<File
+				RelativePath=".\i386\gmsasm.asm">
+			</File>
+			<File
+				RelativePath=".\i386\gmscpu.h">
+			</File>
+			<File
+				RelativePath=".\i386\gmsx86.cpp">
+			</File>
+			<File
+				RelativePath=".\i386\jithelp.asm">
+			</File>
+			<File
+				RelativePath=".\i386\jitinterfacex86.cpp">
+			</File>
+			<File
+				RelativePath=".\i386\remotingx86.cpp">
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\readme.txt">
 		</File>

@@ -907,9 +907,6 @@
 				RelativePath=".\simplerwlock.hpp">
 			</File>
 			<File
-				RelativePath=".\sources.inc">
-			</File>
-			<File
 				RelativePath=".\specialstatics.h">
 			</File>
 			<File
@@ -1001,6 +998,9 @@
 		</Filter>
 		<File
 			RelativePath=".\readme.txt">
+		</File>
+		<File
+			RelativePath=".\sources.inc">
 		</File>
 	</Files>
 	<Globals>

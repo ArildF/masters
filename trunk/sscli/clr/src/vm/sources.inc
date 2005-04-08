@@ -197,6 +197,7 @@ SOURCES = \
         ..\Prestub.cpp \
         ..\ProfToEEInterfaceImpl.cpp \
         ..\rangetree.cpp \
+        ..\refcount.cpp \
         ..\ReflectClassWriter.cpp \
         ..\ReflectUtil.cpp \
         ..\ReflectWrap.cpp \

@@ -41,6 +41,7 @@ const char g_psBaseLibraryName[]  = "mscorlib";
 ArrayTypeDesc *      g_pPredefinedArrayTypes[ELEMENT_TYPE_MAX];
 HINSTANCE            g_pMSCorEE;
 GCHeap *             g_pGCHeap;
+ReferenceCountedHeap * g_pRCHeap;
 ThreadStore *        g_pThreadStore;
 LONG                 g_TrapReturningThreads;
 #ifdef _DEBUG

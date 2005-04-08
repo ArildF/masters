@@ -48,6 +48,7 @@
 #include "threads.h"
 #include "stackwalk.h"
 #include "gc.h"
+#include "refcount.h"
 #include "interoputil.h"
 #include "security.h"
 #include "nstruct.h"
@@ -135,6 +136,7 @@ static void TerminateProfiling(BOOL fProcessDetach);
 #endif // PROFILING_SUPPORTED
 
 static HRESULT InitializeGarbageCollector();
+static HRESULT InitializeReferenceCountedHeap();
 
 // This is our Ctrl-C, Ctrl-Break, etc. handler.
 static BOOL WINAPI DbgCtrlCHandler(DWORD dwCtrlType)
@@ -385,6 +387,9 @@ HRESULT EEStartup(DWORD fFlags)
         IfFailGo(E_FAIL);
 
     if (! SUCCEEDED(InitializeGarbageCollector()) ) 
+        IfFailGo(E_FAIL);
+
+    if (! SUCCEEDED(InitializeReferenceCountedHeap()) )
         IfFailGo(E_FAIL);
 
     if (! SUCCEEDED(SyncClean::Init(FALSE))) {
@@ -1444,6 +1449,24 @@ HRESULT InitializeGarbageCollector()
     }            
 
     return(hr);
+}
+
+// 
+// Initialize the reference counted heap.
+// 
+
+HRESULT InitializeReferenceCountedHeap()
+{
+    HRESULT hr;
+
+    ReferenceCountedHeap* pRCHeap = new (nothrow) ReferenceCountedHeap();
+    if (!pRCHeap)
+        return (E_OUTOFMEMORY);
+    hr = pRCHeap->Initialize();
+
+    g_pRCHeap = pRCHeap;
+
+    return (hr);
 }
 
 

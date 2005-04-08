@@ -62,6 +62,7 @@ typedef unsigned short wchar_t;
 class ClassLoader;
 class LoaderHeap;
 class GCHeap;
+class ReferenceCountedHeap;
 class Object;
 class Object;
 class StringObject;
@@ -310,6 +311,7 @@ class ArrayTypeDesc;
 EXTERN ArrayTypeDesc *     g_pPredefinedArrayTypes[ELEMENT_TYPE_MAX];
 EXTERN HINSTANCE            g_pMSCorEE;
 EXTERN GCHeap *             g_pGCHeap;
+EXTERN ReferenceCountedHeap * g_pRCHeap;
 EXTERN ThreadStore *        g_pThreadStore;
 EXTERN LONG                 g_TrapReturningThreads;
 #ifdef _DEBUG

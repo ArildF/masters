@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.10"
+	Name="refcounting"
+	ProjectGUID="{7A323F3E-FD0D-47A1-BE56-02F18B3A88CC}"
+	Keyword="MakeFileProj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
+			ConfigurationType="0">
+			<Tool
+				Name="VCNMakeTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="0">
+			<Tool
+				Name="VCNMakeTool"/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<File
+			RelativePath=".\rsources">
+		</File>
+		<File
+			RelativePath=".\TestBasic.cs">
+		</File>
+		<File
+			RelativePath=".\TestDestructor.cs">
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

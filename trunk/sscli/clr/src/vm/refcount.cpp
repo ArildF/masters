@@ -14,7 +14,7 @@
 inline void RCLogAlloc(MethodTable *pMT, Object* object)
 {
 #ifdef LOGGING
-    if (LoggingOn(LF_GCALLOC, LL_INFO10))
+    if (LoggingOn(LF_REFCOUNT, LL_INFO10))
     {
         DWORD size = pMT->GetBaseSize();
         LogSpewAlways("Allocated %5d bytes on reference counted heap for %s_TYPE" FMT_ADDR FMT_CLASS "\n",
@@ -23,7 +23,7 @@ inline void RCLogAlloc(MethodTable *pMT, Object* object)
                       DBG_ADDR(object),
                       DBG_CLASS_NAME_MT(pMT));
 
-        if (LoggingOn(LF_GCALLOC, LL_INFO100000))
+        if (LoggingOn(LF_REFCOUNT, LL_INFO100000))
             {
                 void LogStackTrace();
                 LogStackTrace();
@@ -60,7 +60,7 @@ HRESULT ReferenceCountedHeap::Initialize()
         return E_OUTOFMEMORY;
 
 #ifdef LOGGING
-    if (LoggingOn(LF_GC, LL_INFO10))
+    if (LoggingOn(LF_REFCOUNT, LL_INFO10))
     {
         LogSpewAlways("\nInitialized reference counted heap. Heap is now at 0x%x\n", m_HeapPointer);
     }

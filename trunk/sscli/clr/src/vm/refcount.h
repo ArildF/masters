@@ -8,6 +8,12 @@ public:
     {;}
 
     HRESULT Initialize();
+    Object* Alloc(DWORD size);
+private:
+    BYTE* m_HeapStart;
+    BYTE* m_HeapPointer;
 };
+
+OBJECTREF RCAllocateObject( MethodTable* pMT );
 
 #endif

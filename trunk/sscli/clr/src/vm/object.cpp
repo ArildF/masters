@@ -898,7 +898,11 @@ VOID Object::Validate(BOOL bDeep)
 
         _ASSERTE(pMT->GetClass()->GetMethodTable() == pMT);
 
-        _ASSERTE(g_pGCHeap->IsHeapPointer(this));
+        // TODO: Add similar check for RC heap
+        if (!pMT->IsReferenceCounted())
+        {
+            _ASSERTE(g_pGCHeap->IsHeapPointer(this));
+        }
 
         
         if (bDeep && g_pConfig->GetHeapVerifyLevel() == 1) {

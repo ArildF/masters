@@ -52,6 +52,7 @@
 #include "float.h"      // for isnan
 #include "dbginterface.h"
 #include "gcscan.h"
+#include "refcount.h"
 #include "security.h"   // to get security method attribute
 #include "ndirect.h"
 #include "ml.h"
@@ -6838,7 +6839,10 @@ HCIMPL1(Object*, JIT_NewFast, CORINFO_CLASS_HANDLE typeHnd_)
     // END HACK
     //
     {
-        newobj = FastAllocateObject(pMT);
+        if (pMT->IsReferenceCounted())
+            newobj = RCAllocateObject(pMT);
+        else
+            newobj = FastAllocateObject(pMT);
     }
 
     HELPER_METHOD_FRAME_END();

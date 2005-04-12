@@ -39,6 +39,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ildasm", "clr\src\ildasm\il
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "refcounting", "tests\refcounting\refcounting.vcproj", "{7A323F3E-FD0D-47A1-BE56-02F18B3A88CC}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -98,6 +102,12 @@ Global
 		{DCB09E10-3937-4B3F-9A6E-ED9A6233249C}.Release.Build.0 = Release|Win32
 		{DCB09E10-3937-4B3F-9A6E-ED9A6233249C}.run.ActiveCfg = Release|Win32
 		{DCB09E10-3937-4B3F-9A6E-ED9A6233249C}.run.Build.0 = Release|Win32
+		{7A323F3E-FD0D-47A1-BE56-02F18B3A88CC}.Debug.ActiveCfg = Debug|Win32
+		{7A323F3E-FD0D-47A1-BE56-02F18B3A88CC}.Debug.Build.0 = Debug|Win32
+		{7A323F3E-FD0D-47A1-BE56-02F18B3A88CC}.Release.ActiveCfg = Release|Win32
+		{7A323F3E-FD0D-47A1-BE56-02F18B3A88CC}.Release.Build.0 = Release|Win32
+		{7A323F3E-FD0D-47A1-BE56-02F18B3A88CC}.run.ActiveCfg = Release|Win32
+		{7A323F3E-FD0D-47A1-BE56-02F18B3A88CC}.run.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		notes.txt = notes.txt

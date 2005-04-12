@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.10"
-	Name="refcounting"
+	Name="refcounting_tests"
 	ProjectGUID="{7A323F3E-FD0D-47A1-BE56-02F18B3A88CC}"
 	Keyword="MakeFileProj">
 	<Platforms>

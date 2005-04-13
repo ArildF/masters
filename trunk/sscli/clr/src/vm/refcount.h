@@ -1,5 +1,6 @@
 #ifndef _REFCOUNT_H_
 #define _REFCOUNT_H_
+#include "gmheap.hpp"
 
 class ReferenceCountedHeap
 {
@@ -10,8 +11,7 @@ public:
     HRESULT Initialize();
     Object* Alloc(DWORD size);
 private:
-    BYTE* m_HeapStart;
-    BYTE* m_HeapPointer;
+    gmallocHeap* m_Heap;
 };
 
 OBJECTREF RCAllocateObject( MethodTable* pMT );

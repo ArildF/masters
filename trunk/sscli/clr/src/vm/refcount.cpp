@@ -49,20 +49,13 @@ void memclr ( BYTE* mem, size_t size)
 
 HRESULT ReferenceCountedHeap::Initialize()
 {
-    // reserve memory for our heap
-    m_HeapStart = (BYTE*)VirtualAlloc(0, HEAP_SIZE, MEM_RESERVE, PAGE_READWRITE);
-    if (!m_HeapStart)
-        return E_OUTOFMEMORY;
-
-    // commit the first page
-    m_HeapPointer = (BYTE*)VirtualAlloc(m_HeapStart, SEGMENT_SIZE, MEM_COMMIT, PAGE_READWRITE);
-    if (!m_HeapPointer)
-        return E_OUTOFMEMORY;
+    m_Heap = new gmallocHeap;
+    m_Heap->Init("Reference counted heap");
 
 #ifdef LOGGING
     if (LoggingOn(LF_REFCOUNT, LL_INFO10))
     {
-        LogSpewAlways("\nInitialized reference counted heap. Heap is now at 0x%x\n", m_HeapPointer);
+        LogSpewAlways("\nInitialized reference counted heap. ");
     }
 #endif
     return S_OK;
@@ -71,14 +64,11 @@ HRESULT ReferenceCountedHeap::Initialize()
 Object* ReferenceCountedHeap::Alloc(DWORD size)
 {
     // get the space for it on the heap
-    // TODO: handle new committed pages
-    Object* newAlloc = (Object*)m_HeapPointer;
-    m_HeapPointer += size;
-
-    // clear the memory
+    Object* newAlloc = (Object*)m_Heap->Alloc(size);
     memclr((BYTE*)newAlloc, size);
 
-    return newAlloc;
+    // account for the space allocated for the ObjHeader
+    return (Object*) ((ObjHeader*)newAlloc) + 1;
 }
 
 // 

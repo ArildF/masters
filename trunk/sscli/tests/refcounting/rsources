@@ -14,3 +14,4 @@
 # ==--==
 testbasic=TestBasic.cs
 testdestructor=TestDestructor.cs
+massiveallocations=MassiveAllocations.cs

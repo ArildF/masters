@@ -31,6 +31,9 @@
 	</References>
 	<Files>
 		<File
+			RelativePath=".\MassiveAllocations.cs">
+		</File>
+		<File
 			RelativePath=".\rsources">
 		</File>
 		<File

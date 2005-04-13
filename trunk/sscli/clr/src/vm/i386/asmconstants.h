@@ -89,7 +89,7 @@
 #define ARRAYOPLOCSIZEFORPOP (ARRAYOPLOCSIZE-8)
 
 // from clr/src/inc/corinfo.h
- #define CORINFO_HELP_INTERNALTHROW_ASM 0x2f
+ #define CORINFO_HELP_INTERNALTHROW_ASM 0x30
 #define CORINFO_NullReferenceException_ASM 0
 #define CORINFO_IndexOutOfRangeException_ASM 3
 #define CORINFO_ArrayTypeMismatchException_ASM 6

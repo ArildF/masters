@@ -164,6 +164,7 @@ FCDECL3(void, JIT_Stelem_Ref, PtrArray* array, unsigned idx, Object* val);
 FCDECL2(LPVOID, JIT_Unbox, CORINFO_CLASS_HANDLE type, Object* obj);
 FCDECL2(LPVOID, JIT_GetRefAny, CORINFO_CLASS_HANDLE type, TypedByRef typedByRef);
 FCDECL1(Object*, JIT_NewFast, CORINFO_CLASS_HANDLE typeHnd_);
+FCDECL1(Object*, JIT_NewRefCountedObject, CORINFO_CLASS_HANDLE typeHnd_);
 FCDECL1(Object*, JIT_NewCrossContext, CORINFO_CLASS_HANDLE typeHnd_);
 FCDECL1(void, JIT_InitClass, CORINFO_CLASS_HANDLE typeHnd_);
 FCDECL2(Object*, JIT_NewArr1, CORINFO_CLASS_HANDLE typeHnd_, int size);
@@ -1818,6 +1819,12 @@ CorInfoHelpFunc CEEInfo::getNewHelper (CORINFO_CLASS_HANDLE newClsHnd, CORINFO_M
     if(CRemotingServices::IsRemoteActivationRequired(pMT->GetClass()))
     {
         return CORINFO_HELP_NEW_CROSSCONTEXT;
+    }
+
+    // is this a reference counted object?
+    if (pMT->IsReferenceCounted())
+    {
+        return CORINFO_HELP_NEWREFCOUNTEDOBJECT;
     }
 
     // We shouldn't get here with a COM object (they're all potentially
@@ -5935,6 +5942,8 @@ VMHELPDEF hlpFuncTable[] =
     JITHELPER(CORINFO_HELP_NEWARR_1_ALIGN8,     JIT_NewArr1                 )
     JITHELPER(CORINFO_HELP_STRCNS,              JIT_StrCns                  )
 
+    JITHELPER(CORINFO_HELP_NEWREFCOUNTEDOBJECT, JIT_NewRefCountedObject     )
+
     // Object model
     JITHELPER(CORINFO_HELP_INITCLASS,           JIT_InitClass               )
     JITHELPER(CORINFO_HELP_ISINSTANCEOF,        JIT_IsInstanceOf            )
@@ -6839,10 +6848,45 @@ HCIMPL1(Object*, JIT_NewFast, CORINFO_CLASS_HANDLE typeHnd_)
     // END HACK
     //
     {
-        if (pMT->IsReferenceCounted())
-            newobj = RCAllocateObject(pMT);
-        else
-            newobj = FastAllocateObject(pMT);
+        newobj = FastAllocateObject(pMT);
+    }
+
+    HELPER_METHOD_FRAME_END();
+    return(OBJECTREFToObject(newobj));
+}
+HCIMPLEND
+
+/*************************************************************/
+HCIMPL1(Object*, JIT_NewRefCountedObject, CORINFO_CLASS_HANDLE typeHnd_)
+{
+    TypeHandle typeHnd(typeHnd_);
+
+    OBJECTREF newobj;
+    HELPER_METHOD_FRAME_BEGIN_RET_ATTRIB_NOPOLL(Frame::FRAME_ATTR_RETURNOBJ);    // Set up a frame
+    HELPER_METHOD_POLL();
+
+    THROWSCOMPLUSEXCEPTION();
+    _ASSERTE(typeHnd.IsUnsharedMT());                                   // we never use this helper for arrays
+    MethodTable *pMT = typeHnd.AsMethodTable();
+
+    // Don't bother to restore the method table; assume that the prestub of the
+    // constructor will do that check.
+
+#ifdef _DEBUG
+    if (g_pConfig->FastGCStressLevel()) {
+        GetThread()->DisableStressHeap();
+    }
+#endif
+
+    //
+    // HACK HACK
+    //
+    _ASSERTE(!(pMT->IsComObjectType()));
+    //
+    // END HACK
+    //
+    {
+        newobj = RCAllocateObject(pMT);
     }
 
     HELPER_METHOD_FRAME_END();

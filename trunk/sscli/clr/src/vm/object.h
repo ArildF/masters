@@ -171,7 +171,7 @@ class Object
 
     ReferenceCountHeader *GetReferenceCountHeader()
     {
-        _ASSERTE(IsReferenceCounted());
+        _ASSERTE(GetMethodTable()->IsReferenceCounted());
         return ((ReferenceCountHeader*)GetHeader()) - 1;
     }
 

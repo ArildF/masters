@@ -18,3 +18,44 @@ typedef mdToken mdTypeDef;              // TypeDef in this scope
 
 Need to figure out how attributes like StructLayout.Explicit make it into the 
 metadata. The .NET compiler cheats somehow, injecting 
+
+Classes are loaded by the class ClassLoader (clsload.cpp). The most interesting method
+is LoadTypeHandleFromToken at line 1814.
+
+Objects are at runtime represented by two classes: Object (object.h) and 
+ObjHeader (syncblk.h). The ObjHeader resides *before* the Object instance, and is 
+accessed thusly:
+
+ObjHeader   *GetHeader()
+{
+    return ((ObjHeader *) this) - 1;
+}
+
+The space for an ObjHeader is allocated as part of the *preceding* object by the 
+original garbage collector. The size of an object has the size of an ObjHeader
+added to it when the MethodTable is constructed (see EEClass::SetupMethodTable, 
+class.cpp line 7284).
+
+
+Execution engine is initialized in EEStartup() in ceemain.cpp. EEStartup() calls 
+InitializeGarbageCollector(). This instantiates
+an instance of GCHeap and calls its Initialize() method (gcsmp.cpp). This instance
+is kept in a global variable, g_pGCHeap.
+
+Allocation:
+Whenever "new" is used in managed code, the JIT emits a call to a helper function
+JIT_New* (jitinterface.cpp). This function calls (Fast)AllocateObject, which in turn
+calls GCHeap::Alloc (gcsmp.cpp).
+
+When encountering the newobj IL instruction, the JIT compiler calls the 
+FJit::compileCEE_NEWOBJ method(FJit.cpp, 6568). It calls CEEJitInfo::getNewHelper 
+(JitInterface.cp, 4315), which calls CEEInfo::getNewHelper (JitInterface.cpp, 1792).
+This returns a constant, CORINFO_HELP_*, which maps to a helper function. These constants
+are defined in inc/corinfo.h
+
+The JIT then emits a call to this helper function. 
+
+These helper functions are defined in a table hlpFuncTable (jitinterface.cpp, 5897).
+
+FCalls(MethodImplOptions.InternalCall) are mapped to C++ functions by a table in 
+vm\ecall.cpp

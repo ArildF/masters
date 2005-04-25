@@ -210,6 +210,10 @@ public:
             CORINFO_CLASS_HANDLE        cls
             );
 
+    BOOL __stdcall isReferenceCounted(
+            CORINFO_CLASS_HANDLE        cls
+            );
+
     // Static helpers
     static BOOL CanCast(
             CorElementType el1, 

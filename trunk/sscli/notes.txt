@@ -57,5 +57,11 @@ The JIT then emits a call to this helper function.
 
 These helper functions are defined in a table hlpFuncTable (jitinterface.cpp, 5897).
 
-FCalls(MethodImplOptions.InternalCall) are mapped to C++ functions by a table in 
+FCalls(MethodImplOptions.InternalCall) are mapped to C++ functions by tables in 
 vm\ecall.cpp
+
+The main JIT method is FJitCompiler::compileMethod (fjitcompiler, 195). This compiles
+a single method. It calls FJit::jitCompile (fjit, 2603).
+
+Information is shared between the JIT compiler and the rest of the EE through 
+types declared in inc\corinfo.h.

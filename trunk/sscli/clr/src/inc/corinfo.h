@@ -1088,6 +1088,11 @@ public:
     virtual BOOL __stdcall isSDArray(
             CORINFO_CLASS_HANDLE        cls
             ) = 0;
+
+    // Check if this is a reference counted object
+    virtual BOOL __stdcall isReferenceCounted(
+            CORINFO_CLASS_HANDLE        cls
+            ) = 0;
 };
 
 

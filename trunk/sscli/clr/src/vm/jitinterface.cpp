@@ -1562,6 +1562,17 @@ BOOL __stdcall CEEInfo::isSDArray(CORINFO_CLASS_HANDLE  cls)
     return (th.AsArray()->GetRank() == 1);
 }
 
+/*********************************************************************/
+// Check whether the object is reference counted.
+BOOL __stdcall CEEInfo::isReferenceCounted(CORINFO_CLASS_HANDLE  cls)
+{
+    TypeHandle th(cls);
+
+    _ASSERTE(!th.IsNull());
+
+    return th.AsMethodTable()->IsReferenceCounted();
+}
+
 
 /*********************************************************************/
 // Static helpers

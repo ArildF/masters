@@ -14,6 +14,19 @@ private:
     gmallocHeap* m_Heap;
 };
 
+class ReferenceCountHeader
+{
+public:
+    ULONG AddRef();
+    ULONG Release();
+    ULONG ReferenceCount()
+    {
+        return m_RefCount;
+    }
+private:
+    ULONG m_RefCount;
+};
+
 OBJECTREF RCAllocateObject( MethodTable* pMT );
 
 #endif

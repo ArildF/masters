@@ -24,6 +24,7 @@
 #include "util.hpp"
 #include "class.h"
 #include "syncblk.h"
+#include "refcount.h"
 #include "gcdesc.h"
 #include "specialstatics.h"
 #include "gc.h"
@@ -166,6 +167,12 @@ class Object
     ObjHeader   *GetHeader()
     {
         return ((ObjHeader *) this) - 1;
+    }
+
+    ReferenceCountHeader *GetReferenceCountHeader()
+    {
+        _ASSERTE(IsReferenceCounted());
+        return ((ReferenceCountHeader*)GetHeader()) - 1;
     }
 
     // Get the current address of the object (works for debug refs, too.)

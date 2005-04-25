@@ -63,12 +63,31 @@ HRESULT ReferenceCountedHeap::Initialize()
 
 Object* ReferenceCountedHeap::Alloc(DWORD size)
 {
-    // get the space for it on the heap
-    Object* newAlloc = (Object*)m_Heap->Alloc(size);
-    memclr((BYTE*)newAlloc, size);
+    // we need some space for our accounting needs too
+    DWORD realSize = size + sizeof(ReferenceCountHeader);
 
-    // account for the space allocated for the ObjHeader
-    return (Object*) ((ObjHeader*)newAlloc) + 1;
+    // get the space for it on the heap
+    BYTE* newAlloc = (BYTE*)m_Heap->Alloc(realSize);
+    memclr((BYTE*)newAlloc, realSize);
+
+    // initial refcount is 1
+    ((ReferenceCountHeader*)newAlloc)->AddRef();
+
+    // account for the space allocated for the ObjHeader and the 
+    // ReferenceCountHeader
+    return (Object*) (newAlloc + sizeof(ReferenceCountHeader) + sizeof(ObjHeader));
+}
+
+ULONG ReferenceCountHeader::AddRef()
+{
+    m_RefCount++;
+    return m_RefCount;
+}
+
+ULONG ReferenceCountHeader::Release()
+{
+    m_RefCount--;
+    return m_RefCount;
 }
 
 // 

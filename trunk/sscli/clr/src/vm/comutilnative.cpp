@@ -2833,6 +2833,24 @@ FCIMPL1(int, GCInterface::FCReRegisterForFinalize, Object *obj)
 FCIMPLEND
 
 
+/*============================ReferenceCount==============================
+**Action: Find the reference count of the object specified
+**Arguments: Object of interest
+**Exceptions: InvalidOperation if the object is not reference counted
+==============================================================================*/
+FCIMPL1(int, GCInterface::ReferenceCount, Object *obj)
+{
+    THROWSCOMPLUSEXCEPTION();
+
+    if (!obj->GetMethodTable()->IsReferenceCounted())
+        FCThrow(kInvalidOperationException);
+
+    return obj->GetReferenceCountHeader()->ReferenceCount();
+}
+FCIMPLEND
+
+
+
 //
 // COMInterlocked
 //

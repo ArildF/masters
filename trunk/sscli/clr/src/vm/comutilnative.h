@@ -259,6 +259,7 @@ private:
     static FCDECL1(int,     FCSuppressFinalize, Object *obj);
     static FCDECL1(int,     FCReRegisterForFinalize, Object *obj);
     static FCDECL0(void,    NativeSetCleanupCache);
+    static FCDECL1(int,     ReferenceCount, Object *obj);
 };
 
 class COMInterlocked

@@ -1391,6 +1391,7 @@ ECFunc gGCInterfaceFuncs[] =
     {FCFuncElement("SetCleanupCache",               NULL,   (LPVOID)GCInterface::NativeSetCleanupCache)},
     {FCFuncElement("nativeSuppressFinalize",        NULL,   (LPVOID)GCInterface::FCSuppressFinalize)},
     {FCFuncElement("nativeReRegisterForFinalize",   NULL,   (LPVOID)GCInterface::FCReRegisterForFinalize)},
+    {FCFuncElement("nativeReferenceCount",          NULL,   (LPVOID)GCInterface::ReferenceCount)},
     {NULL, NULL, NULL}
 };
 

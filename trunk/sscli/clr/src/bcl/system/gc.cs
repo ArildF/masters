@@ -186,6 +186,16 @@ namespace System {
         }
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]
+        private static extern int nativeReferenceCount(Object o);
+
+        public static int ReferenceCount(Object o)
+        {
+            if (o == null)
+                throw new ArgumentNullException("o");
+            return nativeReferenceCount(o);
+        }
+
+        [MethodImplAttribute(MethodImplOptions.InternalCall)]
         private static extern MethodBase nativeGetCurrentMethod(ref StackCrawlMark stackMark);
 
         [MethodImplAttribute(MethodImplOptions.InternalCall)]

@@ -42,6 +42,9 @@
 		<File
 			RelativePath=".\TestDestructor.cs">
 		</File>
+		<File
+			RelativePath=".\TestGCReferenceCount.cs">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

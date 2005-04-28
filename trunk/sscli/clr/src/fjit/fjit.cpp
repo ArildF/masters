@@ -7276,10 +7276,23 @@ FJitResult FJit::compileDO_STLOC( unsigned offset)
     // Verify that there is a value on the stack
     CHECK_STACK(1);
     // Verify that the type of the value on the stack matches the type of the argument
-    VERIFICATION_CHECK( canAssign(jitInfo,  topOp(), trackedType ) || !"DO_STLOC" );
+    VERIFICATION_CHECK( canAssign(jitInfo,  topOp(), trackedType ) || !"DO_STLOC" );    
+
     trackedType = varInfo->type;
     //trackedType.toNormalizedType();
     TYPE_SWITCH_PRECISE(trackedType,emit_STVAR, (varInfo->offset));
+
+    // emit a call to increase the reference count if the object is reference counted
+    trackedType = varInfo->type;
+    if (trackedType.isRef() && jitInfo->isReferenceCounted(trackedType.cls()))
+    {                               
+        callInfo.reset();
+        TYPE_SWITCH_PRECISE(varInfo->type, emit_LDVAR, (varInfo->offset));
+        deregisterTOS;
+        emit_tos_arg( 1, INTERNAL_CALL );
+        emit_callhelper_I4(jitInfo->getHelperFtn(CORINFO_HELP_ADDREF));
+    }
+
     POP_STACK(1);
     return FJIT_OK;
 }

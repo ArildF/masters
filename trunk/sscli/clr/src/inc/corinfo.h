@@ -179,6 +179,9 @@ enum CorInfoHelpFunc
     CORINFO_HELP_MEMSET,		// Init block of memory
     CORINFO_HELP_MEMCPY,		// Copy block of memory
 
+    CORINFO_HELP_ADDREF,        // Increment the reference count
+    CORINFO_HELP_RELEASE,       // Decrement the reference count
+
     /*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-
      *
      * Start of Machine-specific helpers. All new common JIT helpers

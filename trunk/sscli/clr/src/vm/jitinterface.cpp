@@ -1569,6 +1569,8 @@ BOOL __stdcall CEEInfo::isReferenceCounted(CORINFO_CLASS_HANDLE  cls)
     TypeHandle th(cls);
 
     _ASSERTE(!th.IsNull());
+    if (th.IsArray())
+        return FALSE;
 
     return th.AsMethodTable()->IsReferenceCounted();
 }
@@ -5881,6 +5883,29 @@ HCIMPL0(VOID, JIT_PollGC)
 }
 HCIMPLEND
 
+/*********************************************************************/
+HCIMPL1(void, JIT_AddRef,  Object* obj)
+{
+    if (obj == NULL)
+        return;
+
+    _ASSERTE(obj->GetMethodTable()->IsReferenceCounted());
+
+    obj->GetReferenceCountHeader()->AddRef();
+}
+HCIMPLEND
+
+/*********************************************************************/
+HCIMPL1(void, JIT_Release,  Object* obj)
+{
+    if (obj == NULL)
+        return;
+    _ASSERTE(obj->GetMethodTable()->IsReferenceCounted());
+
+    obj->GetReferenceCountHeader()->Release();
+}
+HCIMPLEND
+
 
 /*********************************************************************/
 /* we don't use HCIMPL macros because we don't want the overhead even in debug mode */
@@ -6039,6 +6064,9 @@ VMHELPDEF hlpFuncTable[] =
 
     JITHELPER(CORINFO_HELP_MEMSET,              NULL                        )
     JITHELPER(CORINFO_HELP_MEMCPY,              NULL                        )
+
+    JITHELPER(CORINFO_HELP_ADDREF,              JIT_AddRef                  )
+    JITHELPER(CORINFO_HELP_RELEASE,             JIT_Release                 )
 
 #if !CPU_HAS_FP_SUPPORT || defined(_IA64_)
     //

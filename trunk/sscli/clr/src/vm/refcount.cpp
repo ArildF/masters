@@ -70,9 +70,6 @@ Object* ReferenceCountedHeap::Alloc(DWORD size)
     BYTE* newAlloc = (BYTE*)m_Heap->Alloc(realSize);
     memclr((BYTE*)newAlloc, realSize);
 
-    // initial refcount is 1
-    ((ReferenceCountHeader*)newAlloc)->AddRef();
-
     // account for the space allocated for the ObjHeader and the 
     // ReferenceCountHeader
     return (Object*) (newAlloc + sizeof(ReferenceCountHeader) + sizeof(ObjHeader));

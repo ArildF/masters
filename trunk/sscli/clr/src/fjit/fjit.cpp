@@ -2737,6 +2737,9 @@ JitAgain:
         }
     }
 
+    // AddRef() any parameters that are refcounted
+    emitParameterAddRefCalls();
+
 #ifdef LOGGING
     if (codeLog) {
         emit_log_entry(szDebugClassName, szDebugMethodName);
@@ -4060,14 +4063,42 @@ END_JIT_LOOP:
                     FJIT_FAIL(FJIT_INTERNALERROR);                     \
                 }
 
+FJitResult FJit::emitParameterAddRefCalls() {
+    int paramCount = methodInfo->args.numArgs;
+    stackItems* paramInfo;
+
+    for(int i = 0; i < paramCount; i++ )
+    {
+        paramInfo = &argsMap[i];
+        OpType type = paramInfo->type;
+
+        // is this a reference counted type?
+        if (type.isRef() && jitInfo->isReferenceCounted(type.cls()))
+        {
+            callInfo.reset();
+            TYPE_SWITCH_PRECISE(type, emit_LDVAR, (paramInfo->offset));
+            emit_tos_arg( 1, INTERNAL_CALL );
+            emit_callhelper_I4(jitInfo->getHelperFtn(CORINFO_HELP_ADDREF));
+        }
+    }
+
+    return FJIT_OK;
+}
+
 
 FJitResult FJit::emitReleaseCalls() {
-    int varCount = methodInfo->locals.numArgs;
-    stackItems* varInfo;
+    // first parameters
+    doEmitReleaseCalls(argsMap, methodInfo->args.numArgs);
 
-    for(int i = 0; i < varCount; i++)
+    // then locals
+    doEmitReleaseCalls(localsMap, methodInfo->locals.numArgs);
+
+    return FJIT_OK;
+}
+
+FJitResult FJit::doEmitReleaseCalls(stackItems* varInfo, int count){
+    for(int i = 0; i < count; i++, varInfo++ )
     {
-        varInfo = &localsMap[i];
         OpType type = varInfo->type;
 
         // is this a reference counted type?

@@ -16,3 +16,4 @@ testbasic=TestBasic.cs
 testdestructor=TestDestructor.cs
 massiveallocations=MassiveAllocations.cs
 testgcreferencecount=TestGCReferenceCount.cs
+testparameterpassing=TestParameterPassing.cs

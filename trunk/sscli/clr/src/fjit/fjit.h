@@ -597,6 +597,10 @@ private:
 
     /* Emit code to .Release() all local variables */
     FJitResult emitReleaseCalls();
+    FJitResult doEmitReleaseCalls(stackItems* varInfo, int count);
+
+    /* Emit code to .AddRef() all parameters */
+    FJitResult emitParameterAddRefCalls();
 
     // Helper function to help compile specific IL instructions
     FJitResult compileCEE_MUL();

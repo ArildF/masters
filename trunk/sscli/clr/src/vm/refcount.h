@@ -10,6 +10,7 @@ public:
 
     HRESULT Initialize();
     Object* Alloc(DWORD size);
+    void Free(void* ptr);
 private:
     gmallocHeap* m_Heap;
 };
@@ -17,14 +18,20 @@ private:
 class ReferenceCountHeader
 {
 public:
+    ReferenceCountHeader() : m_RefCount(0)
+    {;}
+
     ULONG AddRef();
     ULONG Release();
     ULONG ReferenceCount()
     {
         return m_RefCount;
     }
+
+    Object* GetObject();
 private:
-    ULONG m_RefCount;
+    void Finalize();
+    int m_RefCount;
 };
 
 OBJECTREF RCAllocateObject( MethodTable* pMT );

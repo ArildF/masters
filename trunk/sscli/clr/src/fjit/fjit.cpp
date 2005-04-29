@@ -710,6 +710,8 @@ void FJit::computeLocalOffsets() {
       localsFrameSize += ( (localsFrameSize + sizeof(prolog_data)) % SIZE_STACK_SLOT );
 }
 
+
+
 /* answer true if this arguement type is enregisterable on a machine chip */
 bool FJit::enregisteredArg(CorInfoType argType) {
     _ASSERTE( argType < CORINFO_TYPE_COUNT && (int)argType >= 0 );
@@ -3838,6 +3840,9 @@ END_JIT_LOOP:
     // Add a pcoffset for the epilog of the function to the map
     mapping->add(len+1,(unsigned)(outPtr - outBuff));
 
+    // emit code to .Release() all locals that go out of scope
+    emitReleaseCalls();
+
     // the single epilog that all returns jump to ( by convention caller always removes arguments for vararg calls )
     compileEpilog(methodInfo->args.isVarArg() ? 0 : argsFrameSize );
 
@@ -4055,6 +4060,30 @@ END_JIT_LOOP:
                     FJIT_FAIL(FJIT_INTERNALERROR);                     \
                 }
 
+
+FJitResult FJit::emitReleaseCalls() {
+    int varCount = methodInfo->locals.numArgs;
+    stackItems* varInfo;
+
+    for(int i = 0; i < varCount; i++)
+    {
+        varInfo = &localsMap[i];
+        OpType type = varInfo->type;
+
+        // is this a reference counted type?
+        if (type.isRef() && jitInfo->isReferenceCounted(type.cls()))
+        {
+            callInfo.reset();
+            TYPE_SWITCH_PRECISE(type, emit_LDVAR, (varInfo->offset));
+            deregisterTOS;
+            emit_tos_arg( 1, INTERNAL_CALL );
+            emit_callhelper_I4(jitInfo->getHelperFtn(CORINFO_HELP_RELEASE));
+
+        }
+    }
+
+    return FJIT_OK;
+}
 
 FJitResult FJit::compileCEE_MUL()
 {

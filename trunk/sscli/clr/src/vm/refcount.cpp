@@ -75,6 +75,11 @@ Object* ReferenceCountedHeap::Alloc(DWORD size)
     return (Object*) (newAlloc + sizeof(ReferenceCountHeader) + sizeof(ObjHeader));
 }
 
+void ReferenceCountedHeap::Free(void* ptr)
+{
+    m_Heap->Free(ptr);
+}
+
 ULONG ReferenceCountHeader::AddRef()
 {
     m_RefCount++;
@@ -84,7 +89,29 @@ ULONG ReferenceCountHeader::AddRef()
 ULONG ReferenceCountHeader::Release()
 {
     m_RefCount--;
-    return m_RefCount;
+    int refcount = m_RefCount;
+
+    if (m_RefCount <= 0)
+    {
+        // finalize if we have a finalizer
+        Finalize();
+
+        // free memory associated with the object
+        g_pRCHeap->Free(this);
+    }
+    return refcount;
+}
+
+void ReferenceCountHeader::Finalize()
+{
+    Object* obj = GetObject();
+    if (obj->GetMethodTable()->HasFinalizer())
+        MethodTable::CallFinalizer(obj);
+}
+
+Object* ReferenceCountHeader::GetObject()
+{
+    return (Object*) ((ObjHeader*)(this + 1) + 1);
 }
 
 // 

@@ -595,6 +595,9 @@ private:
     /* compute the offset of the start of the local */
     int localOffset(unsigned base, unsigned size);
 
+    /* Emit code to .Release() all local variables */
+    FJitResult emitReleaseCalls();
+
     // Helper function to help compile specific IL instructions
     FJitResult compileCEE_MUL();
     FJitResult compileCEE_MUL_OVF();

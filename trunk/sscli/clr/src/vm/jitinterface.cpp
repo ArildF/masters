@@ -5889,9 +5889,13 @@ HCIMPL1(void, JIT_AddRef,  Object* obj)
     if (obj == NULL)
         return;
 
+    HELPER_METHOD_FRAME_BEGIN_NOPOLL();
+
     _ASSERTE(obj->GetMethodTable()->IsReferenceCounted());
 
     obj->GetReferenceCountHeader()->AddRef();
+
+    HELPER_METHOD_FRAME_END();
 }
 HCIMPLEND
 
@@ -5900,9 +5904,14 @@ HCIMPL1(void, JIT_Release,  Object* obj)
 {
     if (obj == NULL)
         return;
+
+    HELPER_METHOD_FRAME_BEGIN_NOPOLL();
+
     _ASSERTE(obj->GetMethodTable()->IsReferenceCounted());
 
     obj->GetReferenceCountHeader()->Release();
+
+    HELPER_METHOD_FRAME_END();
 }
 HCIMPLEND
 

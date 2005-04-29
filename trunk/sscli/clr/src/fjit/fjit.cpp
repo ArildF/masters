@@ -7325,7 +7325,7 @@ FJitResult FJit::compileDO_STARG( unsigned offset)
 FJitResult FJit::compileDO_STLOC( unsigned offset)
 {
     OpType                  trackedType;
-    stackItems            * varInfo;
+    stackItems            * varInfo;    
 
     // Make sure that the offset is legal (with respect to the number of locals )
     VALIDITY_CHECK(offset < methodInfo->locals.numArgs);
@@ -7336,19 +7336,28 @@ FJitResult FJit::compileDO_STLOC( unsigned offset)
     // Verify that there is a value on the stack
     CHECK_STACK(1);
     // Verify that the type of the value on the stack matches the type of the argument
-    VERIFICATION_CHECK( canAssign(jitInfo,  topOp(), trackedType ) || !"DO_STLOC" );    
+    VERIFICATION_CHECK( canAssign(jitInfo,  topOp(), trackedType ) || !"DO_STLOC" );  
+
+    // make sure to call .Release() on the old object in the var
+    trackedType = varInfo->type;
+    if (isRefCounted(trackedType))
+    {
+        callInfo.reset();
+        TYPE_SWITCH_PRECISE(varInfo->type, emit_LDVAR, (varInfo->offset));
+        emit_tos_arg( 1, INTERNAL_CALL );
+        emit_callhelper_I4(jitInfo->getHelperFtn(CORINFO_HELP_RELEASE));
+    }
 
     trackedType = varInfo->type;
     //trackedType.toNormalizedType();
     TYPE_SWITCH_PRECISE(trackedType,emit_STVAR, (varInfo->offset));
 
-    // emit a call to increase the reference count if the object is reference counted
+    // emit a call to increase the reference count if the new object is reference counted
     trackedType = varInfo->type;
-    if (trackedType.isRef() && jitInfo->isReferenceCounted(trackedType.cls()))
+    if (isRefCounted(trackedType))
     {                               
         callInfo.reset();
         TYPE_SWITCH_PRECISE(varInfo->type, emit_LDVAR, (varInfo->offset));
-        deregisterTOS;
         emit_tos_arg( 1, INTERNAL_CALL );
         emit_callhelper_I4(jitInfo->getHelperFtn(CORINFO_HELP_ADDREF));
     }

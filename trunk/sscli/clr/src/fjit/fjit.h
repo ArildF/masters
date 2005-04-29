@@ -602,6 +602,11 @@ private:
     /* Emit code to .AddRef() all parameters */
     FJitResult emitParameterAddRefCalls();
 
+    BOOL isRefCounted(OpType& type)
+    {
+        return type.isRef() && jitInfo->isReferenceCounted(type.cls());
+    }
+
     // Helper function to help compile specific IL instructions
     FJitResult compileCEE_MUL();
     FJitResult compileCEE_MUL_OVF();

@@ -45,6 +45,12 @@
 		<File
 			RelativePath=".\TestGCReferenceCount.cs">
 		</File>
+		<File
+			RelativePath=".\TestParameterPassing.cs">
+		</File>
+		<File
+			RelativePath=".\TestReferenceCount1.cs">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

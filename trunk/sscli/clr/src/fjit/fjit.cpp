@@ -7290,6 +7290,30 @@ FJitResult FJit::compileCEE_ENDFINALLY()
     return FJIT_OK;
 }
 
+FJitResult FJit::maybeReleaseArgOrVar(stackItems* varInfo) {
+    if (isRefCounted(varInfo->type))
+    {
+        callInfo.reset();
+        TYPE_SWITCH_PRECISE(varInfo->type, emit_LDVAR, (varInfo->offset));
+        emit_tos_arg( 1, INTERNAL_CALL );
+        emit_callhelper_I4(jitInfo->getHelperFtn(CORINFO_HELP_RELEASE));
+    }
+
+    return FJIT_OK;
+}
+
+FJitResult FJit::maybeAddRefArgOrVar(stackItems* varInfo) {
+    if (isRefCounted(varInfo->type))
+    {                               
+        callInfo.reset();
+        TYPE_SWITCH_PRECISE(varInfo->type, emit_LDVAR, (varInfo->offset));
+        emit_tos_arg( 1, INTERNAL_CALL );
+        emit_callhelper_I4(jitInfo->getHelperFtn(CORINFO_HELP_ADDREF));
+    }
+
+    return FJIT_OK;
+}
+
 FJitResult FJit::compileDO_STARG( unsigned offset)
 {
     OpType                  trackedType;
@@ -7315,7 +7339,14 @@ FJitResult FJit::compileDO_STARG( unsigned offset)
     }
     else
     {
+        // make sure to call .Release() on the old object in the var
+        maybeReleaseArgOrVar(varInfo);
+
         TYPE_SWITCH_PRECISE(trackedType,emit_STVAR, (varInfo->offset));
+
+        // addref the new if necessary
+        maybeAddRefArgOrVar(varInfo);
+
         POP_STACK(1);
     }
 
@@ -7339,29 +7370,15 @@ FJitResult FJit::compileDO_STLOC( unsigned offset)
     VERIFICATION_CHECK( canAssign(jitInfo,  topOp(), trackedType ) || !"DO_STLOC" );  
 
     // make sure to call .Release() on the old object in the var
-    trackedType = varInfo->type;
-    if (isRefCounted(trackedType))
-    {
-        callInfo.reset();
-        TYPE_SWITCH_PRECISE(varInfo->type, emit_LDVAR, (varInfo->offset));
-        emit_tos_arg( 1, INTERNAL_CALL );
-        emit_callhelper_I4(jitInfo->getHelperFtn(CORINFO_HELP_RELEASE));
-    }
+    maybeReleaseArgOrVar(varInfo);    
 
     trackedType = varInfo->type;
     //trackedType.toNormalizedType();
     TYPE_SWITCH_PRECISE(trackedType,emit_STVAR, (varInfo->offset));
 
     // emit a call to increase the reference count if the new object is reference counted
-    trackedType = varInfo->type;
-    if (isRefCounted(trackedType))
-    {                               
-        callInfo.reset();
-        TYPE_SWITCH_PRECISE(varInfo->type, emit_LDVAR, (varInfo->offset));
-        emit_tos_arg( 1, INTERNAL_CALL );
-        emit_callhelper_I4(jitInfo->getHelperFtn(CORINFO_HELP_ADDREF));
-    }
-
+    maybeAddRefArgOrVar(varInfo);
+    
     POP_STACK(1);
     return FJIT_OK;
 }

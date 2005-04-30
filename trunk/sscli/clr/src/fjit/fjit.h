@@ -602,6 +602,9 @@ private:
     /* Emit code to .AddRef() all parameters */
     FJitResult emitParameterAddRefCalls();
 
+    FJitResult maybeAddRefArgOrVar(stackItems* varInfo);
+    FJitResult maybeReleaseArgOrVar(stackItems* varInfo);
+
     BOOL isRefCounted(OpType& type)
     {
         return type.isRef() && jitInfo->isReferenceCounted(type.cls());

@@ -604,6 +604,7 @@ private:
 
     FJitResult maybeAddRefArgOrVar(stackItems* varInfo);
     FJitResult maybeReleaseArgOrVar(stackItems* varInfo);
+    FJitResult doEmitSTFLD_REF(OpType& type, BOOL isStatic);
 
     BOOL isRefCounted(OpType& type)
     {

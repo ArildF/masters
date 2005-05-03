@@ -43,10 +43,16 @@
 			RelativePath=".\TestDestructor.cs">
 		</File>
 		<File
+			RelativePath=".\TestFields.cs">
+		</File>
+		<File
 			RelativePath=".\TestGCReferenceCount.cs">
 		</File>
 		<File
 			RelativePath=".\TestParameterPassing.cs">
+		</File>
+		<File
+			RelativePath=".\TestParameterPassing2.cs">
 		</File>
 		<File
 			RelativePath=".\TestReferenceCount1.cs">

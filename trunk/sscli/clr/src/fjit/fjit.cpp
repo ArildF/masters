@@ -4791,7 +4791,6 @@ FJitResult FJit::compileCEE_LDFLDA( OPCODE opcode)
 FJitResult FJit::compileDO_LDVAR( OPCODE opcode, stackItems* varInfo)
 {
     OpType          trackedType;
-
     TYPE_SWITCH_PRECISE(varInfo->type, emit_LDVAR, (varInfo->offset));
     trackedType = varInfo->type;
     trackedType.toFPNormalizedType();
@@ -5688,6 +5687,62 @@ FJitResult FJit::compileCEE_LDELEMA()
     return FJIT_OK;
 }
 
+// Helper function to emit the STFLD instruction
+FJitResult FJit::doEmitSTFLD_REF(OpType& type, BOOL isStatic)
+{
+    BOOL refCounted = isRefCounted(type);
+
+    // if the field is reference counted, we need to do a lot of stuff
+    if (refCounted)
+    {
+        // the offset from the object pointer to where the field is now TOS
+        deregisterTOS; // make sure the offset's on the stack
+
+        pop_register(CALLEE_SAVED_1, 0); // offset
+        pop_register(ARG_1, 0); // RHS object
+        pop_register(CALLEE_SAVED_2, 0); // LHS object
+
+        // push for the second LDFLD call
+        push_register(CALLEE_SAVED_2, 0); // object
+        push_register(CALLEE_SAVED_1, 0); // offset 
+
+        // push for the STFLD call
+        push_register(CALLEE_SAVED_2, 0); // LHS object
+        push_register(ARG_1, 0); // RHS object
+        push_register(CALLEE_SAVED_1, 0); // offset
+
+        // push for the first LDFLD call
+        push_register(CALLEE_SAVED_2, 0); // object
+        push_register(CALLEE_SAVED_1, 0); // offset        
+
+        // get the object stored in the slot
+        emit_LDFLD_REF(isStatic);
+
+        // call Release() on it
+        callInfo.reset();
+        emit_tos_arg(1, INTERNAL_CALL);
+        emit_callhelper_I4(jitInfo->getHelperFtn(CORINFO_HELP_RELEASE));
+
+        // now the actual STFLD
+        emit_STFLD_REF((isStatic));
+
+        // get the new object in that slot
+        emit_LDFLD_REF(isStatic);
+
+        // AddRef() it
+        callInfo.reset();
+        emit_tos_arg(1, INTERNAL_CALL);
+        emit_callhelper_I4(jitInfo->getHelperFtn(CORINFO_HELP_ADDREF));
+    }
+    else
+    {
+        // much simpler for non-refcounted objs
+        emit_STFLD_REF((isStatic));
+    }
+
+    return FJIT_OK;
+}
+
 FJitResult FJit::compileCEE_STFLD( OPCODE opcode)
 {
 
@@ -5887,7 +5942,7 @@ FJitResult FJit::compileCEE_STFLD( OPCODE opcode)
             emit_STFLD_R8((fieldIsStatic || isEnCField));
             break;
         case CORINFO_TYPE_CLASS:
-            emit_STFLD_REF((fieldIsStatic || isEnCField));
+            doEmitSTFLD_REF(fieldStackType, fieldIsStatic || isEnCField);
             break;
         case CORINFO_TYPE_VALUECLASS:
             if (fieldIsStatic)

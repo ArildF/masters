@@ -5696,28 +5696,43 @@ FJitResult FJit::doEmitSTFLD_REF(OpType& type, BOOL isStatic)
     if (refCounted)
     {
         // the offset from the object pointer to where the field is now TOS
-        deregisterTOS; // make sure the offset's on the stack
+        // for static fields, it is the address of the field
+        deregisterTOS; // make sure the offset/address is on the stack
 
-        pop_register(CALLEE_SAVED_1, 0); // offset
+        pop_register(CALLEE_SAVED_1, 0); // offset/address
         pop_register(ARG_1, 0); // RHS object
-        pop_register(CALLEE_SAVED_2, 0); // LHS object
 
-        // push for the second LDFLD call
-        push_register(CALLEE_SAVED_2, 0); // object
-        push_register(CALLEE_SAVED_1, 0); // offset 
+        if (!isStatic)
+        {
+            pop_register(CALLEE_SAVED_2, 0); // LHS object
+
+            // push for the second LDFLD call
+            push_register(CALLEE_SAVED_2, 0); // object
+        }        
+        push_register(CALLEE_SAVED_1, 0); // offset/address
 
         // push for the STFLD call
-        push_register(CALLEE_SAVED_2, 0); // LHS object
+        if (!isStatic)
+        {
+            push_register(CALLEE_SAVED_2, 0); // LHS object
+        }
         push_register(ARG_1, 0); // RHS object
-        push_register(CALLEE_SAVED_1, 0); // offset
+        push_register(CALLEE_SAVED_1, 0); // offset/address
 
         // push for the first LDFLD call
-        push_register(CALLEE_SAVED_2, 0); // object
-        push_register(CALLEE_SAVED_1, 0); // offset        
+        if (!isStatic)
+        {
+            push_register(CALLEE_SAVED_2, 0); // object
+        }
+        push_register(CALLEE_SAVED_1, 0); // offset/address        
 
         // get the object stored in the slot
+        if (isStatic)
+        {
+            enregisterTOS;
+        }
         emit_LDFLD_REF(isStatic);
-
+        
         // call Release() on it
         callInfo.reset();
         emit_tos_arg(1, INTERNAL_CALL);
@@ -5727,8 +5742,13 @@ FJitResult FJit::doEmitSTFLD_REF(OpType& type, BOOL isStatic)
         emit_STFLD_REF((isStatic));
 
         // get the new object in that slot
+        
+        if (isStatic)
+        {
+            enregisterTOS;
+        }
         emit_LDFLD_REF(isStatic);
-
+        
         // AddRef() it
         callInfo.reset();
         emit_tos_arg(1, INTERNAL_CALL);

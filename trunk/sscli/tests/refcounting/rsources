@@ -20,3 +20,4 @@ testparameterpassing=TestParameterPassing.cs
 testparameterpassing2=TestParameterPassing2.cs
 testreferencecount1=TestReferenceCount1.cs
 testfields=TestFields.cs
+teststaticfields=TestStaticFields.cs

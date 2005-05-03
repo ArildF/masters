@@ -57,6 +57,9 @@
 		<File
 			RelativePath=".\TestReferenceCount1.cs">
 		</File>
+		<File
+			RelativePath=".\TestStaticFields.cs">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

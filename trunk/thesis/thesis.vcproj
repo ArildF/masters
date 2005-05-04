@@ -48,6 +48,9 @@ make html"
 				RelativePath=".\chapter_2.xml">
 			</File>
 			<File
+				RelativePath=".\chapter_3.xml">
+			</File>
+			<File
 				RelativePath=".\description.xml">
 			</File>
 			<File

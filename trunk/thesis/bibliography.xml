@@ -23,5 +23,46 @@
       <publishername>Communications of the ACM</publishername>
     </publisher>
   </biblioentry>
+  
+  <biblioentry id="ecma-334">
+    <title><ulink url="http://www.ecma-international.org/publications/standards/Ecma-334.htm">
+    Standard ECMA-334 C# Language Specification</ulink></title>
+    <pubdate>2002</pubdate>
+  </biblioentry>
+  
+  <biblioentry id="ecma-335">
+    <title><ulink url="http://www.ecma-international.org/publications/standards/Ecma-335.htm">
+    Standard ECMA-335 Common Language Infrastructure (CLI)</ulink></title>
+    <pubdate>2002</pubdate>
+  </biblioentry> 
+  
+  <biblioentry id="ecma-vol-1">
+    <title><ulink url="http://msdn.microsoft.com/net/ecma/">ECMA-335: 
+    CLI Partition I - Architecture</ulink></title>
+    <pubdate>2002</pubdate>
+  </biblioentry>
+  
+  <biblioentry id="ecma-bcl-detailed">
+    <title><ulink url="http://msdn.microsoft.com/net/ecma/">ECMA-335: 
+    Class Library Detailed Specifications</ulink></title>
+    <pubdate>2002</pubdate>
+  </biblioentry>
+  
+  <biblioentry id="mono">
+    <title><ulink url="http://www.mono-project.com/">http://www.mono-project.com/</ulink>
+    </title>
+  </biblioentry>
+  
+  <biblioentry id="portabledotnet">
+    <title><ulink url="http://www.southern-storm.com.au/portable_net.html">
+    http://www.southern-storm.com.au/portable_net.html</ulink></title>
+  </biblioentry>
+  
+  <biblioentry id="sscli">
+    <title><ulink url="http://msdn.microsoft.com/net/sscli">
+      http://msdn.microsoft.com/net/sscli</ulink>
+    </title>
+  
+  </biblioentry>
 
 </bibliography>

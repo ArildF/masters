@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter id="chapter_3">
+  <title>The Shared Source CLI (Rotor)</title>
+  
+  <sect1 id="chapter_3-sect-1">
+    <title>ECMA 335</title>
+    <para>In August 2000, while developing their new architecture known as .NET,
+    Microsoft decided to submit the specification of the runtime engine and
+    the new C# language to the European Computer Manufacturers' Association. These
+    two elements of .NET were ratified by ECMA as ECMA standards 334
+    <xref linkend="ecma-334"/> and 335<xref linkend="ecma-335"/> in December 2001;
+    ECMA-334 describing the C# language and ECMA-335 describing the execution 
+    environment.</para>
+    <para>From the preface to ECMA-335:</para>
+    
+    <blockquote>
+      This Standard ECMA-335 defines the Common Language Infrastructure (CLI) 
+      in which applications written in multiple high level languages may be 
+      executed in different system environments without the need to rewrite 
+      the application to take into consideration the unique characteristics 
+      of those environments.
+    </blockquote>
+  </sect1>
+  
+  <sect1 id="chapter_3-sect-2">
+    <title>Rotor</title>
+    <para>The Shared Source Common Language Infrastructure, or 
+    <firstterm>Rotor</firstterm>, is an implementation of ECMA 335 and 
+    ECMA-335 in source form, released by Microsoft in 2002. Rotor contains 
+    source code for a large set of libraries, tools and compilers, including
+    the JIT compiler and the virtual machine.</para>
+    
+    <para>The source code for Rotor was derived from 
+    Microsoft's commercial implementation of .NET, but forked and modified to 
+    build and run on the Mac OS X and FreeBSD operating systems in addition to 
+    Microsoft Windows. It is also easily portable to other operating systems
+    and CPU architectures (it currently supports IA/32 and PowerPC CPUs). It 
+    comes with a full implementation of the Base Class Library (BCL), but
+    libraries outside the scope of the standard such as the ASP.NET web
+    framework and the Windows Forms GUI toolkit are not included.</para> 
+    
+    <para>This text will henceforth use the terms <quote>Rotor</quote> and 
+    <quote>SSCLI</quote> interchangeably.</para>
+    
+    <para>Rotor also contains source code for a C# compiler, implementing
+    the ECMA-334<xref linkend="ecma-334"/> standard.</para>
+       
+  </sect1>
+</chapter>

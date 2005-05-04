@@ -2,7 +2,34 @@
 <chapter id="chapter_2">
   <title>Garbage collection in the CLR</title>
   <sect1 id="chapter_1-sect-1">
-    <para></para>
+    <para>The ECMA standard that defines the Common Language Runtime is 
+    remarkably silent on the subject of garbage collection. Volume 1, 
+    Architecture<xref linkend="ecma-vol-1"/> only mentions the term
+    <quote>garbage collection</quote> once, and even then very briefly.
+    The detailed specification<xref linkend="ecma-bcl-detailed"/> of 
+    the <firstterm>Base Class Library </firstterm> does however contain the 
+    following note:</para>
+    
+    <blockquote>The garbage collector is responsible for tracking and reclaiming
+    objects allocated in managed memory. Periodically, the garbage collector
+    performs a garbage collection to reclaim memory allocated to objects for
+    which there are no valid references. Garbage collections happen
+    automatically when a request for memory cannot be satisfied using available
+    free memory. A garbage collection consists of the following steps: During a
+    collection, the garbage collector will not free an object if it finds one
+    or more references to the object in managed code. However, the garbage
+    collector does not recognize references to an object from unmanaged code,
+    and may free objects that are being used exclusively in unmanaged code
+    unless explicitly prevented from doing so. </blockquote>
+    
+    <para>Even so, the lack of a detailed specification of the memory 
+    management model in the main specification implies a considerable flexibility 
+    in how a CLR-conforming implementation manages memory. However,
+    all the existing implementations of the CLR<footnote><para>At the time of
+    writing, these include Microsoft .NET, Mono<xref linkend="mono"/>, 
+    Portable .NET<xref linkend="portabledotnet"/> and the Shared Source 
+    CLI<xref linkend="sscli"/>.</para></footnote> use a tracing garbage 
+    collector, as described in the previous chapter.</para>
   </sect1>
   
   <sect1 id="chapter_1-sect-2">

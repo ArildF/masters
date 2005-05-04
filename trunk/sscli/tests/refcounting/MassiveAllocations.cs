@@ -11,6 +11,12 @@ public class MassiveAllocations
     public MassiveAllocations()
     {
         this.big.L1 = 42;
+        Count++;
+    }
+
+    ~MassiveAllocations()
+    {
+        Count--;        
     }
 
     public void Method()
@@ -22,11 +28,16 @@ public class MassiveAllocations
     {
         for( int i = 0; i < 10000; i++ )
         {
-            Console.WriteLine( "Allocation no {0}", i );
             MassiveAllocations m = new MassiveAllocations();
             m.Method();
+            if ( Count != 1 )
+            {
+                Console.WriteLine( "Expected count to be 1, was {0}", Count );
+                Environment.Exit(1);
+            }
         }
     }
 
     private Big big;
+    private static int Count;
 }

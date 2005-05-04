@@ -35,6 +35,31 @@ inline void RCLogAlloc(MethodTable *pMT, Object* object)
 #define RCLogAlloc(size, pMT, object)
 #endif
 
+#ifdef  _DEBUG
+inline void RCLogFree(MethodTable *pMT, Object* object)
+{
+#ifdef LOGGING
+    if (LoggingOn(LF_REFCOUNT, LL_INFO10))
+    {
+        DWORD size = pMT->GetBaseSize();
+        LogSpewAlways("Object at" FMT_ADDR" has 0 references. Freeing %5d bytes on reference counted heap for %s_TYPE " FMT_CLASS "\n",
+                      DBG_ADDR(object),
+                      size,
+                      pMT->GetClass()->IsValueClass() ? "VAL" : "REF",                       
+                      DBG_CLASS_NAME_MT(pMT));
+
+        if (LoggingOn(LF_REFCOUNT, LL_INFO100000))
+            {
+                void LogStackTrace();
+                LogStackTrace();
+            }
+        }
+#endif
+}
+#else
+#define RCLogFree(size, pMT, object)
+#endif
+
 //This function clears a piece of memory
 // size has to be Dword aligned
 // (Taken from gcsmp.cpp)
@@ -55,7 +80,7 @@ HRESULT ReferenceCountedHeap::Initialize()
 #ifdef LOGGING
     if (LoggingOn(LF_REFCOUNT, LL_INFO10))
     {
-        LogSpewAlways("\nInitialized reference counted heap. ");
+        LogSpewAlways("\nInitialized reference counted heap.\n");
     }
 #endif
     return S_OK;
@@ -93,6 +118,8 @@ ULONG ReferenceCountHeader::Release()
 
     if (m_RefCount <= 0)
     {
+        RCLogFree(GetObject()->GetMethodTable(), GetObject());
+
         // finalize if we have a finalizer
         Finalize();
 

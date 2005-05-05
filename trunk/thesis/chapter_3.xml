@@ -42,8 +42,121 @@
     <para>This text will henceforth use the terms <quote>Rotor</quote> and 
     <quote>SSCLI</quote> interchangeably.</para>
     
+    <para>Rotor is provided under a so called <quote>Shared Source</quote> 
+    license. This license prohibits any form of commercial use of the libraries
+    and tools provided. The stated purpose of Rotor is to serve as an educational 
+    tool, allowing academics to use it for research and teaching. It is also
+    of great interest to advanced .NET programmers with an interest in what's 
+    going on under the hood. The fact that it is so close to Microsoft's 
+    commercial implementation makes it a perfect vehicle for gaining a deeper
+    understanding of how .NET really works. For academic research it is also
+    helpful to know that any modifications made to the SSCLI will most likely
+    work on the commercial runtime. </para>
+    
     <para>Rotor also contains source code for a C# compiler, implementing
-    the ECMA-334<xref linkend="ecma-334"/> standard.</para>
-       
+    the ECMA-334<xref linkend="ecma-334"/> standard. The implementation
+    of reference counting described in this text does not require compiler
+    support, and the compiler will not be covered any further. A potential
+    future expansion on the ideas presented here might also include direct
+    language support (syntactic sugar) for reference counting, and it would 
+    then be natural to use the Rotor C# compiler as a starting point.</para>        
+  </sect1>
+  
+  <sect1 id="chapter_3-sect-3">
+    <title>The Rotor source code</title>
+    
+    <para>The SSCLI is a rather large piece of software (or perhaps a large 
+    collection of smaller pieces of software). The unpacked tarball takes up 
+    115 megabytes of disk space, consisting of 10808 files spread over a large
+    number of directories. The execution engine is written in C++, with most 
+    of the class library written in C#. There are also some assembler code 
+    files.</para>
+    
+    <para>As a reference for later, I will here describe the most 
+    important directories in the distribution.</para>
+    
+    <figure id="chapter_3-fig-1">
+      <title>The top level layout of the SSCLI source tree.</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="ssclisrctree.png" width="271" height="648" format="png"/> 
+        </imageobject> 
+      </mediaobject>
+    </figure>
+    
+    <para>Most of the important code relating to the actual execution engine
+    resides under the <filename>clr</filename> directory. Other interesting 
+    top level directories include:</para>
+    
+    <variablelist>
+      
+      <varlistentry>
+        <term><filename>/build</filename></term>
+        <listitem>The <filename>build</filename> directory contains the output 
+        from the build process. There can be several subdirectories beneath 
+        <filename>build</filename>, one for each build configuration (one of
+        <property>checked</property>, <property>fastchecked</property> or
+        <property>free</property>.</listitem></varlistentry>
+      
+      <varlistentry>
+        <term><filename>/pal</filename></term>
+        <listitem>This contains the <firstterm>Platform Adaptation 
+        Layer</firstterm>, the SSCLI's primary way of ensuring portability across
+        operating systems and CPU architectures. The PAL is a subset of the
+        Win32 API, implemented both for UNIX and for
+        Windows<footnote><para>Obviously, the Win32 PAL is a very thin layer
+        over the actual Win32 API</para></footnote>.
+        </listitem>     
+      </varlistentry>
+      
+      <varlistentry>
+        <term><filename>/palrt</filename></term>
+        <listitem>The <filename>palrt</filename> directory contains shared PAL 
+        code that has no dependencies on the underlying file system.        
+        </listitem>     
+      </varlistentry>
+      
+      <varlistentry>
+        <term><filename>/tests</filename></term>
+        <listitem>The <filename>tests</filename> directory contains two large 
+        test suites, one for the CLR and one for the PAL.</listitem>
+      </varlistentry>
+    </variablelist>
+    
+    <para>The <filename>clr</filename> directory contains the source for the
+    execution engine, the JIT and the C# compiler:</para>
+    
+    <variablelist>
+      <varlistentry>
+        <term><filename>/clr/src/bcl</filename></term>
+        <listitem>C# source for the Base Class Libraries (BCL).</listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term><filename>/clr/src/csharp</filename></term>
+        <listitem>The C# compiler, written in C++.</listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term><filename>/clr/src/fjit</filename></term>
+        <listitem>The Just-In-Time compiler. This is a separate component, 
+        communicating with the execution engine through a set of well-defined
+        interfaces.</listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term><filename>/clr/src/inc</filename></term>
+        <listitem>Include files that are shared among the various components.
+        </listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term><filename>/clr/src/vm</filename></term>
+        <listitem>The execution engine, including the class loader, the garbage
+        collector and the main entry point.</listitem>
+      </varlistentry>
+    </variablelist>
+    
+    
   </sect1>
 </chapter>

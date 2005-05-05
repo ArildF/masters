@@ -5,12 +5,18 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "thesis", "thesis.vcproj", "
 EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
+		Chunked HTML = Chunked HTML
+		HTML = HTML
+		PDF = PDF
 		Release = Release
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
-		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.Debug.ActiveCfg = Debug|Win32
-		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.Debug.Build.0 = Debug|Win32
+		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.Chunked HTML.ActiveCfg = Chunked HTML|Win32
+		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.Chunked HTML.Build.0 = Chunked HTML|Win32
+		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.HTML.ActiveCfg = HTML|Win32
+		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.HTML.Build.0 = HTML|Win32
+		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.PDF.ActiveCfg = PDF|Win32
+		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.PDF.Build.0 = PDF|Win32
 		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.Release.ActiveCfg = Release|Win32
 		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.Release.Build.0 = Release|Win32
 	EndGlobalSection

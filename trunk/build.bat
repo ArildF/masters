@@ -13,11 +13,13 @@ make
 cd ..\..\thesis\
 
 make html
+make chunked-html
 cmd /c make pdf
 
 mkdir %targdir%
 copy /y html\thesis.html %targdir%
 copy /y pdf\thesis.pdf %targdir%
+xcopy /s chunked-html %targdir%
 
 date /t >> index.html
 time /t >> index.html

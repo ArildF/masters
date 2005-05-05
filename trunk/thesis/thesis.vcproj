@@ -46,6 +46,19 @@ make pdf"
 				CleanCommandLine="make clean"
 				Output="pdf\thesis.pdf"/>
 		</Configuration>
+		<Configuration
+			Name="Chunked HTML|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="0">
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="make chunked-html"
+				ReBuildCommandLine="make clean
+make chunked-html"
+				CleanCommandLine="make clean"
+				Output="chunked-html\index.html"/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>
@@ -70,6 +83,13 @@ make pdf"
 			</File>
 			<File
 				RelativePath=".\thesis.xml">
+			</File>
+		</Filter>
+		<Filter
+			Name="images"
+			Filter="">
+			<File
+				RelativePath=".\ssclisrctree.png">
 			</File>
 		</Filter>
 		<File

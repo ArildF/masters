@@ -1,8 +1,16 @@
 PROC=xsltproc
 
 html/%.html: $(SOURCES)
-	cp *.png html
+	cp $(IMAGES) html
+	cp $(CSS) html
 	$(PROC) --output $@ $(HTMLXSLT) $< 
+	
+chunked-html/index.html: $(SOURCES)
+	cp $(IMAGES) chunked-html
+	cp $(CSS) chunked-html
+	$(PROC) --output $@ $(CHUNKEDHTMLXSLT) $< 
+	
+	
 fo/%.fo: $(SOURCES)
 	$(PROC) --docbook --output $@ $(FOXSLT) $< 
 

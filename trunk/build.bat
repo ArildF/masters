@@ -19,7 +19,9 @@ cmd /c make pdf
 mkdir %targdir%
 copy /y html\thesis.html %targdir%
 copy /y pdf\thesis.pdf %targdir%
-xcopy /s chunked-html %targdir%
+
+mkdir %targdir%\chunked-html
+xcopy /s /y chunked-html %targdir%\chunked-html
 
 date /t >> index.html
 time /t >> index.html

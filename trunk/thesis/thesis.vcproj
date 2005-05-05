@@ -11,7 +11,7 @@
 	</Platforms>
 	<Configurations>
 		<Configuration
-			Name="Debug|Win32"
+			Name="HTML|Win32"
 			OutputDirectory="Debug"
 			IntermediateDirectory="Debug"
 			ConfigurationType="0">
@@ -30,6 +30,21 @@ make html"
 			ConfigurationType="0">
 			<Tool
 				Name="VCNMakeTool"/>
+		</Configuration>
+		<Configuration
+			Name="PDF|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="0">
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="taskkill /im acrord32.exe
+make pdf"
+				ReBuildCommandLine="taskkill /im acrord32.exe
+make clean
+make pdf"
+				CleanCommandLine="make clean"
+				Output="pdf\thesis.pdf"/>
 		</Configuration>
 	</Configurations>
 	<References>

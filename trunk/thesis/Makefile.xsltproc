@@ -1,13 +1,14 @@
 PROC=xsltproc
 
-html/%.html: %.xml
-	$(PROC) --docbook --output $@ $(HTMLXSLT) $< 
-fo/%.fo: %.xml
+html/%.html: $(SOURCES)
+	cp *.png html
+	$(PROC) --output $@ $(HTMLXSLT) $< 
+fo/%.fo: $(SOURCES)
 	$(PROC) --docbook --output $@ $(FOXSLT) $< 
 
-pdf/%.pdf: %.xml
-	$(PROC) --docbook --output $@ $(FOXSLT) $< 
+pdf/thesis.pdf: $(SOURCES)
+	$(FOP) -xsl $(FOXSLT) -xml thesis.xml -pdf $@
 
-ps/%.ps: %.xml
+ps/%.ps: $(SOURCES)
 	$(PROC) --docbook --output $@ $(FOXSLT) $< 
 

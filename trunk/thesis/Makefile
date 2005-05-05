@@ -6,16 +6,10 @@ HTMLXSLT=$(TOOLS)/html-stylesheet.xsl
 FOXSLT=$(TOOLS)/fo-stylesheet.xsl
 FOP=cmd.exe /c fop.bat
 
+SOURCES=thesis.xml chapter_1.xml chapter_2.xml chapter_3.xml bibliography.xml
 
-# are we running on linux?
-ifeq ($(shell uname -s),Linux)
-	SUBMAKEFILE=Makefile.xsltproc
-	BROWSER=opera	    
-else
-	SUBMAKEFILE=Makefile.Transform
-	BROWSER=opera	    
-endif
-
+# use xsltproc regardless, since Transform has problems with some of the sources
+SUBMAKEFILE=Makefile.xsltproc
 
 include $(SUBMAKEFILE)
 

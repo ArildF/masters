@@ -155,8 +155,120 @@
         <listitem>The execution engine, including the class loader, the garbage
         collector and the main entry point.</listitem>
       </varlistentry>
-    </variablelist>
+    </variablelist>   
+  </sect1>
+  
+  <sect1 id="chapter_3-sect-4">
+    <title>The SSCLI type system</title>
+      <para> The CLR's type system reflects the fact that it is targetted
+      primarily (but not exclusively) towards object-oriented languages. It
+      supports two main categories of types:</para>
+      <para>XXX: This section is taken a verbo from the generics essay</para>
+      <variablelist>
+          <varlistentry><term>objects</term>
+              <listitem>Object types are always allocated on the heap. Any
+              representation of an object as a local variable merely consists
+              of a pointer to the object. In addition to the instance data, 
+              an object also contains a pointer to a 
+              <firstterm>method table</firstterm>(used for dispatching virtual
+              methods) and a <firstterm>sync block.</firstterm>The latter is 
+              used for thread synchronization, for example with the C# keyword
+              <token>lock</token>. These two pointers give each allocated 
+              heap object an overhead of 8 bytes(on a 32 bit platform).
+              </listitem>
+          </varlistentry>
+          <varlistentry><term>value types</term>
+              <listitem>Value types are essentially nothing more than a
+              sequence of bytes, and are represented as such on a program's
+              stack. They are allocated either on the runtime
+              stack or inline in objects that contain them. They support
+              methods, but not inheritance, although they can implement 
+              interfaces. Since the inheritance hierarchy is never more than one
+              level deep, all method calls can be resolved at compile time and there
+              is no need for a method table. Additionally, they do not have a 
+              sync block, and cannot be used for thread synchronization(Technically,
+              the compiler allows it, but you will merely end up boxing the value
+              type into a freshly allocated anonymous object, which is completely
+              useless). All primitive types, such as integers and
+              floats, are represented in the CLR type system as value
+              types. C#, for example, allows you to write this: 
+              <programlisting>string s = 42.ToString();</programlisting></listitem>
+          </varlistentry>
+      </variablelist>
+      
+      <para>Since only objects are allocated dynamically, they are the only 
+      types that are garbage collected, and thus of interest when implementing
+      reference counting. Value types live either on the runtime stack or as 
+      part of other objects, and their lifetimes are thereby already 
+      deterministic.</para>
+      
+      <sect2>
+        <title>Runtime representation of objects</title>
+        <para>At runtime, objects are represented by the <type>Object</type>
+        class, in <filename>clr/src/vm/object.h</filename>. This class has a 
+        single field; a pointer to a <type>MethodTable</type> object:</para>
+        
+        <programlisting><![CDATA[
+class Object
+{
+  protected:
+    MethodTable    *m_pMethTab;
     
+    // ... 
+};    
     
+        ]]>
+        </programlisting>
+        <para>Obviously, that's not the whole story. The <type>Object</type>
+        class has a large number of methods, and there is a 
+        <quote>hidden</quote> field associated with each object, located at a
+        <emphasis>negative</emphasis> offset from the object itself:</para>
+        
+        <figure id="chapter_3-fig-2">
+          <title>Runtime layout of object types</title>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="objectobjheader.png" format="png"/> 
+            </imageobject> 
+          </mediaobject>
+        </figure>
+        
+        <para>Every time an object is allocated, the <type>ObjHeader</type> is 
+        allocated with it. If you have a pointer to an <type>Object</type>, you 
+        can access the <type>ObjHeader</type> through some pointer trickery:
+        </para>
+<programlisting><![CDATA[
+ObjHeader   *GetHeader()
+{
+    return ((ObjHeader *) this) - 1;
+}     
+        ]]>
+        </programlisting>
+        
+        <para>The <type>ObjHeader</type> is used for, among other things, 
+        thread synchronization. The mechanism used here is worth noting, since 
+        I have chosen a similar approach to implement reference counting.</para>
+        
+        <para>The <type>MethodTable</type> instance pointed to by 
+        the sole member field of <type>Object</type> is shared among all 
+        instances of a class. It determines the type identity of an object, i.e.,
+        if <programlisting>obj1->p_methTab == obj2->p_methTab</programlisting>
+        holds, the objects are of the same type.</para>
+        
+        <para>Further, it contains data and methods to acquire information about 
+        the fields and methods associated with the type.</para>      
+        
+        <para><type>MethodTable</type> also contains a pointer to an 
+        <type>EEClass</type> instance. Like <type>MethodTable</type>, 
+        <type>EEClass</type> also contains information about types. There is a
+        1-1 relationship between <type>EEClass</type> instances and 
+        <type>MethodTable</type> instances; there is one of each for every type
+        loaded. However, while <type>MethodTable</type> contains data and 
+        operations that are designed to be accessed quickly at runtime, 
+        <type>EEClass</type> contains the data that are typically only needed
+        by compilers and other tools that need to be able to introspect into
+        the type system. The separation between the two allow better cache
+        coherency.</para>        
+      </sect2>
   </sect1>
 </chapter>

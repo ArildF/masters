@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <chapter id="chapter_4">
-  <title>TBD</title>
+  <title>The implementation</title>
   
   <sect1 id="chapter_4-sect-1">
     <title>Introducing reference counting into the CLR</title>
@@ -251,8 +251,249 @@ public class Derived : Base
         <classname>IMDInternalImport</classname>.
         </para>
       </sect3>
-            
+      
+      <para>I implemented a global function <function>IsReferenceCounted()
+      </function> that takes a metadata token for the type and determines 
+      whether the <classname>ReferenceCountedAttribute</classname> attribute
+      is applied to it. The implementation resides in 
+      <filename>/clr/src/vm/nstruct.cpp</filename> and looks like this:</para>
+      
+      <programlisting><![CDATA[
+HRESULT IsReferenceCounted(IMDInternalImport *pInternalImport, mdTypeDef cl )
+{
+    const void *pData;
+    ULONG cbBlob;
+
+    // we only need to know if there is such an attribute on the type
+    HRESULT hr = pInternalImport->GetCustomAttributeByName( cl, 
+        "System.ReferenceCountedAttribute", &pData, &cbBlob);
+
+    return hr;
+}
+]]></programlisting>
+
+    <para>The function returns <constant>S_OK</constant> if the attribute 
+    exists and <constant>S_FALSE</constant> if it doesn't. Any other return
+    value is treated as an error.</para>  
+    
+    <para><classname>EEClass</classname> contains a series of bitflags 
+    describing various attributes of the type in question. I added a new flag
+    indicating a reference counted class (in <filename>/clr/src/vm/class.cpp
+    </filename>:</para>
+<programlisting><![CDATA[
+VMFLAG_ISSINGLEDELEGATE                = 0x10000000,
+VMFLAG_ISMULTIDELEGATE                 = 0x20000000,
+VMFLAG_PREFER_ALIGN8                   = 0x40000000, // Would like to have 8-byte alignment
+VMFLAG_REFERENCECOUNTED                = 0x80000000,
+
+// ...
+
+inline BOOL EEClass::IsReferenceCounted()
+{
+    return (m_VMFlags & VMFLAG_REFERENCECOUNTED);
+}
+
+inline void EEClass::SetReferenceCounted()
+{
+    m_VMFlags |= VMFLAG_REFERENCECOUNTED;
+}
+]]>
+</programlisting>
+      <para>I also added similar flags and accessors on <classname>MethodTable
+      </classname>. Obviously, this is a duplication of information since it 
+      could also be accessed through the  
+      <classname>MethodTable</classname>'s pointer to the 
+      <classname>corresponding</classname> EEClass, but there is ample 
+      precedent in the existing code for doing it this way. I can only assume
+      the idea is to avoid accessing the <classname>EEClass</classname> at 
+      runtime if possible, for performance reasons.</para> 
+      
+      <para>Now, the class loader merely has to call 
+      <function>IsReferenceCounted</function> and set the flag accordingly in 
+      <methodname>ClassLoader::LoadTypeHandleFromToken()</methodname>
+      (<filename>/clr/src/vm/clsload.cpp</filename>):</para>  
+<programlisting><![CDATA[
+// is the type reference counted?    
+hr = IsReferenceCounted(pInternalImport, cl);
+
+BOOL fIsReferenceCounted = (hr == S_OK);
+if(FAILED(hr) && hr != S_FALSE) 
+{
+    m_pAssembly->PostTypeLoadException(pInternalImport, cl, IDS_CLASSLOAD_BADFORMAT, pThrowable);
+    return hr;
+}
+
+// ...
+
+if (fIsReferenceCounted) 
+    pClass->SetReferenceCounted();
+
+]]></programlisting>              
+      
     </sect2>
+  </sect1>
+  
+  <sect1>
+    <title>The reference counted heap</title>
+    <para>The reference counted objects cannot share the same heap as the
+    garbage collected objects use. The objects on the garbage collected heap
+    are routinely moved and/or discarded as part of a garbage collection sweep,
+    a mechanism which doesn't take into account the needs of the reference 
+    counted objects. </para> 
+    
+    <sidebar>
+      <title>The large object heap</title>
+      <para>Not all objects are placed on the garbage collected heap even in the
+      existing SSCLI implementation. Large objects, in the SSCLI defined as
+      objects bigger than 85,000 bytes, are allocated and managed on a separate
+      heap. This heap, the large object heap, is further subdivided into two: a
+      section for objects that contain internal pointers to other objects and 
+      a section for those without such pointers. This is due to the large cost
+      of scanning such large objects for pointers. The garbage collector
+      queries the <classname>MethodTable</classname> instance for an object to
+      determine whether it contains internal pointers.</para>
+      
+      <para>The cost of constantly moving objects as big as those on the large 
+      object heap would be prohibitive, so the garbage collector does not use
+      compaction for these objects. Instead they are managed by a more 
+      traditional malloc-style heap.</para>    
+    </sidebar>
+    
+    <para>It is then obvious that another heap implementation is necessary to
+    fill the needs of the reference counting mechanism. I have decided here to
+    reuse the malloc-style allocator used for the large object heap. While it
+    may not be optimized for the needs of allocating a lot of small objects, it
+    is well encapsulated from the rest of the implementation and can be swapped
+    out for a more efficient implementation at a later time. Investigating such
+    implementations might serve as a good topic for further work on this
+    research. </para>
+    
+    <para>The implementation of the heap used for the LOH is located in 
+    <filename>/clr/src/vm/gmheap.cpp</filename>. I created a class 
+    <classname>ReferenceCountedHeap</classname> in 
+    <filename>clr/src/vm/refcount.[cpp|h]</filename>, which encapsulates this 
+    implementation and provides the operations necessary to support allocation
+    and deallocation of reference counted objects: </para>
+    
+    <programlisting><![CDATA[
+class ReferenceCountedHeap
+{
+public:
+    ReferenceCountedHeap()
+    {;}
+
+    HRESULT Initialize();
+    Object* Alloc(DWORD size);
+    void Free(void* ptr);
+private:
+    gmallocHeap* m_Heap;
+};  
+    ]]></programlisting>
+    
+    <para><classname>gmallocHeap</classname> here is the malloc implementation.
+    </para>
+    
+    
+    <para>The runtime maintains a global instance of 
+    <classname>ReferenceCountedHeap</classname>, accessed 
+    through the pointer <varname>g_pRCHeap</varname> which is declared in 
+    <filename>clr/src/vm/vars.hpp</filename>. This matches the way the runtime
+    has a global variable for the garbage collected heap, 
+    <varname>g_pGCHeap</varname>. An accessor function in 
+    <filename>refcount.cpp</filename> is used to allocate objects from the 
+    reference counted heap:</para>
+    <programlisting><![CDATA[
+OBJECTREF RCAllocateObject( MethodTable* pMT )
+{
+    // TODO: locking
+    THROWSCOMPLUSEXCEPTION();
+
+    // allocate memory for it
+    Object* orObject = (Object*)g_pRCHeap->Alloc(pMT->GetBaseSize());
+
+    // verify that the memory is zeroed out.
+    _ASSERTE( ! orObject->HasSyncBlockIndex() );
+    
+    // make sure it has a method table
+    orObject->SetMethodTable(pMT);
+
+    RCLogAlloc(pMT, orObject);
+
+    return( ObjectToOBJECTREF(orObject) );    
+}    
+    
+    ]]></programlisting>
+    
+    <para>This global instance also needs to be initialized. I have created a function
+    <function>InitializeReferenceCountedHeap()</function> which is called from
+    <function>InitializeEE()</function>, the main initialization function of 
+    the execution engine. The implementation merely creates an instance of 
+    <classname>ReferenceCountedHeap</classname> and calls its 
+    <methodname>Init() method.</methodname><footnote><para>I have, as much as 
+    possible tried to use the same coding conventions as are used by the 
+    existing code. Personally, I would rather have performed any initialization
+    in the constructor, but I don't see it as my role to impose my personal 
+    idioms on an existing codebase.</para></footnote>
+    </para>    
+  </sect1>
+  
+  <sect1>
+    <title>Allocating reference counted objects</title>
+    <para>The JIT compiler is a separate component that communicates with the 
+    execution engine proper through the <classname>ICorJitInfo</classname> 
+    interface (<filename>/clr/src/inc/corjit.h</filename>). This interface is 
+    implemented by the <classname>CEEInfo</classname> class in 
+    <filename>/clr/src/vm/jitinterface.cpp</filename>. Whenever the JIT
+    compiler needs to emit a call to allocate an object, it calls 
+    <methodname>CEEInfo::getNewHelper()</methodname>. This method investigates
+    the <classname>MethodTable</classname> of the object that needs to be 
+    allocated and returns a constant corresponding to an appropriate helper 
+    function.</para>
+    
+    <para>I created a new constant, <constant>CORINFO_HELP_NEWREFCOUNTEDOBJECT
+    </constant>and injected this code into <methodname>CEEInfo::getNewHelper():
+    </methodname></para>
+    
+    <programlisting><![CDATA[
+    
+// ...
+
+// is this a reference counted object?
+if (pMT->IsReferenceCounted())
+{
+    return CORINFO_HELP_NEWREFCOUNTEDOBJECT;
+}
+
+// ... 
+    ]]>
+    </programlisting>
+    
+    <para><varname>pMT</varname> is here a pointer to the 
+    <classname>MethodTable</classname> object for the class the runtime needs 
+    to allocate an instance of. <methodname>IsReferenceCounted()</methodname>
+    is the accessor method I created earlier.</para>
+    
+    <para>The JIT compiler then calls <methodname>CEEInfo::getHelperFtn()
+    </methodname>which maps the constant to a function pointer through a table. 
+    A call to this function is emitted into the generated native code.
+    <constant>CORINFO_HELP_NEWREFCOUNTEDOBJECT</constant> maps to the function
+    <function>JIT_NewRefCountedObject()</function>, which does some 
+    housekeeping and then calls the <function>RCAllocateObject()</function>
+    function described earlier.</para>
+  </sect1>
+  
+  <sect1>
+    <title>Keeping track of reference counts</title>
+    <para>One important question remains unanswered at this point: Where do
+    we store the reference count for an object? The first solution that comes to
+    mind is to introduce a new field in the <classname>Object</classname> class.
+    However, this would mean that <emphasis>all</emphasis> objects, reference
+    counted or not, have to pay the cost of this extra field. Since the purpose
+    of this whole exercise is to find a way for both reference counting and 
+    mark & sweep garbage collection to coexist, this is clearly unacceptable.
+    </para>
+    
+    <para></para>
   </sect1>
   
 </chapter>

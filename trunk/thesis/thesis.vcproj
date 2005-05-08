@@ -92,6 +92,9 @@ make chunked-html"
 			Name="images"
 			Filter="">
 			<File
+				RelativePath=".\objectobjheader.png">
+			</File>
+			<File
 				RelativePath=".\ssclisrctree.png">
 			</File>
 		</Filter>

@@ -3,9 +3,8 @@
   <xsl:import href="docbook-xsl/html/chunk.xsl"/>
 
   <xsl:param name="html.stylesheet">styles.css</xsl:param>
-  <xsl:param name="toc.section.depth">3</xsl:param>
-  <xsl:param name="annotate.toc">0</xsl:param>
-  <xsl:param name="chunk.first.sections">1</xsl:param>
+  <xsl:param name="bibliography.numbered">1</xsl:param>
+  <xsl:param name="chunker.output.encoding" select="'UTF-8'"/>
 
   <!--<xsl:template match="sect1" mode="toc">
     <xsl:param name="toc-context" select="."/>

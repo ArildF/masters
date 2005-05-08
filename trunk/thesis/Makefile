@@ -9,7 +9,8 @@ CSS=$(TOOLS)/styles.css
 IMAGES=*.png
 FOP=cmd.exe /c fop.bat
 
-SOURCES=thesis.xml chapter_1.xml chapter_2.xml chapter_3.xml bibliography.xml
+SOURCES=thesis.xml chapter_1.xml chapter_2.xml chapter_3.xml bibliography.xml \
+    chapter_4.xml
 
 # use xsltproc regardless, since Transform has problems with some of the sources
 SUBMAKEFILE=Makefile.xsltproc

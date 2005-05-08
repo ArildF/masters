@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="utf-8"?>
+<chapter id="chapter_4">
+  <title>TBD</title>
+  
+  <sect1 id="chapter_4-sect-1">
+    <title>Introducing reference counting into the CLR</title>
+    
+    <para>Obviously, the Rotor code base is largely built around the assumption
+    that the implementation will be garbage collected. Locating all the places
+    where these assumptions have been made and ripping them out to create a 
+    pure reference counted runtime would be an enormous task. I therefore 
+    decided on creating a dual type system in which both reference counted 
+    types and types tracked by the current garbage collector exist side by 
+    side.
+    </para>
+    
+    <sect2 id="chapter_4-sect-1.1">
+      <title>Telling the runtime about reference counted types</title>
+      <para>If the runtime is going to support both reference counted and types
+      tracked by a classic garbage collector simultaneously, there needs to be 
+      a way for it to tell the difference between the two types. One possible
+      approach might be to introduce new IL instructions to allocate and 
+      initialize reference counted types. Instructions could also be added to 
+      explicitly manage the reference counts.</para>
+      
+      <para>I have decided against this approach because of its rather invasive
+      nature, and because of the massive amount of changes required to the 
+      runtime. It would also require all compilers targeting the runtime to be 
+      modified to emit the new instructions, something which is clearly not 
+      feasible considering the large amount of compilers out there targetting
+      IL. A less invasive approach would be far more desirable.</para>
+      
+      <para>What is needed in this case is a way to tell the runtime that "hey,
+      this type should not be tracked by the garbage collector". A specific 
+      type could be labelled in this way and the runtime would treat the type
+      as a special case, tracking it using reference counting rather than 
+      the garbage collector. This would ideally not require any changes to 
+      existing compilers, allowing even these to take advantage of the new
+      reference counting mechanism..</para>
+      
+      <para>Fortunately, the CLI already provides a mechanism that allows us
+      to annotate types (and methods, fields, parameters etc) with arbitrary
+      metadata: custom attributes. Since these are part of the standard, all
+      existing CLI languages already know how to produce and consume custom
+      attributes.</para>
+      
+      <sidebar id="chapter_4-sidebar-1">
+        <title>Metadata in the CLR</title>
+        <para>The CLR's type system, the <firstterm>Common Type 
+        System</firstterm>, is centered around the concept of 
+        <firstterm>metadata.</firstterm> From Partition I of ECMA-335
+        <xref linkend="ecma-vol-1"/>:</para>
+        
+        <blockquote><para>New types – value types and reference types – are
+        introduced into the CTS via type declarations expressed in metadata. In
+        addition, metadata is a structured way to represent all information
+        that the CLI uses to locate and load classes, lay out instances in
+        memory, resolve method invocations, translate CIL to native code,
+        enforce security, and set up runtime context boundaries. Every CLI
+        PE/COFF module (see Partition II) carries a compact metadata binary
+        that is emitted into the module by the CLI-enabled development tool or
+        compiler. Each CLI-enabled language will expose a language-appropriate
+        syntax for declaring types and members and for annotating them with
+        attributes that express which services they require of the
+        infrastructure. Type imports are also handled in a language-appropriate
+        way, and it is the development tool or compiler that consumes the
+        metadata to expose the types that the developer sees. </para>
+        </blockquote>
+        
+        <para>In other words, metadata is the mechanism in which the runtime 
+        itself and other tools obtain information about the types and their 
+        attributes and operations. It doesn't stop there, though: it also 
+        allows developers to create their own <emphasis>custom</emphasis>
+        metadata, in the form of <firstterm>attributes.</firstterm>.</para>
+        
+        <para>An attribute is a type deriving from the
+        <classname>System.Attribute</classname> class. It can be applied to
+        classes, structs, methods, fields and parameters, as well as to
+        assemblies. They can contain explicit information in the form of
+        properties on the type, or they can implicitly convey information
+        merely by being present on some element.</para>
+        
+        <para>In the C# language, attributes are expressed using square
+        brackets in front of the element onto which they are applied. For
+        example, the <classname>Serializable</classname> attribute indicates to
+        the runtime that a type can be serialized:</para>
+        
+        <programlisting><![CDATA[
+[Serializable]
+public class Foo
+{
+  // ...
+}       
+]]></programlisting>
+      
+        <para><classname>Serializable</classname> is an attribute that does not
+        contain any information beyond its mere presence. It is declared like 
+        this:</para>
+<programlisting><![CDATA[
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct |
+   AttributeTargets.Enum | AttributeTargets.Delegate)]
+public sealed class SerializableAttribute : Attribute     
+{
+   // ...
+} 
+]]></programlisting>
+        <para>It is interesting to note that declaring custom attributes also
+        requires the use of attributes to constrain which kinds of types they
+        can be applied to. We can see here that
+        <classname>Serializable</classname> can be applied to classes, structs,
+        enums and delegates.</para> 
+        
+      </sidebar>
+      
+      <para>I have therefore decided to use a custom attribute to signify that
+      a given type should be reference counted rather than garbage collected.
+      Since this attribute is rather central to the runtime, I have placed it
+      in the <classname>System</classname> namespace, as part of the core
+      library which gets implicitly referenced by all .NET assemblies: corlib.
+      The implementation can be found in
+      <filename>clr/src/bcl/system/referencecountedattribute.cs</filename> and
+      looks like this:</para>
+<programlisting><![CDATA[
+namespace System
+{
+    /// <summary>
+    /// An attribute that indicates to the runtime that the applied-to type
+    /// should be handled by reference counting, not M&S garbage collection.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, Inherited=true)]
+    public class ReferenceCountedAttribute : Attribute
+    {
+        public ReferenceCountedAttribute()
+        {            
+        }
+    }
+}
+]]></programlisting>   
+
+      <para>This attribute can then be applied onto a class like this
+      <footnote><para>Note that C# allows you to omit the
+      <classname>Attribute</classname> suffix to the attribute type when
+      applying it. All attribute types are required to have this suffix in the
+      name, though.</para></footnote>: </para>
+      
+      <programlisting><![CDATA[
+[ReferenceCounted]
+public class Foo
+{
+   // ...
+}
+]]></programlisting>  
+
+      <para>The attribute does not carry any information beyond its presence on
+      a class. It is restricted to classes (reference types) only; as I have 
+      mentioned before, value types are allocated either on the stack or as 
+      part of reference types, and thus already have predictable life times.
+      XXX: Apply on interfaces?</para>
+      
+      <para>As can be inferred from the <classname>AttributeUsage</classname>
+      attribute applied on <classname>ReferenceCountedAttribute</classname>, I
+      have chosen to let the attribute be inherited to subclasses. As an
+      example, let's say we have the following classes:</para> 
+      
+      <programlisting><![CDATA[
+[ReferenceCounted]
+public class Base
+{
+   // ...
+}
+
+public class Derived : Base
+{
+   // ...
+}
+]]></programlisting>
+
+    <para>In my implementation, instances of both
+    <classname>Derived</classname> and <classname>Base</classname> will be
+    reference counted.</para>
+      
+    </sect2>
+  </sect1>
+  
+  <sect1 id="chapter_4-sect-2">
+    <title>Modifying the class loading process</title>
+    <para>Now, with that attribute in place, the information about whether a
+    given class should be reference counted gets embedded into the assembly as
+    part of the metadata associated with the type. A tool can reflect on the
+    type and use the presence of the
+    <classname>ReferenceCountedAttribute</classname> attribute on a class to
+    infer that it should be reference counted. .NET code can also query for
+    this attribute on a class at runtime.</para>
+    
+    <para>Obviously, having tools be able to extract this information is nice 
+    and all, but ultimately worthless unless the execution engine itself 
+    detects the attribute and acts on it.</para>
+    
+    <sect2 id="chapter_4-sect.2.1"> 
+      <title>The SSCLI class loader</title>
+    
+      <para>Loading a new type into the runtime is a quite involved process, and 
+      involves building the <classname>EEClass</classname> and 
+      <classname>MethodTable</classname> instances associated with the type 
+      as described in the previous chapter.</para>
+      
+      <para>When a managed executable is run by the 
+      <application>clix</application> executable launcher, the <application>
+      sscoree</application> dynamic library is loaded and the 
+      <function>_CorExeMain2</function> function is called. This function 
+      initializes the runtime and eventually ends up calling the 
+      <methodname>ClassLoader::ExecuteMainMethod</methodname> method. 
+      <methodname>ExecuteMainMethod</methodname> figures out which type 
+      contains the entry point for the assembly, loads it and then executes it.
+      </para>
+      
+      <para>By the time it has gotten that far, though, the 
+      <classname>ClassLoader</classname> has already loaded the classes that 
+      are central to the execution engine, such as <classname>Object</classname>,
+      <classname>Array</classname> and <classname>String</classname>. The 
+      main work horse when it comes to loading classes is the 
+      <methodname>ClassLoader::LoadTypeHandleFromToken</methodname> method. It
+      takes in a <firstterm>metadata token</firstterm> for the requested type 
+      (extracted from the assembly metadata) and builds an
+      <classname>EEClass</classname> instance (and by extension, a
+      <classname>MethodTable</classname> instance). The 
+      <classname>EEClass</classname>/<classname>MethodTable</classname> pair
+      is then used by the runtime to create instances of the type.</para>    
+    </sect2>
+    
+    <sect2 id="chapter_4-sect.2.2">
+      <title>Detecting reference counted types</title>
+      <para>In order to determine whether a type is reference counted, I need
+      to check whether the <classname>ReferenceCounted</classname> attribute is
+      present on that type. </para>
+      
+      <sect3 id="chapter_4-sect.2.2.1">
+        <title>The SSCLI metadata APIs</title>
+        <para>The SSCLI provides an API that allows you to manipulate, emit and 
+        inspect the metadata for an API. This API is public and intended for use
+        by writers of compilers and other tools, but is also used extensively 
+        internally in the execution engine.</para>
+        
+        <para>The metadata API is COM-based and the relevant interfaces can be 
+        found in <filename>/clr/src/inc/cor.h</filename>. The interface used 
+        for metadata inspection is <classname>IMetaDataImport</classname>.
+        Internally in the runtime, the name <classname>IMDInternalImport
+        </classname> is used. As far as I have been able to tell, this is the
+        same interface, and I have been able to use the documentation for 
+        <classname>IMetaDataImport</classname> in my work with 
+        <classname>IMDInternalImport</classname>.
+        </para>
+      </sect3>
+            
+    </sect2>
+  </sect1>
+  
+</chapter>

@@ -18,6 +18,7 @@ cmd /c make pdf
 
 mkdir %targdir%
 copy /y html\thesis.html %targdir%
+xcopy /y *.png %targdir%
 copy /y pdf\thesis.pdf %targdir%
 
 mkdir %targdir%\chunked-html

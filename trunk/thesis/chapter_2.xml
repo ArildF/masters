@@ -36,11 +36,11 @@
     <title>Finalization</title>
     <para>A large number of .NET classes hold onto resources beyond the actual 
     memory they occupy in the managed heap. For example, the .NET 
-    <type>System.IO.FileStream</type> class owns an operating system file 
-    handle. Likewise, the <type>System.Windows.Forms.Control</type> class
-    (with descendants) holds onto a window handle (a <type>HWND</type>).
-    The <type>System.Drawing.Brush</type> class keeps a reference to a Windows
-    brush object (a <type>HBRUSH</type>).</para>
+    <classname>System.IO.FileStream</classname> class owns an operating system file 
+    handle. Likewise, the <classname>System.Windows.Forms.Control</classname> class
+    (with descendants) holds onto a window handle (a <classname>HWND</classname>).
+    The <classname>System.Drawing.Brush</classname> class keeps a reference to a Windows
+    brush object (a <classname>HBRUSH</classname>).</para>
     
     <para>These resources are not available in infinite supply. The operating 
     system has a limited number of them, and it is important that code that
@@ -49,7 +49,7 @@
     <sect2 id="chapter_2-sect-2-1">
       <title><function>Finalize()</function></title>
       <para>To ensure these kinds of resources can be released, the CLR 
-      <type>Object</type> type declares a virtual method called 
+      <classname>Object</classname> type declares a virtual method called 
       <function>Finalize()</function>. Types can override this method and 
       use it to release whatever unmanaged resources they are holding on to.
       The garbage collector will call this method before the object is finally 
@@ -133,7 +133,7 @@ public class Brush
       resources, the designers of the .NET framework provided the 
       <firstterm>IDisposable pattern.</firstterm></para>
       
-      <para><type>System.IDisposable</type> is an interface defining a single
+      <para><classname>System.IDisposable</classname> is an interface defining a single
       method, <function>Dispose()</function>:</para>
       <programlisting><![CDATA[
 namespace System
@@ -149,12 +149,12 @@ namespace System
       freed instantaneously. For types where another name for this method would
       be more semantically correct, one can provide another method with the
       appropriate name and have it call <function>Dispose()</function> (or the 
-      other way around). For example, the <type>FileStream</type> class 
-      implements <type>IDisposable</type>, but provides a <function>Close()
+      other way around). For example, the <classname>FileStream</classname> class 
+      implements <classname>IDisposable</classname>, but provides a <function>Close()
       </function> method intended for the consumer to use.</para>
       
       <para>A strategy of implementing <emphasis>only </emphasis>
-      <type>IDisposable</type> can be a bit dangerous, though. You have no 
+      <classname>IDisposable</classname> can be a bit dangerous, though. You have no 
       guarantees that the user will ever bother calling 
       <function>Dispose() </function>, even if you write it in bold red type in
       the documentation (programmers can't read, and even if they could, they 
@@ -169,8 +169,8 @@ namespace System
       the problem of having finalizable objects linger for a much longer time
       than necessary would remain. Fortunately, you can tell the garbage 
       collector <emphasis>not</emphasis> to finalize a specific object if it's
-      already been disposed. The most common implementation of <type>
-      IDisposable</type> will call the <function>GC.SuppressFinalize()
+      already been disposed. The most common implementation of <classname>
+      IDisposable</classname> will call the <function>GC.SuppressFinalize()
       </function> method once it has disposed of the unmanaged resource: 
       </para>
       

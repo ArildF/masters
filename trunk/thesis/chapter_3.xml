@@ -204,9 +204,9 @@
       
       <sect2>
         <title>Runtime representation of objects</title>
-        <para>At runtime, objects are represented by the <type>Object</type>
+        <para>At runtime, objects are represented by the <classname>Object</classname>
         class, in <filename>clr/src/vm/object.h</filename>. This class has a 
-        single field; a pointer to a <type>MethodTable</type> object:</para>
+        single field; a pointer to a <classname>MethodTable</classname> object:</para>
         
         <programlisting><![CDATA[
 class Object
@@ -219,7 +219,7 @@ class Object
     
         ]]>
         </programlisting>
-        <para>Obviously, that's not the whole story. The <type>Object</type>
+        <para>Obviously, that's not the whole story. The <classname>Object</classname>
         class has a large number of methods, and there is a 
         <quote>hidden</quote> field associated with each object, located at a
         <emphasis>negative</emphasis> offset from the object itself:</para>
@@ -233,9 +233,9 @@ class Object
           </mediaobject>
         </figure>
         
-        <para>Every time an object is allocated, the <type>ObjHeader</type> is 
-        allocated with it. If you have a pointer to an <type>Object</type>, you 
-        can access the <type>ObjHeader</type> through some pointer trickery:
+        <para>Every time an object is allocated, the <classname>ObjHeader</classname> is 
+        allocated with it. If you have a pointer to an <classname>Object</classname>, you 
+        can access the <classname>ObjHeader</classname> through some pointer trickery:
         </para>
 <programlisting><![CDATA[
 ObjHeader   *GetHeader()
@@ -245,12 +245,12 @@ ObjHeader   *GetHeader()
         ]]>
         </programlisting>
         
-        <para>The <type>ObjHeader</type> is used for, among other things, 
+        <para>The <classname>ObjHeader</classname> is used for, among other things, 
         thread synchronization. The mechanism used here is worth noting, since 
         I have chosen a similar approach to implement reference counting.</para>
         
-        <para>The <type>MethodTable</type> instance pointed to by 
-        the sole member field of <type>Object</type> is shared among all 
+        <para>The <classname>MethodTable</classname> instance pointed to by 
+        the sole member field of <classname>Object</classname> is shared among all 
         instances of a class. It determines the type identity of an object, i.e.,
         if <programlisting>obj1->p_methTab == obj2->p_methTab</programlisting>
         holds, the objects are of the same type.</para>
@@ -258,14 +258,14 @@ ObjHeader   *GetHeader()
         <para>Further, it contains data and methods to acquire information about 
         the fields and methods associated with the type.</para>      
         
-        <para><type>MethodTable</type> also contains a pointer to an 
-        <type>EEClass</type> instance. Like <type>MethodTable</type>, 
-        <type>EEClass</type> also contains information about types. There is a
-        1-1 relationship between <type>EEClass</type> instances and 
-        <type>MethodTable</type> instances; there is one of each for every type
-        loaded. However, while <type>MethodTable</type> contains data and 
+        <para><classname>MethodTable</classname> also contains a pointer to an 
+        <classname>EEClass</classname> instance. Like <classname>MethodTable</classname>, 
+        <classname>EEClass</classname> also contains information about types. There is a
+        1-1 relationship between <classname>EEClass</classname> instances and 
+        <classname>MethodTable</classname> instances; there is one of each for every type
+        loaded. However, while <classname>MethodTable</classname> contains data and 
         operations that are designed to be accessed quickly at runtime, 
-        <type>EEClass</type> contains the data that are typically only needed
+        <classname>EEClass</classname> contains the data that are typically only needed
         by compilers and other tools that need to be able to introspect into
         the type system. The separation between the two allow better cache
         coherency.</para>        

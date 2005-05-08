@@ -13,12 +13,12 @@
     environment.</para>
     <para>From the preface to ECMA-335:</para>
     
-    <blockquote>
+    <blockquote><para>
       This Standard ECMA-335 defines the Common Language Infrastructure (CLI) 
       in which applications written in multiple high level languages may be 
       executed in different system environments without the need to rewrite 
       the application to take into consideration the unique characteristics 
-      of those environments.
+      of those environments.</para>
     </blockquote>
   </sect1>
   

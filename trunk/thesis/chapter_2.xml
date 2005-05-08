@@ -10,7 +10,7 @@
     the <firstterm>Base Class Library </firstterm> does however contain the 
     following note:</para>
     
-    <blockquote>The garbage collector is responsible for tracking and reclaiming
+    <blockquote><para>The garbage collector is responsible for tracking and reclaiming
     objects allocated in managed memory. Periodically, the garbage collector
     performs a garbage collection to reclaim memory allocated to objects for
     which there are no valid references. Garbage collections happen
@@ -20,7 +20,7 @@
     or more references to the object in managed code. However, the garbage
     collector does not recognize references to an object from unmanaged code,
     and may free objects that are being used exclusively in unmanaged code
-    unless explicitly prevented from doing so. </blockquote>
+    unless explicitly prevented from doing so.</para></blockquote>
     
     <para>Even so, the lack of a detailed specification of the memory 
     management model in the main specification implies a considerable flexibility 

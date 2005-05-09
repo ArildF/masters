@@ -208,7 +208,7 @@
         class, in <filename>clr/src/vm/object.h</filename>. This class has a 
         single field; a pointer to a <classname>MethodTable</classname> object:</para>
         
-        <programlisting><![CDATA[
+        <example><programlisting><![CDATA[
 class Object
 {
   protected:
@@ -218,7 +218,7 @@ class Object
 };    
     
         ]]>
-        </programlisting>
+        </programlisting></example>
         <para>Obviously, that's not the whole story. The <classname>Object</classname>
         class has a large number of methods, and there is a 
         <quote>hidden</quote> field associated with each object, located at a
@@ -237,13 +237,13 @@ class Object
         allocated with it. If you have a pointer to an <classname>Object</classname>, you 
         can access the <classname>ObjHeader</classname> through some pointer trickery:
         </para>
-<programlisting><![CDATA[
+<example><programlisting><![CDATA[
 ObjHeader   *GetHeader()
 {
     return ((ObjHeader *) this) - 1;
 }     
         ]]>
-        </programlisting>
+        </programlisting></example>
         
         <para>The <classname>ObjHeader</classname> is used for, among other things, 
         thread synchronization. The mechanism used here is worth noting, since 

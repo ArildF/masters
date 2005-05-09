@@ -56,7 +56,7 @@
       destroyed and its memory released back to the managed heap. A typical 
       Finalize() implementation might look like this:</para>
       
-      <programlisting><![CDATA[
+      <example><programlisting><![CDATA[
 
 public class Brush
 {
@@ -75,20 +75,20 @@ public class Brush
    private IntPtr handle;
 }      
       ]]>      
-      </programlisting>
+      </programlisting></example>
       
       <para>In C# and C++, two of the languages that run on the CLR, the 
       <function>Finalize()</function> method is declared using the same syntax
       as C++ destructors. The finalizer from the above example could then look
       like this:</para>
       
-      <programlisting><![CDATA[
+      <example><programlisting><![CDATA[
     ~Brush()
     {
       Win32.CloseHandle( this.handle );
     }      
       ]]>
-      </programlisting>
+      </programlisting></example>
     </sect2>
     
     <sect2 id="chapter_2-sect-2-2">
@@ -135,14 +135,14 @@ public class Brush
       
       <para><classname>System.IDisposable</classname> is an interface defining a single
       method, <function>Dispose()</function>:</para>
-      <programlisting><![CDATA[
+      <example><programlisting><![CDATA[
 namespace System
 {
   public interface IDisposable
   {
     void Dispose();
   }
-}]]></programlisting>
+}]]></programlisting></example>
       <para>Types that own unmanaged resources will implement this interface.
       The user of such a type can then call <function>Dispose()</function> 
       explicitly when he is done with the object, causing the resource to be
@@ -174,7 +174,7 @@ namespace System
       </function> method once it has disposed of the unmanaged resource: 
       </para>
       
-      <programlisting><![CDATA[ 
+      <example><programlisting><![CDATA[ 
 public class Foo : IDisposable
 {
     public Foo()
@@ -214,10 +214,10 @@ public class Foo : IDisposable
 }      
       
       ]]>
-      </programlisting>
+      </programlisting></example>
       
       <para>One could then use this object like this:</para>
-      <programlisting><![CDATA[
+      <example><programlisting><![CDATA[
 
 Foo foo;
 try
@@ -230,7 +230,7 @@ finally
 {
     foo.Dispose();
 }
-]]></programlisting>
+]]></programlisting></example>
       <para>Putting the <function>Dispose()</function> call in a finally 
       ensures that the object will be cleaned up even if the code in the try 
       block throws an exception.</para>
@@ -238,12 +238,12 @@ finally
       <para>The <function>using</function> construct in C# makes the 
       IDisposable pattern even easier to use. The following C# code is 
       equivalent to the above example:</para>
-<programlisting><![CDATA[
+<example><programlisting><![CDATA[
 using( Foo foo = new Foo() )
 {
     // use foo here
 }
-]]>  </programlisting>   
+]]>  </programlisting>  </example> 
       
       
       

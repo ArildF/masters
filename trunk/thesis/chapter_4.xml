@@ -85,25 +85,25 @@
         example, the <classname>Serializable</classname> attribute indicates to
         the runtime that a type can be serialized:</para>
         
-        <programlisting><![CDATA[
+        <example><programlisting><![CDATA[
 [Serializable]
 public class Foo
 {
   // ...
 }       
-]]></programlisting>
+]]></programlisting></example>
       
         <para><classname>Serializable</classname> is an attribute that does not
         contain any information beyond its mere presence. It is declared like 
         this:</para>
-<programlisting><![CDATA[
+<example><programlisting><![CDATA[
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct |
    AttributeTargets.Enum | AttributeTargets.Delegate)]
 public sealed class SerializableAttribute : Attribute     
 {
    // ...
 } 
-]]></programlisting>
+]]></programlisting></example>
         <para>It is interesting to note that declaring custom attributes also
         requires the use of attributes to constrain which kinds of types they
         can be applied to. We can see here that
@@ -120,7 +120,7 @@ public sealed class SerializableAttribute : Attribute
       The implementation can be found in
       <filename>clr/src/bcl/system/referencecountedattribute.cs</filename> and
       looks like this:</para>
-<programlisting><![CDATA[
+<example><programlisting><![CDATA[
 namespace System
 {
     /// <summary>
@@ -135,7 +135,7 @@ namespace System
         }
     }
 }
-]]></programlisting>   
+]]></programlisting></example>   
 
       <para>This attribute can then be applied onto a class like this
       <footnote><para>Note that C# allows you to omit the
@@ -143,13 +143,13 @@ namespace System
       applying it. All attribute types are required to have this suffix in the
       name, though.</para></footnote>: </para>
       
-      <programlisting><![CDATA[
+      <example><programlisting><![CDATA[
 [ReferenceCounted]
 public class Foo
 {
    // ...
 }
-]]></programlisting>  
+]]></programlisting> </example> 
 
       <para>The attribute does not carry any information beyond its presence on
       a class. It is restricted to classes (reference types) only; as I have 
@@ -162,7 +162,7 @@ public class Foo
       have chosen to let the attribute be inherited to subclasses. As an
       example, let's say we have the following classes:</para> 
       
-      <programlisting><![CDATA[
+      <example><programlisting><![CDATA[
 [ReferenceCounted]
 public class Base
 {
@@ -173,7 +173,7 @@ public class Derived : Base
 {
    // ...
 }
-]]></programlisting>
+]]></programlisting></example>
 
     <para>In my implementation, instances of both
     <classname>Derived</classname> and <classname>Base</classname> will be
@@ -258,7 +258,7 @@ public class Derived : Base
       is applied to it. The implementation resides in 
       <filename>/clr/src/vm/nstruct.cpp</filename> and looks like this:</para>
       
-      <programlisting><![CDATA[
+      <example><programlisting><![CDATA[
 HRESULT IsReferenceCounted(IMDInternalImport *pInternalImport, mdTypeDef cl )
 {
     const void *pData;
@@ -270,7 +270,7 @@ HRESULT IsReferenceCounted(IMDInternalImport *pInternalImport, mdTypeDef cl )
 
     return hr;
 }
-]]></programlisting>
+]]></programlisting></example>
 
     <para>The function returns <constant>S_OK</constant> if the attribute 
     exists and <constant>S_FALSE</constant> if it doesn't. Any other return
@@ -280,7 +280,7 @@ HRESULT IsReferenceCounted(IMDInternalImport *pInternalImport, mdTypeDef cl )
     describing various attributes of the type in question. I added a new flag
     indicating a reference counted class (in <filename>/clr/src/vm/class.cpp
     </filename>:</para>
-<programlisting><![CDATA[
+<example><programlisting><![CDATA[
 VMFLAG_ISSINGLEDELEGATE                = 0x10000000,
 VMFLAG_ISMULTIDELEGATE                 = 0x20000000,
 VMFLAG_PREFER_ALIGN8                   = 0x40000000, // Would like to have 8-byte alignment
@@ -298,7 +298,7 @@ inline void EEClass::SetReferenceCounted()
     m_VMFlags |= VMFLAG_REFERENCECOUNTED;
 }
 ]]>
-</programlisting>
+</programlisting></example>
       <para>I also added similar flags and accessors on <classname>MethodTable
       </classname>. Obviously, this is a duplication of information since it 
       could also be accessed through the  
@@ -312,7 +312,7 @@ inline void EEClass::SetReferenceCounted()
       <function>IsReferenceCounted</function> and set the flag accordingly in 
       <methodname>ClassLoader::LoadTypeHandleFromToken()</methodname>
       (<filename>/clr/src/vm/clsload.cpp</filename>):</para>  
-<programlisting><![CDATA[
+<example><programlisting><![CDATA[
 // is the type reference counted?    
 hr = IsReferenceCounted(pInternalImport, cl);
 
@@ -328,7 +328,7 @@ if(FAILED(hr) && hr != S_FALSE)
 if (fIsReferenceCounted) 
     pClass->SetReferenceCounted();
 
-]]></programlisting>              
+]]></programlisting> </example>             
       
     </sect2>
   </sect1>
@@ -375,7 +375,7 @@ if (fIsReferenceCounted)
     implementation and provides the operations necessary to support allocation
     and deallocation of reference counted objects: </para>
     
-    <programlisting><![CDATA[
+    <example><programlisting><![CDATA[
 class ReferenceCountedHeap
 {
 public:
@@ -388,7 +388,7 @@ public:
 private:
     gmallocHeap* m_Heap;
 };  
-    ]]></programlisting>
+    ]]></programlisting></example>
     
     <para><classname>gmallocHeap</classname> here is the malloc implementation.
     </para>
@@ -402,7 +402,7 @@ private:
     <varname>g_pGCHeap</varname>. An accessor function in 
     <filename>refcount.cpp</filename> is used to allocate objects from the 
     reference counted heap:</para>
-    <programlisting><![CDATA[
+    <example><programlisting><![CDATA[
 OBJECTREF RCAllocateObject( MethodTable* pMT )
 {
     // TODO: locking
@@ -422,7 +422,7 @@ OBJECTREF RCAllocateObject( MethodTable* pMT )
     return( ObjectToOBJECTREF(orObject) );    
 }    
     
-    ]]></programlisting>
+    ]]></programlisting></example>
     
     <para>This global instance also needs to be initialized. I have created a function
     <function>InitializeReferenceCountedHeap()</function> which is called from
@@ -455,7 +455,7 @@ OBJECTREF RCAllocateObject( MethodTable* pMT )
     </constant>and injected this code into <methodname>CEEInfo::getNewHelper():
     </methodname></para>
     
-    <programlisting><![CDATA[
+    <example><programlisting><![CDATA[
     
 // ...
 
@@ -467,7 +467,7 @@ if (pMT->IsReferenceCounted())
 
 // ... 
     ]]>
-    </programlisting>
+    </programlisting></example>
     
     <para><varname>pMT</varname> is here a pointer to the 
     <classname>MethodTable</classname> object for the class the runtime needs 
@@ -523,7 +523,7 @@ if (pMT->IsReferenceCounted())
       has a design that resembles that of COM's <classname>IUnknown:</classname>
       </para>
       
-      <programlisting><![CDATA[
+      <example><programlisting><![CDATA[
 class ReferenceCountHeader
 {
 public:
@@ -542,7 +542,7 @@ private:
     void Finalize();
     int m_RefCount;
 };
-]]></programlisting>
+]]></programlisting></example>
 
 
       <para>The semantics of <methodname>AddRef()</methodname> and 
@@ -552,12 +552,12 @@ private:
       It uses some pointer arithmetic to retrieve the pointer to the actual 
       <classname>Object</classname> instance associated with this object:</para>
       
-      <programlisting><![CDATA[
+      <example><programlisting><![CDATA[
 Object* ReferenceCountHeader::GetObject()
 {
     return (Object*) ((ObjHeader*)(this + 1) + 1);
 }  
-      ]]></programlisting>
+      ]]></programlisting></example>
       
        <para>Obviously, the size of the <classname>ReferenceCountHeader
        </classname> also needs to be taken into account when allocating object 
@@ -565,7 +565,7 @@ Object* ReferenceCountHeader::GetObject()
        already incorporates the size of the <classname>ObjHeader</classname>
        instance.</para></footnote>:</para>
        
-<programlisting><![CDATA[
+<example><programlisting><![CDATA[
 Object* ReferenceCountedHeap::Alloc(DWORD size)
 {
     // we need some space for our accounting needs too
@@ -579,7 +579,58 @@ Object* ReferenceCountedHeap::Alloc(DWORD size)
     // ReferenceCountHeader
     return (Object*) (newAlloc + sizeof(ReferenceCountHeader) + sizeof(ObjHeader));
 }
-]]></programlisting>     
+]]></programlisting></example>     
+    </sect2>
+    
+    <sect2>
+      <title><methodname>GC.ReferenceCount</methodname></title>
+      <para>The <methodname>ReferenceCount()</methodname> accessor method in 
+      <classname>ReferenceHeader</classname> was added to serve as the underlying
+      foundation for a new method on the <classname>GC</classname> class, 
+      <methodname>GC.ReferenceCount</methodname>. The <classname>GC</classname>
+      class is part of the BCL and contains various methods to control the 
+      garbage collector, such as explicitly starting a garbage collection sweep, 
+      suppressing and reenabling finalization of objects and discovering which
+      generation an object is currently part of.</para>
+      
+      <para>The <methodname>GC.ReferenceCount()</methodname> method allows 
+      a .NET developer to query the runtime for the current reference count
+      of a reference counted object. It is implemented as an internal call
+      into the runtime:</para>
+      <example><programlisting><![CDATA[
+[MethodImplAttribute(MethodImplOptions.InternalCall)]
+private static extern int nativeReferenceCount(Object o);
+
+public static int ReferenceCount(Object o)
+{
+    if (o == null)
+        throw new ArgumentNullException("o");
+    return nativeReferenceCount(o);
+}
+      ]]></programlisting></example>
+      
+      <para>The <constant>MethodImplOptions.InternalCall</constant> argument
+      to the <classname>MethodImplAttribute</classname> attribute here 
+      indicates that the real implementation of the method can be found in 
+      native code inside the execution engine. The runtime maps the call
+      through a table into a method on the <classname>GCInterface</classname>
+      class. This method merely calls the <methodname>ReferenceCount()</methodname> 
+      method on the  <classname>ReferenceCountHeader</classname> associated
+      with the object, after verifying that it actually is a reference counted
+      object (<filename>clr/src/vm/comutilnative.cpp</filename>):</para>     
+      <example><programlisting><![CDATA[
+FCIMPL1(int, GCInterface::ReferenceCount, Object *obj)	
+{	
+ 	  THROWSCOMPLUSEXCEPTION();	
+
+ 	  if (!obj->GetMethodTable()->IsReferenceCounted())	
+ 	      FCThrow(kInvalidOperationException);	
+
+ 	  return obj->GetReferenceCountHeader()->ReferenceCount();	
+}      
+      ]]></programlisting>
+      </example>
+      
     </sect2>
     
   </sect1>

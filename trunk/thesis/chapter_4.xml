@@ -433,7 +433,8 @@ OBJECTREF RCAllocateObject( MethodTable* pMT )
     possible tried to use the same coding conventions as are used by the 
     existing code. Personally, I would rather have performed any initialization
     in the constructor, but I don't see it as my role to impose my personal 
-    idioms on an existing codebase.</para></footnote>
+    idioms on an existing codebase. When in Redmond, do as the Redmondians.
+    </para></footnote>
     </para>    
   </sect1>
   
@@ -490,10 +491,97 @@ if (pMT->IsReferenceCounted())
     However, this would mean that <emphasis>all</emphasis> objects, reference
     counted or not, have to pay the cost of this extra field. Since the purpose
     of this whole exercise is to find a way for both reference counting and 
-    mark & sweep garbage collection to coexist, this is clearly unacceptable.
+    mark and sweep garbage collection to coexist, this is clearly unacceptable.
     </para>
     
-    <para></para>
+    <para>Another solution might be to create a subclass of 
+    <classname>Object</classname>, <classname>ReferenceCountedObject</classname>,
+    containing this field. XXX more here</para>
+    
+    <para>The solution I eventually landed on was to replicate the mechanism
+    used to allocate and place the <classname>ObjHeader</classname>; i.e., placing 
+    it <emphasis>before</emphasis>the actual <classname>Object</classname> 
+    instance. Obviously, the <classname>ObjHeader</classname> is already located
+    in front of <classname>Object</classname>, so I need to locate it before 
+    that. This means that the actual runtime layout of a reference counted 
+    object on the reference counted heap ends up looking like this:</para>
+    
+    <figure id="chapter_4-fig-1">
+      <title>Runtime layout of reference counted types</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="refcountheader.png" format="png"/> 
+        </imageobject> 
+      </mediaobject>
+    </figure>
+    
+    <sect2>
+      <title><classname>ReferenceCountHeader</classname></title>
+      
+      <para>The reference count of a reference counted object is managed by 
+      an instance of the class <classname>ReferenceCountHeader</classname>. It
+      has a design that resembles that of COM's <classname>IUnknown:</classname>
+      </para>
+      
+      <programlisting><![CDATA[
+class ReferenceCountHeader
+{
+public:
+    ReferenceCountHeader() : m_RefCount(0)
+    {;}
+
+    ULONG AddRef();
+    ULONG Release();
+    ULONG ReferenceCount()
+    {
+        return m_RefCount;
+    }
+
+    Object* GetObject();
+private:
+    void Finalize();
+    int m_RefCount;
+};
+]]></programlisting>
+
+
+      <para>The semantics of <methodname>AddRef()</methodname> and 
+      <methodname>Release()</methodname> should be obvious in this contex, 
+      even to people without COM experience. The implementation of 
+      <methodname>GetObject()</methodname> is worth taking a look at, though. 
+      It uses some pointer arithmetic to retrieve the pointer to the actual 
+      <classname>Object</classname> instance associated with this object:</para>
+      
+      <programlisting><![CDATA[
+Object* ReferenceCountHeader::GetObject()
+{
+    return (Object*) ((ObjHeader*)(this + 1) + 1);
+}  
+      ]]></programlisting>
+      
+       <para>Obviously, the size of the <classname>ReferenceCountHeader
+       </classname> also needs to be taken into account when allocating object 
+       instances<footnote><para>The <parameter>size</parameter> parameter here 
+       already incorporates the size of the <classname>ObjHeader</classname>
+       instance.</para></footnote>:</para>
+       
+<programlisting><![CDATA[
+Object* ReferenceCountedHeap::Alloc(DWORD size)
+{
+    // we need some space for our accounting needs too
+    DWORD realSize = size + sizeof(ReferenceCountHeader);
+
+    // get the space for it on the heap
+    BYTE* newAlloc = (BYTE*)m_Heap->Alloc(realSize);
+    memclr((BYTE*)newAlloc, realSize);
+
+    // account for the space allocated for the ObjHeader and the 
+    // ReferenceCountHeader
+    return (Object*) (newAlloc + sizeof(ReferenceCountHeader) + sizeof(ObjHeader));
+}
+]]></programlisting>     
+    </sect2>
+    
   </sect1>
   
 </chapter>

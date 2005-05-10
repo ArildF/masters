@@ -11,6 +11,14 @@ FOP=cmd.exe /c fop.bat
 
 SOURCES=thesis.xml chapter_1.xml chapter_2.xml chapter_3.xml bibliography.xml \
     chapter_4.xml
+    
+MAKEFILES=Makefile Makefile.xsltproc
+    
+PARAMS=
+FOPARAMS=--stringparam paper.type A4 \
+         --stringparam page.margin.top 25mm \
+         --stringparam page.margin.bottom 25mm \
+         --stringparam body.font.master 13
 
 # use xsltproc regardless, since Transform has problems with some of the sources
 SUBMAKEFILE=Makefile.xsltproc
@@ -51,6 +59,7 @@ clean:
 	-rm -rf ps
 	-rm -rf pdf
 	-rm -rf chunked-html
+	-rm *.fo
 
 
 

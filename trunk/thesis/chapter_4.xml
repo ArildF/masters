@@ -546,7 +546,7 @@ private:
 
 
       <para>The semantics of <methodname>AddRef()</methodname> and 
-      <methodname>Release()</methodname> should be obvious in this contex, 
+      <methodname>Release()</methodname> should be obvious in this context, 
       even to people without COM experience. The implementation of 
       <methodname>GetObject()</methodname> is worth taking a look at, though. 
       It uses some pointer arithmetic to retrieve the pointer to the actual 
@@ -632,6 +632,48 @@ FCIMPL1(int, GCInterface::ReferenceCount, Object *obj)
       </example>
       
     </sect2>
+    
+  </sect1>
+  
+  <sect1>
+    <title>Modifying the JIT compiler</title>
+    
+    <para>There is now a mechanism in place to allocate and free reference 
+    counted objects, as well as incrementing and decrementing their reference
+    counts. The next step is to modify the JIT compiler in such a way that the 
+    reference count for an object is implicitly managed. Unlike COM in C++, 
+    the mechanism introduced here should not require the developer to manually
+    call <methodname>AddRef()</methodname> or <methodname>Release()</methodname>.
+    </para>
+    
+    <para>The intent is to make the use of reference counted objects as 
+    transparent as possible, while still providing a very deterministic life 
+    time and finalization for such objects. Take the following example:</para>
+    
+    <example><programlisting><![CDATA[
+
+for( int i = 0; i < BigConstant; i++ )
+{
+  SomeType obj = new SomeType();
+  obj.SomeOperation()
+}   
+    ]]></programlisting></example>
+    
+    <para>Here, a new instance of the <classname>SomeType</classname> 
+    class is created for each iteration of the loop. In the traditional 
+    CLR environment, the memory for the allocated objects would not be recycled
+    and the memory use would continue to grow, possibly triggering a garbage
+    collection. If the object also has non-trivial finalizer requirements, the
+    memory use would be even worse, since the objects would not be cleaned up
+    immediately in a garbage collection, instead having to wait for the 
+    finalizer thread to deal with them.</para>
+    
+    <para>The goal of the implementation here is to ensure that in the example
+    above, there will never be more than a single instance of 
+    <classname>SomeType</classname> in existence at any given iteration of the 
+    loop. If <classname>SomeType</classname> has a finalizer, it should be 
+    executed synchronously at the end of the loop. This is as opposed to the
+    asynchronous behavior of the current CLR finalization mechanism.</para>
     
   </sect1>
   

@@ -675,6 +675,181 @@ for( int i = 0; i < BigConstant; i++ )
     executed synchronously at the end of the loop. This is as opposed to the
     asynchronous behavior of the current CLR finalization mechanism.</para>
     
+    <para>The mechanism I have chosen is to have all reference counted objects
+    be created with an initial reference count of 0. When they are assigned
+    to a local variable, a parameter or a class field, their reference count 
+    gets incremented by one. If the local variable, parameter or class field
+    already holds a reference to a reference counted object, the reference 
+    count of that object gets decremented by one. If they hold no reference, 
+    they contain null.</para>
+    
+    <para>I proceeded to create two JIT helper functions, JIT_AddRef and JIT_Release 
+    (<filename>/clr/src/vm/jitinterface.cpp</filename>):</para>
+    
+    <example><programlisting><![CDATA[
+HCIMPL1(void, JIT_AddRef,  Object* obj)
+{
+    if (obj == NULL)
+        return;
+
+    HELPER_METHOD_FRAME_BEGIN_NOPOLL();
+
+    _ASSERTE(obj->GetMethodTable()->IsReferenceCounted());
+
+    obj->GetReferenceCountHeader()->AddRef();
+
+    HELPER_METHOD_FRAME_END();
+}
+HCIMPLEND    
+    
+    ]]></programlisting></example>
+    
+    <para><function>JIT_Release</function> is similar.</para>
+    
+    <sect2>
+      <title>The JIT compiler</title>
+      <para>In the SSCLI, the JIT compiler is a separate component from the 
+      execution engine proper. It resides in the directory 
+      <filename>/clr/src/fjit</filename>. The F in fjit presumably stands for 
+      <quote>fast</quote>, although the JIT in the SSCLI does not seem to be
+      the same as that in the commercial .NET implementation, and is not very
+      optimized. </para>
+      
+     <para>The implementation of the JIT compiler mostly consists of a large
+      switch statement over the various IL opcodes. The switch calls various
+      helper methods, which in turn emits the native code through several
+      layers ofincreasingly processor-specific macros. The extensive use of the
+      C++ macro mechanism here makes working with the code a lot harder than it
+      should be, since the macros are not very friendly to debuggers and it is
+      sometimes very hard to see what code is actually being executed. Working
+      with this part of the code was one of the hardest parts of implementing
+      reference counting, and it often took me days to figure out how to do 
+      some of these things.</para>
+    </sect2>
+    
+    <sect2>
+      <title>Handling local variables</title>
+      <para>In CIL, local variables are handled by the <function>ldloc
+      </function> and <function>stloc</function> instructions. They load or store
+      the value of a local variable from or to the IL execution stack. The IL
+      execution stack does not actually exist in the emitted native code, but 
+      the semantics of it are mostly emulated by the processor stack. For 
+      example, a <function>ldloc</function> usually translates into 
+      something like this:</para>
+      
+      <example><programlisting><![CDATA[
+mov         eax,dword ptr [ebp-10h]
+push        eax
+      ]]></programlisting></example>
+      
+      <para>In other words, the local is retrieved from the stack frame and 
+      pushed onto the stack. The JIT does not push the local onto the stack in 
+      all cases, though. If it is to be reused instantly, for example in some
+      calculation, it is merely kept in the CPU register. The JIT constantly
+      keeps track of whether the <firstterm>Top Of Stack</firstterm> (TOS) is
+      on the CPU stack or in a register. On the IA/32 architecture, the 
+      register used for the TOS is always <varname>eax</varname>.</para>
+      
+      <para>Emitting code for the <function>stloc</function>
+      instruction is handled by the
+      <methodname>FJit::compileDO_STLOC</methodname> method. Here I call two
+      helper methods which conditionally emits calls to <function>AddRef()
+      </function> or <function>Release()</function> depending on 
+      whether the local variable is a reference counted object or not:</para>
+      
+      <example><programlisting><![CDATA[
+// make sure to call .Release() on the old object in the var
+maybeReleaseArgOrVar(varInfo);    
+
+trackedType = varInfo->type;
+//trackedType.toNormalizedType();
+TYPE_SWITCH_PRECISE(trackedType,emit_STVAR, (varInfo->offset));
+
+// emit a call to increase the reference count if the new object is reference counted
+maybeAddRefArgOrVar(varInfo);      
+      
+      ]]></programlisting></example>
+      
+      <para><methodname>maybeAddRefArgOrVar() looks like this:</methodname></para>
+      
+      <example><programlisting><![CDATA[
+FJitResult FJit::maybeAddRefArgOrVar(stackItems* varInfo) {
+    if (isRefCounted(varInfo->type))
+    {                               
+        callInfo.reset();
+        TYPE_SWITCH_PRECISE(varInfo->type, emit_LDVAR, (varInfo->offset));
+        emit_tos_arg( 1, INTERNAL_CALL );
+        emit_callhelper_I4(jitInfo->getHelperFtn(CORINFO_HELP_ADDREF));
+    }
+
+    return FJIT_OK;
+}      
+      ]]></programlisting></example>
+      
+      <para>Here I actually emulate the semantics of the <function>ldloc
+      </function> instruction to load the value of the variable so it can
+      be passed on the CPU stack for the call to the helper function.</para>
+      
+      <para><methodname>isRefCounted</methodname> is a helper function which 
+      calls into the execution engine to determine whether the local is a 
+      reference counted object. Doing this at JIT time instead of at runtime
+      has some interesting implications, a topic which I will revisit later.</para>
+      
+      <para>XXX: more here</para>
+      
+   </sect2>
+   
+   <sect2>
+      <title>Parameters</title>      
+      
+      <para>Parameters are just another type of local variables, and the 
+      <function>starg</function> instruction to store a value in a parameter is 
+      handled in an almost identical way (thus the name 
+      <methodname>maybeAddRefArgOrVar()</methodname>) to <function>stloc</function>. 
+      The method handling the emitting of native code in this case is
+      <methodname>FJit::compileDO_STARG</methodname>.</para>
+      
+      <para>However, parameters also have another aspect when it comes to 
+      reference counting: when an object is passed as a parameter to another
+      method, it needs to have its reference count incremented. Further, this
+      reference count needs to be decremented at the end of the method.</para>
+      
+      <para>JIT-compiling a single method is handled by the 
+      <methodname>FJit::compileMethod</methodname> method. At the beginning I
+      insert a call to this emitParameterAddRefCalls():</para>
+      
+      <example><programlisting><![CDATA[
+FJitResult FJit::emitParameterAddRefCalls() {
+    int paramCount = methodInfo->args.numArgs;
+    stackItems* paramInfo;
+
+    for(int i = 0; i < paramCount; i++ )
+    {
+        paramInfo = &argsMap[i];
+        OpType type = paramInfo->type;
+
+        // is this a reference counted type?
+        if (type.isRef() && jitInfo->isReferenceCounted(type.cls()))
+        {
+            callInfo.reset();
+            TYPE_SWITCH_PRECISE(type, emit_LDVAR, (paramInfo->offset));
+            emit_tos_arg( 1, INTERNAL_CALL );
+            emit_callhelper_I4(jitInfo->getHelperFtn(CORINFO_HELP_ADDREF));
+        }
+    }
+
+    return FJIT_OK;
+}      
+      ]]></programlisting></example>
+      
+      <para>Here, a call to <function>AddRef()</function> is emitted for every
+      reference counted parameter passed to the JIT-compiled method.</para>
+      
+      <para>A similar function handles calling <function>Release()</function>
+      on every parameter <emphasis>and</emphasis> local variable.</para>
+    </sect2>  
+    
+    
   </sect1>
   
 </chapter>

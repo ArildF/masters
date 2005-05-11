@@ -845,10 +845,25 @@ FJitResult FJit::emitParameterAddRefCalls() {
       <para>Here, a call to <function>AddRef()</function> is emitted for every
       reference counted parameter passed to the JIT-compiled method.</para>
       
-      <para>A similar function handles calling <function>Release()</function>
-      on every parameter <emphasis>and</emphasis> local variable.</para>
+      <para>A similar function called at the end of 
+      <methodname>FJit::compileMethod</methodname> emits calls to 
+      <function>Release()</function> on every parameter <emphasis>and</emphasis> local 
+      variable. This, in addition to the way objects have their reference count
+      decremented every time a local is overwritten with a new value, ensures 
+      that objects are deallocated and finalized as soon as they go out of 
+      scope. As mentioned earlier, objects referenced by local variables have 
+      their reference counts incremented to 1 when they are initially assigned.</para>
     </sect2>  
     
+    <sect2>
+      <title>Class fields</title>
+      <para>While dealing with local variables and parameters was a pretty 
+      straightforwar, assignments to fields also need to be intercepted and
+      dealt with. Unfortunately, this did not turn out to be quite as simple. 
+      I spent a lot of time trying to decipher exactly what the JIT macros 
+      were doing in order to inject code to call <function>AddRef()</function>
+      and <function>Release()</function>. </para>
+    </sect2>   
     
   </sect1>
   

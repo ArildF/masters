@@ -102,6 +102,9 @@ make chunked-html"
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\tools\fo-stylesheet.xsl">
+		</File>
+		<File
 			RelativePath=".\index.html">
 		</File>
 		<File

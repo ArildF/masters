@@ -1,17 +1,17 @@
 PROC=xsltproc
 
-html/%.html: $(SOURCES) $(MAKEFILES)
+html/%.html: $(SOURCES) $(MAKEFILES) $(HTMLXSLT)
 	cp $(IMAGES) html
 	cp $(CSS) html
 	$(PROC) --output $@ $(HTMLXSLT) $< 
 	
-chunked-html/index.html: $(SOURCES) $(MAKEFILES)
+chunked-html/index.html: $(SOURCES) $(MAKEFILES) $(CHUNKEDHTMLXSLT)
 	cp $(IMAGES) chunked-html
 	cp $(CSS) chunked-html
 	$(PROC) --output $@ $(CHUNKEDHTMLXSLT) $< 
 	
 	
-%.fo: $(SOURCES) $(MAKEFILES)
+%.fo: $(SOURCES) $(MAKEFILES) $(FOXSLT)
 	$(PROC) $(PARAMS) $(FOPARAMS) -output $@ $(FOXSLT) $< 
 
 pdf/thesis.pdf: thesis.fo 

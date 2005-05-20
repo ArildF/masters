@@ -18,7 +18,9 @@ PARAMS=
 FOPARAMS=--stringparam paper.type A4 \
          --stringparam page.margin.top 25mm \
          --stringparam page.margin.bottom 25mm \
-         --stringparam body.font.master 13
+         --stringparam body.font.master 13 \
+         --stringparam section.autolabel 1 \
+         --stringparam section.label.includes.component.label 1
 
 # use xsltproc regardless, since Transform has problems with some of the sources
 SUBMAKEFILE=Makefile.xsltproc

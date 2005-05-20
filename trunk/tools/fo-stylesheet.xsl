@@ -8,7 +8,19 @@
   <xsl:attribute-set name="monospace.verbatim.properties">
     <xsl:attribute name="wrap-option">wrap</xsl:attribute>
     <xsl:attribute name="hyphenation-character">\</xsl:attribute>
-    <xsl:attribute name="font-size">10pt</xsl:attribute>
+    <xsl:attribute name="font-size">11pt</xsl:attribute>
+  </xsl:attribute-set>
+  
+  <xsl:attribute-set name="section.title.level1.properties">
+    <xsl:attribute name="font-size">22pt</xsl:attribute>
+  </xsl:attribute-set>
+  
+   <xsl:attribute-set name="section.title.level2.properties">
+    <xsl:attribute name="font-size">18pt</xsl:attribute>
+  </xsl:attribute-set>
+  
+   <xsl:attribute-set name="section.title.level3.properties">
+    <xsl:attribute name="font-size">16pt</xsl:attribute>
   </xsl:attribute-set>
   
 </xsl:stylesheet>

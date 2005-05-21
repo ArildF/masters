@@ -194,6 +194,39 @@ HRESULT IsReferenceCounted(IMDInternalImport *pInternalImport, mdTypeDef cl )
     return hr;
 }
 
+//=======================================================================
+// This is invoked from the class loader while building a EEClass.
+// This function should check if the class has reference counted fields
+//
+// Returns:
+//  S_OK    - yes, it has reference counted fields
+//  S_FALSE - no, there are no reference counted fields
+//  fail    - couldn't tell because of metadata error
+//=======================================================================
+HRESULT IsRCField(IMDInternalImport* pInternalImport, mdFieldDef fd)
+{
+    ULONG size;
+    PCCOR_SIGNATURE sig = pInternalImport->GetSigOfFieldDef(fd, &size);
+
+    SigPointer sigptr(sig);
+
+    // the first part of the sig defines the calling convention
+    _ASSERTE(sigptr.GetData() == IMAGE_CEE_CS_CALLCONV_FIELD);
+
+    // then comes the type
+    CorElementType corType = (CorElementType)sigptr.GetData();
+
+    // we only deal with class objects for now
+    if (corType == ELEMENT_TYPE_CLASS)
+    {
+        // next part of the signature is the metadata token for the field
+        mdTypeDef type = sigptr.GetToken();        
+        return IsReferenceCounted(pInternalImport, type);
+    }
+    else
+        return S_FALSE;
+}
+
 
 
 HRESULT ParseNativeType(Module *pModule,

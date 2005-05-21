@@ -77,6 +77,18 @@ HRESULT HasLayoutMetadata(IMDInternalImport *pInternalImport, mdTypeDef cl, EECl
 HRESULT IsReferenceCounted(IMDInternalImport *pInternalImport, mdTypeDef cl);
 
 
+//=======================================================================
+// This is invoked from the class loader while building an EEClass.
+// This function should check if the class has reference counted fields
+//
+// Returns:
+//  S_OK    - yes, it has reference counted fields
+//  S_FALSE - no, there are no reference counted fields
+//  fail    - couldn't tell because of metadata error
+//=======================================================================
+HRESULT IsRCField(IMDInternalImport *pInternalImport, mdFieldDef cl);
+
+
 
 
 

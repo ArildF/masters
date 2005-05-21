@@ -274,7 +274,8 @@ public:
         enum_flag_NotTightlyPacked      =  0x4000000, // the fields of the valuetype are not tightly packed (not valid for classes)
 
         enum_CtxProxyMask               = 0x10000000, // class is a context proxy
-        enum_flag_ReferenceCounted    = 0x40000000, // class is reference counted
+        enum_flag_hasRCFields           = 0x20000000, // class has one or more reference counted fields
+        enum_flag_ReferenceCounted      = 0x40000000, // class is reference counted
         enum_InterfaceMask              = 0x80000000, // class is a interface
     };
 
@@ -375,6 +376,8 @@ public:
     BOOL            IsNotTightlyPacked(){ return (m_wFlags & enum_flag_NotTightlyPacked); }
     BOOL            IsReferenceCounted(){ return (m_wFlags & enum_flag_ReferenceCounted); }
     void            SetReferenceCounted(){ m_wFlags |= enum_flag_ReferenceCounted; }
+    BOOL            HasRCFields(){ return (m_wFlags & enum_flag_hasRCFields); }
+    void            SetHasRCFields(){ m_wFlags |= enum_flag_hasRCFields; }
 
         // This is what would be used in a signature for this type.  One exception is enumerations,
         // for those the type is the underlying type.  
@@ -661,12 +664,12 @@ public:
     // Does this class have non-trivial finalization requirements?
     DWORD               HasFinalizer()
     {
-        return (m_wFlags & enum_flag_HasFinalizer);
+        return (m_wFlags &enum_flag_HasFinalizer);
     }
 
     DWORD  CannotUseSuperFastHelper()
     {
-        return HasFinalizer() || IsLargeObject();
+        return HasFinalizer() || IsLargeObject() || HasRCFields();
     }
 
     DWORD  GetStaticSize();
@@ -675,6 +678,7 @@ public:
 
     static void         CallFinalizer(Object *obj);
     static void         InitForFinalization();
+    static void         FinalizeRefCountedFields(Object *obj);
 
     HRESULT InitInterfaceVTableMap();
 
@@ -891,6 +895,8 @@ enum
     VMFLAG_TRUEPRIMITIVE                   = 0x00004000,
     VMFLAG_HASOVERLAYEDFIELDS              = 0x00008000,
     VMFLAG_RESTORING                       = 0x00010000,
+
+    VMFLAG_HASRCFIELDS                     = 0x00020000,
 
 
 #if CHECK_APP_DOMAIN_LEAKS
@@ -1612,6 +1618,8 @@ public :
 
     BOOL   IsReferenceCounted();
     void   SetReferenceCounted();
+
+    BOOL   HasRCFields();
     
 
 #if CHECK_APP_DOMAIN_LEAKS
@@ -2315,6 +2323,11 @@ inline BOOL EEClass::IsReferenceCounted()
 inline void EEClass::SetReferenceCounted()
 {
     m_VMFlags |= VMFLAG_REFERENCECOUNTED;
+}
+
+inline BOOL EEClass::HasRCFields()
+{
+    return (m_VMFlags & VMFLAG_HASRCFIELDS);
 }
 
 

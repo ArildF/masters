@@ -21,3 +21,5 @@ testparameterpassing2=TestParameterPassing2.cs
 testreferencecount1=TestReferenceCount1.cs
 testfields=TestFields.cs
 teststaticfields=TestStaticFields.cs
+testgcfinalizer=TestGCFinalizer.cs
+testrcfinalizer=TestRCFinalizer.cs

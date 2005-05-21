@@ -511,7 +511,7 @@ void CallFinalizer(Object* obj)
                     obj = proxy;
                 }
             }           
-            _ASSERTE(pMT->HasFinalizer());
+            _ASSERTE(pMT->HasFinalizer() || pMT->HasRCFields());
             MethodTable::CallFinalizer(obj);
         }
         else

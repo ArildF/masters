@@ -4381,6 +4381,12 @@ HRESULT EEClass::InitializeFieldDescs(FieldDesc *pFieldDescList,
             }
         }
 
+        hr = ::IsRCField(bmtInternal->pInternalImport, bmtMetaData->pFields[i]);
+        if (hr == S_OK)
+        {
+            m_VMFlags |= VMFLAG_HASRCFIELDS;
+        }
+
         
         // Static fields are not packed
         if (IsFdStatic(dwMemberAttrs) && (dwLog2FieldSize < 2))
@@ -7187,6 +7193,8 @@ HRESULT EEClass::SetupMethodTable(bmtVtable* bmtVT,
     // we need to keep this information both in the EEClass and the MethodTable
     if (IsReferenceCounted())
         m_pMethodTable->SetReferenceCounted();
+    if (HasRCFields())
+        m_pMethodTable->SetHasRCFields();
     
     if (IsValueClass()) 
     {
@@ -8532,7 +8540,7 @@ void MethodTable::MaybeSetHasFinalizer()
             (GetVtable() [slot] != s_FinalizerMD->GetAddrofCode()))
         {
             m_wFlags |= enum_flag_HasFinalizer;
-        }
+        }        
     }
 }
 
@@ -8548,14 +8556,23 @@ void MethodTable::CallFinalizer(Object *obj)
         // starts new threads in the runtime.
         PAL_TRY
         {
+            if (obj->GetMethodTable()->HasFinalizer())
+            {
 #ifdef DEBUGGING_SUPPORTED
-            SLOT funcPtr = obj->GetMethodTable()->GetVtable() [s_FinalizerMD->GetSlot()];
-            if (CORDebuggerTraceCall())
-                g_pDebugInterface->TraceCall((const BYTE *) funcPtr);
+                SLOT funcPtr = obj->GetMethodTable()->GetVtable() [s_FinalizerMD->GetSlot()];
+                if (CORDebuggerTraceCall())
+                    g_pDebugInterface->TraceCall((const BYTE *) funcPtr);
 #endif // DEBUGGING_SUPPORTED
 
-            ARG_SLOT arg = PtrToArgSlot(obj);
-            s_FinalizerMD->Call(&arg);
+                ARG_SLOT arg = PtrToArgSlot(obj);
+                s_FinalizerMD->Call(&arg);
+            }
+
+            if (obj->GetMethodTable()->HasRCFields())
+            {
+                printf("Finalizing type with reference counted fields\n");
+                FinalizeRefCountedFields(obj);
+            }
         } 
         PAL_EXCEPT_FILTER(ThreadBaseExceptionFilter, (PVOID)FinalizerThread) 
         {
@@ -8583,6 +8600,30 @@ void MethodTable::InitForFinalization()
     s_FinalizerMD = g_Mscorlib.GetMethod(METHOD__OBJECT__FINALIZE);
 }
 
+// Call Release() on all reference counted fields
+void         MethodTable::FinalizeRefCountedFields(Object *obj)
+{
+    FieldDescIterator fdIterator(obj->GetClass(), FieldDescIterator::INSTANCE_FIELDS);
+    FieldDesc* curField;
+
+    // go through all the fields
+    while ((curField = fdIterator.Next()) != NULL)
+    {
+        // get the class for this type and check if it has RC fields
+        EEClass* fieldType = curField->FindType().AsClass();
+        if (fieldType->IsReferenceCounted())
+        {
+            OBJECTREF fieldObj = NULL;
+            curField->GetInstanceField(obj, (LPVOID)&fieldObj);
+
+            // release this object
+            if (fieldObj != NULL)
+            {
+                fieldObj->GetReferenceCountHeader()->Release();
+            }
+        }
+    }
+}
 
 // Release resources associated with supporting finalization
 

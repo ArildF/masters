@@ -794,7 +794,7 @@ OBJECTREF AllocateObjectSpecial( MethodTable *pMT )
 
     {   
         orObject = (Object *) Alloc(pMT->GetBaseSize(),
-                                    pMT->HasFinalizer(),
+                                    pMT->HasFinalizer() || pMT->HasRCFields(),
                                     pMT->ContainsPointers());
 
         // verify zero'd memory (at least for sync block)
@@ -807,7 +807,7 @@ OBJECTREF AllocateObjectSpecial( MethodTable *pMT )
             orObject->SetAppDomain(); 
         else
 #endif
-        if (pMT->HasFinalizer())
+        if (pMT->HasFinalizer() || pMT->HasRCFields())
             orObject->SetAppDomain(); 
 
 #ifdef PROFILING_SUPPORTED
@@ -869,7 +869,7 @@ OBJECTREF FastAllocateObject( MethodTable *pMT )
     _ASSERTE( GetThread()->PreemptiveGCDisabled() );
 
     orObject = (Object *) Alloc(pMT->GetBaseSize(),
-                                pMT->HasFinalizer(),
+                                pMT->HasFinalizer() || pMT->HasRCFields(),
                                 pMT->ContainsPointers());
 
     // verify zero'd memory (at least for sync block)
@@ -893,7 +893,7 @@ OBJECTREF FastAllocateObject( MethodTable *pMT )
         orObject->SetAppDomain(); 
     else
 #endif
-    if (pMT->HasFinalizer())
+    if (pMT->HasFinalizer() || pMT->HasRCFields())
         orObject->SetAppDomain(); 
 
     return( ObjectToOBJECTREF(orObject) );

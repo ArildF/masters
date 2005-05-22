@@ -8570,7 +8570,6 @@ void MethodTable::CallFinalizer(Object *obj)
 
             if (obj->GetMethodTable()->HasRCFields())
             {
-                printf("Finalizing type with reference counted fields\n");
                 FinalizeRefCountedFields(obj);
             }
         } 

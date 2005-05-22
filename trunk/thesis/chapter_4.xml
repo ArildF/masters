@@ -857,6 +857,8 @@ FJitResult FJit::emitParameterAddRefCalls() {
     
     <sect2>
       <title>Class fields</title>
+      <sect3>
+      <title>Assignments</title>
       <para>While dealing with local method/function variables and parameters
       was a pretty straightforward task, assignments to class fields also
       needed to be intercepted and dealt with. Unfortunately, this did not turn
@@ -1016,6 +1018,163 @@ emit_callhelper_I4(jitInfo->getHelperFtn(CORINFO_HELP_ADDREF));
       the stack frames are slightly different for static fields. The actual 
       code takes this into account and deals with static field assignments 
       properly.</para>
+      
+      </sect3>
+      
+      <sect3>
+        <title>Releasing class fields</title>
+        
+        <para>When an object of a reference counted type is destroyed, it 
+        should call <methodname>Release()</methodname> on all of its reference
+        counted fields (if it has any). It would also be beneficial if this
+        behavior could be achieved for objects of <quote>normal</quote> types;
+        types tracked by the tracing garbage collector.</para>
+        
+        <para>Achieving the former should be relatively simple; just go through
+        the values of any reference counted fields at the time of destruction 
+        and call <function>Release()</function> on them directly. Doing the 
+        latter requires some more thought. The main problem is that the garbage
+        collector really isn't - it does not <emphasis>collect</emphasis> 
+        garbage as much as it collects non-garbage and dumps the rest. This 
+        unfortunately (for me) means that objects that are garbage are not 
+        visited by the collector before they are disposed of, leaving no way
+        to decrement the reference counts on any fields held by the object.        
+        </para>
+        
+        <para>The approach I have chosen is to treat objects with reference 
+        counted fields as if they have a finalizer. The objects will then be
+        placed on the finalizer queue which gives us a way to to intercept them
+        and deal with them before they are disposed of. When the finalizer is 
+        eventually called, it will iterate over all the reference counted fields 
+        and decrement their reference counts one by one. This solution has the 
+        added benefit of being usable for both types of objects; for objects
+        controlled by the tracing GC the finalizer is called by the finalizer 
+        thread, and for reference counted objects the finalizer is called by 
+        the implementation of <methodname>Release()</methodname>.</para>
+        
+        <sect4>
+          <title>Discovering reference counted fields</title>
+          <para>In order to mark objects of types that have reference counted
+          fields as finalizable, it is necessary to discover exactly which 
+          types of objects this condition applies to. The natural place for 
+          performing such discovery is in the class loading mechanism.</para>
+          
+          <para>In the CLR, the binary layout of a type isn't decided by the 
+          front end compiler. This is in contrast to how traditional language
+          compilers work, where the binary layout of everything is hardcoded
+          into the resulting executable. Instead, the CLR lays out fields at runtime
+          when a type is initially loaded. This gives the execution engine a 
+          large amount of flexibility to choose a layout that is optimal for 
+          the environment in which the program is to run.<footnote><para>This 
+          obviously does not apply to structs that have explicit layout 
+          information associated with them. In the CLR, explicit layout of 
+          struct fields can be achieved using the 
+          <classname>StructLayout</classname> attribute.</para></footnote>
+          </para>
+          
+          <para>Laying out fields is handled by the 
+          <methodname>EEClass::InitializeFieldDescs()</methodname> method. I 
+          initially assumed it would just be a matter of checking the types of
+          the fields and querying their <classname>EEClass</classname> instance 
+          as to whether they are reference counted or not. Alas, it turned out
+          not to be that simple. At the time a type is loaded, you have no 
+          guarantee that the types of all of its fields are loaded as well. This
+          makes sense, since loading the types of all fields would cause a 
+          cascade of type loads. Instead, the 
+          class loading mechanism does without exact type information, relying 
+          only on information about field sizes to determine a type's binary
+           layout.</para>
+           
+           <para>Fortunately, it <emphasis>is</emphasis> possible to extract
+           a metadata token for the type of a field from the metadata token
+           for the field itself. Given a metadata token for the type, I can use
+           the same approach as I take to initially discover reference counted 
+           types. To extract this information from the field one needs to query
+           its <firstterm>signature</firstterm>. In the CLR, a signature is a
+           packed structure of binary data, which needs to be parsed in order 
+           to obtain the desired information. The SSCLI provides the 
+           <classname>SigPointer</classname> class to parse a signature. Given
+           a field signature that represents a reference to an object, the 
+           metadata token for the object type is the third item. When the 
+           metadata token has been acquired, I can merely delegate to the 
+           <function>IsReferenceCounted()</function> function I wrote earlier 
+           that determines whether the <classname>ReferenceCounted</classname>
+           attribute is applied to it.</para>
+           
+           <example>
+            <title>The <function>IsRCField()</function> function</title>
+            <programlisting><![CDATA[
+HRESULT IsRCField(IMDInternalImport* pInternalImport, mdFieldDef fd)	
+{	
+ 	ULONG size;	
+ 	PCCOR_SIGNATURE sig = pInternalImport->GetSigOfFieldDef(fd, &size);	
+
+ 	SigPointer sigptr(sig);	
+
+ 	// the first part of the sig defines the calling convention	
+ 	_ASSERTE(sigptr.GetData() == IMAGE_CEE_CS_CALLCONV_FIELD);	
+
+ 	// then comes the type	
+ 	CorElementType corType = (CorElementType)sigptr.GetData();	
+
+ 	// we only deal with class objects	
+ 	if (corType == ELEMENT_TYPE_CLASS)	
+ 	{	
+ 	    // next part of the signature is the metadata token for the field	
+ 	    mdTypeDef type = sigptr.GetToken();	
+ 	    return IsReferenceCounted(pInternalImport, type);	
+ 	}	
+ 	else	
+ 	    return S_FALSE;	
+}           
+            ]]></programlisting>
+           </example>
+           
+           <para>This function, <function>IsRCField()</function>, is called 
+           <methodname>InitializeFieldDescs()</methodname> for each field in 
+           a type. When a reference counted field is found, a flag is set in 
+           the <classname>EEClass</classname> and the 
+           <classname>MethodTable</classname> that indicates that the type has
+           one or more reference counted fields. This flag is then checked by
+           the tracing garbage collector when objects of the type are allocated
+           in order to determine if the new object should be placed on the
+           finalizer queue. If the flag is set, it gets placed on the 
+           queue regardless of whether it has other finalizer requirements. It
+           is then up to the <methodname>MethodTable::CallFinalizer()</methodname>
+           method to determine whether an object needs to perform traditional
+           finalizer tasks, decrement reference counts on fields or both.
+           </para>
+           
+           <para>For a reference counted type, 
+           <methodname>CallFinalizer()</methodname> calls the 
+           <methodname> MethodTable::FinalizeRefCountedFields()</methodname>
+           helper method. This method iterates over all the fields of the object
+           and calls <methodname>Release()</methodname> on any non-null reference
+           counted object:</para>
+           
+           <example>
+            <title><methodname>MethodTable::FinalizeRefCountedFields</methodname></title>
+            <programlisting><![CDATA[
+while ((curField = fdIterator.Next()) != NULL)	
+{	
+  // get the class for this type and check if it has RC fields	
+ 	EEClass* fieldType = curField->FindType().AsClass();	
+ 	if (fieldType->IsReferenceCounted())	
+ 	{	
+ 	    OBJECTREF fieldObj = NULL;	
+ 	    curField->GetInstanceField(obj, (LPVOID)&fieldObj);	
+
+ 	    // release this object	
+ 	    if (fieldObj != NULL)	
+ 	    {	
+ 	        fieldObj->GetReferenceCountHeader()->Release();	
+ 	    }	
+ 	}	
+}            
+            ]]></programlisting>
+           </example>
+        </sect4>
+      </sect3>
       
     </sect2>   
     

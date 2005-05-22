@@ -9,13 +9,13 @@
     projects of today, while equal in actual scope, are far more ambitious
     in their goals than those of the IBM OS/360 project to which Frederick 
     Brooks relates in his seminal work 
-    "The Mythical Man-Month"<xref linkend="brooks-1975"/>. While software 
-    engineering as a field is better understood now than it was in the
+    <quote>The Mythical Man-Month</quote><xref linkend="brooks-1975"/>. While
+    software engineering as a field is better understood now than it was in the
     mid-sixties, you will find few researchers in the field claiming that this
     understanding has kept up with the growth in the complexity of software 
     projects.</para>
     
-    <para>In fact, in a world where Visual Basic is one of the most popular
+    <para>In fact, in a world where Visual Basic remains one of the most popular
     programming languages, one can easily argue that the developer pool has a 
     larger portion of relatively unskilled programmers now than ever. Yet, 
     some of the software even from this segment has complexity requirements
@@ -25,25 +25,30 @@
     developers plays an important part in our society. </para>
     
     <para>While software engineering hasn't quite been able to meet
-    the expectations once held for it (one constantly sees figures of up
-    to 80% failure in software projects TODO), it is obvious that something
-    has enabled programmers to build more and more complex software. And if
-    this "something" isn't a vastly increased understanding of the art and 
-    science of software engineering, what is it?</para>
+    the expectations once held for it, it is obvious that something
+    has enabled programmers to build increasingly more complex software. And if
+    this <quote>something</quote> isn't a vastly increased understanding of the 
+    art and science of software engineering, what is it?</para>
     
-    <para>The answer is simple: the tools and languages we use today
-    are orders of magnitude better than what the developers under Brooks
+   <para>The answer is complex and probably worth of a thesis or two of its
+    own, but one thing is certain: the tools and languages we use today are
+    orders of magnitude better than what the developers under Brooks
     had available. OS/360 was written wholly in assembly code, which was
     (and still is) hard to write and debug, mainly because of its lack of
-    abstraction and its conceptual distance from the problem domain.</para>
+    abstraction and its conceptual distance from the problem domain. Fred 
+    Brooks himself mentioned the advent of higher level programming languages
+    as one of the things most likely to advance the field of software 
+    engineering <footnote><para>Likewise, in his retrospective essay 
+    <quote>No Silver Bullet</quote><xref linkend="brooks-1987"/>, he 
+    mentions object-oriented programming as one of the things that indeed came 
+    closest to being a <quote>silver bullet</quote>.</para></footnote>.</para>
     
-    <para>In contrast, we have today at our disposal a vast array
-    of very high level languages. Languages like Visual Basic, Python, Java
-    and C# maintain a high level of abstraction from the actual hardware, and
-    often come with massive standard libraries that enables the developer
-    to focus on the core functionality of his application, rather than 
-    constantly having to reinvent the wheel. 
-    </para>
+    <para>In contrast to the situation in Brooks' day, we currently have at our
+    disposal a vast array of very high level languages. Languages like Visual
+    Basic, Python, Java and C# maintain a high level of abstraction from the
+    actual hardware, and often come with massive standard libraries that
+    enables the developer to focus on the core functionality of his
+    application, rather than constantly having to reinvent the wheel. </para>
     
     <para>While the availability of high quality standard libraries go a long
     way in explaining the increased productivity of todays' developers, it is 

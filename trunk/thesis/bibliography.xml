@@ -3,7 +3,8 @@
 
 
   <biblioentry id="brooks-1975">
-    <title>The Mythical Month: Essays on software engineering</title>
+    <title>The Mythical Month</title>
+    <subtitle>Essays on Software Engineering</subtitle>
     
     <author>
       <firstname>Frederick</firstname>
@@ -11,6 +12,18 @@
     </author>
     
     <pubdate>1975</pubdate>    
+  </biblioentry>
+  
+  <biblioentry id="brooks-1987">
+    <title>No Silver Bullet</title>
+    <subtitle>Essence and Accidents of Software Engineering</subtitle>
+    
+    <author>
+      <firstname>Frederick</firstname>
+      <surname>Brooks</surname>
+    </author>
+    <publisher>Computer Magazine</publisher>
+    <pubdate>1987</pubdate>    
   </biblioentry>
   
   <biblioentry id="mccarthy-1960">
@@ -26,6 +39,13 @@
   
   <biblioentry id="python-language">
     <title><ulink url="http://www.python.org">www.python.org</ulink></title>
+  </biblioentry>
+  
+  <biblioentry id="marner-2002">
+    <title><ulink url="http://www.rolemaker.dk/articles/evaljava/">
+    Evaluating Java for Game Development</ulink></title>
+    
+    <pubdate>March 4, 2002</pubdate>     
   </biblioentry>
   
   <biblioentry id="ecma-334">

@@ -85,6 +85,9 @@ make chunked-html"
 				RelativePath=".\chapter_5.xml">
 			</File>
 			<File
+				RelativePath=".\chapter_6.xml">
+			</File>
+			<File
 				RelativePath=".\description.xml">
 			</File>
 			<File

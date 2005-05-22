@@ -7,6 +7,7 @@
 <!ENTITY chapter_3 SYSTEM "chapter_3.xml">
 <!ENTITY chapter_4 SYSTEM "chapter_4.xml">
 <!ENTITY chapter_5 SYSTEM "chapter_5.xml">
+<!ENTITY chapter_6 SYSTEM "chapter_6.xml">
 <!ENTITY bibliography SYSTEM "bibliography.xml">
 ]>
 <book id="thesis">
@@ -36,6 +37,8 @@
   &chapter_4;
   
   &chapter_5;
+  
+  &chapter_6;
   
   &bibliography;
     

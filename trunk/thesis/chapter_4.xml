@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<chapter id="chapter_3">
+<chapter id="chapter_4">
   <title>The Shared Source CLI (Rotor)</title>
   
-  <sect1 id="chapter_3-sect-1">
+  <sect1 id="chapter_4-sect-1">
     <title>ECMA 335</title>
     <para>In August 2000, while developing their new architecture known as .NET,
     Microsoft decided to submit the specification of the runtime engine and
@@ -22,7 +22,7 @@
     </blockquote>
   </sect1>
   
-  <sect1 id="chapter_3-sect-2">
+  <sect1 id="chapter_4-sect-2">
     <title>Rotor</title>
     <para>The Shared Source Common Language Infrastructure, or 
     <firstterm>Rotor</firstterm>, is an implementation of ECMA 335 and 
@@ -62,7 +62,7 @@
     then be natural to use the Rotor C# compiler as a starting point.</para>        
   </sect1>
   
-  <sect1 id="chapter_3-sect-3">
+  <sect1 id="chapter_4-sect-3">
     <title>The Rotor source code</title>
     
     <para>The SSCLI is a rather large piece of software (or perhaps a large 
@@ -75,7 +75,7 @@
     <para>As a reference for later, I will here describe the most 
     important directories in the distribution.</para>
     
-    <figure id="chapter_3-fig-1">
+    <figure id="chapter_4-fig-1">
       <title>The top level layout of the SSCLI source tree.</title>
       <mediaobject>
         <imageobject>
@@ -158,7 +158,7 @@
     </variablelist>   
   </sect1>
   
-  <sect1 id="chapter_3-sect-4">
+  <sect1 id="chapter_4-sect-4">
     <title>The SSCLI type system</title>
       <para> The CLR's type system reflects the fact that it is targetted
       primarily (but not exclusively) towards object-oriented languages. It
@@ -224,7 +224,7 @@ class Object
         <quote>hidden</quote> field associated with each object, located at a
         <emphasis>negative</emphasis> offset from the object itself:</para>
         
-        <figure id="chapter_3-fig-2">
+        <figure id="chapter_4-fig-2">
           <title>Runtime layout of object types</title>
           <mediaobject>
             <imageobject>

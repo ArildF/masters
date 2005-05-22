@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<chapter id="chapter_4">
+<chapter id="chapter_5">
   <title>The implementation</title>
   
-  <sect1 id="chapter_4-sect-1">
+  <sect1 id="chapter_5-sect-1">
     <title>Introducing reference counting into the CLR</title>
     
     <para>Obviously, the Rotor code base is largely built around the assumption
@@ -14,7 +14,7 @@
     side.
     </para>
     
-    <sect2 id="chapter_4-sect-1.1">
+    <sect2 id="chapter_5-sect-1.1">
       <title>Telling the runtime about reference counted types</title>
       <para>If the runtime is going to support both reference counted and types
       tracked by a classic garbage collector simultaneously, there needs to be 
@@ -44,7 +44,7 @@
       existing CLI languages already know how to produce and consume custom
       attributes.</para>
       
-      <sidebar id="chapter_4-sidebar-1">
+      <sidebar id="chapter_5-sidebar-1">
         <title>Metadata in the CLR</title>
         <para>The CLR's type system, the <firstterm>Common Type 
         System</firstterm>, is centered around the concept of 
@@ -182,7 +182,7 @@ public class Derived : Base
     </sect2>
   </sect1>
   
-  <sect1 id="chapter_4-sect-2">
+  <sect1 id="chapter_5-sect-2">
     <title>Modifying the class loading process</title>
     <para>Now, with that attribute in place, the information about whether a
     given class should be reference counted gets embedded into the assembly as
@@ -196,7 +196,7 @@ public class Derived : Base
     and all, but ultimately worthless unless the execution engine itself 
     detects the attribute and acts on it.</para>
     
-    <sect2 id="chapter_4-sect.2.1"> 
+    <sect2 id="chapter_5-sect.2.1"> 
       <title>The SSCLI class loader</title>
     
       <para>Loading a new type into the runtime is a quite involved process, and 
@@ -228,13 +228,13 @@ public class Derived : Base
       is then used by the runtime to create instances of the type.</para>    
     </sect2>
     
-    <sect2 id="chapter_4-sect.2.2">
+    <sect2 id="chapter_5-sect.2.2">
       <title>Detecting reference counted types</title>
       <para>In order to determine whether a type is reference counted, I need
       to check whether the <classname>ReferenceCounted</classname> attribute is
       present on that type. </para>
       
-      <sect3 id="chapter_4-sect.2.2.1">
+      <sect3 id="chapter_5-sect.2.2.1">
         <title>The SSCLI metadata APIs</title>
         <para>The SSCLI provides an API that allows you to manipulate, emit and 
         inspect the metadata for an API. This API is public and intended for use
@@ -506,7 +506,7 @@ if (pMT->IsReferenceCounted())
     that. This means that the actual runtime layout of a reference counted 
     object on the reference counted heap ends up looking like this:</para>
     
-    <figure id="chapter_4-fig-1">
+    <figure id="chapter_5-fig-1">
       <title>Runtime layout of reference counted types</title>
       <mediaobject>
         <imageobject>

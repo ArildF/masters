@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<chapter id="chapter_2">
+<chapter id="chapter_3">
   <title>Garbage collection in the CLR</title>
-  <sect1 id="chapter_2-sect-1">
+  <sect1 id="chapter_3-sect-1">
     <para>The ECMA standard that defines the Common Language Runtime is 
     remarkably silent on the subject of garbage collection. Volume 1, 
     Architecture<xref linkend="ecma-vol-1"/> only mentions the term
@@ -32,7 +32,7 @@
     collector, as described in the previous chapter.</para>
   </sect1>
   
-  <sect1 id="chapter_2-sect-2">
+  <sect1 id="chapter_3-sect-2">
     <title>Finalization</title>
     <para>A large number of .NET classes hold onto resources beyond the actual 
     memory they occupy in the managed heap. For example, the .NET 
@@ -46,7 +46,7 @@
     system has a limited number of them, and it is important that code that
     acquires such a resource also releases it in a timely fashion.</para>    
     
-    <sect2 id="chapter_2-sect-2-1">
+    <sect2 id="chapter_3-sect-2-1">
       <title><function>Finalize()</function></title>
       <para>To ensure these kinds of resources can be released, the CLR 
       <classname>Object</classname> type declares a virtual method called 
@@ -91,7 +91,7 @@ public class Brush
       </programlisting></example>
     </sect2>
     
-    <sect2 id="chapter_2-sect-2-2">
+    <sect2 id="chapter_3-sect-2-2">
       <title>The finalizer queue</title>
       <para>When a GC heap is collected, objects that have a finalizer are
       <emphasis>not</emphasis> collected right away. Instead they are put in a
@@ -123,7 +123,7 @@ public class Brush
       remaining ones from running by taking too long to execute. </para>      
     </sect2>
     
-    <sect2 id="chapter_2-sect-2-3">
+    <sect2 id="chapter_3-sect-2-3">
       <title>The IDisposable pattern</title>      
       <para>As the previous section describes, relying on the finalizer to 
       take care of your external resources has some drawbacks: it is 

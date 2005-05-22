@@ -4,6 +4,7 @@
   <title>Introduction</title>
   
   <sect1 id="chapter_1-sect-1">
+    <title>The complexity of software</title>
     <para>Computer software is getting more and more complex. Software 
     projects of today, while equal in actual scope, are far more ambitious
     in their goals than those of the IBM OS/360 project to which Frederick 
@@ -53,7 +54,7 @@
     backing memory has been freed<footnote><para>This is commonly referred
     to as a "dangling" pointer.</para></footnote>?), and tracking down these
     bugs can take up an inordinate amount of developer time, especially in more
-    complex software. The newer languages basically makes this a non-issue by
+    complex software. The newer languages basically make this a non-issue by
     handling the allocation and de-allocation of memory in the language
     runtime, thus relieving the developer of this rather tedious burden.</para> 
     
@@ -70,6 +71,126 @@
      most low-level of development tasks (operating systems, drivers, 3D graphics 
      engines etc.) And the higher level languages all invariably support 
      automatic memory management.</para>       
-  </sect1>    
+  </sect1>  
+  
+  <sect1>
+    <title>The Common Language Runtime</title>
+    <para>Enter the Common Language Runtime (CLR): A rich execution engine that
+    provides services and support for a wide variety of computer languages,
+    ranging from low level ones, such as C and C++, to very high level languages
+    such as IronPython, Nemerle and Boo. However, any language that targets the
+    CLR is pretty much confined to the memory model provided by the execution 
+    engine. </para>
+    
+    <para>This model, based on a tracing garbage collector, is in its very 
+    nature undeterministic: it provides no guarantees as to when an object 
+    will be marked as garbage and disposed of. If the object holds onto 
+    resources not related to memory, such as file handles and other items in
+    scarce supply, disposing of an object at the earliest possible moment 
+    might be crucial in order to attain the maximum possible performance.</para>
+    
+    <para>To illustrate, an example might be in order:</para>
+    <example>
+      <title>Memory pressure</title>
+      <programlisting><![CDATA[
+for (int i = 0; i < 42000; i++)
+{
+   LargeObject obj = new LargeObject();
+   obj.DoStuff();
+}      
+      ]]></programlisting>      
+    </example>   
+    
+    <para>In the above code, 42000 instances of the 
+    <classname>LargeObject</classname> is created inside a tight loop. Now, what 
+    happens at the end brace? Is the object created inside the loop disposed of,
+    releasing the memory allocated and any unmanaged resources associated with 
+    it? In the CLR, the answer is no. New instances of <classname>LargeObject</classname> 
+    will continue to be allocated, but the old ones will linger up until the
+    time when the garbage collector runs out of space to allocate the new
+    ones.</para> 
+    
+    <para>If <quote>Large</quote> in <classname>LargeObject</classname> does 
+    not refer to the actual amount of heap memory allocated for the object, but
+    another resource held by it, this might take a long time. Consider the case
+    where you have a class like this:</para> 
+    
+    <example>
+      <title>A type holding onto an expensive unmanaged resource</title>
+      <programlisting><![CDATA[
+class LargeObject
+{
+  Foo()
+  {
+    this.expensiveUnmanagedResource = AcquireResource();
+  }
+  
+  ~LargeObject()
+  {
+     FreeResource(this.expensiveUnmanagedResource);
+  }
+  
+  // ...
+  
+  private IntPtr expensiveUnmanagedResource; 
+ 
+} 
+
+      ]]></programlisting>      
+    </example>   
+    <para>In this case, objects of the <classname>LargeObject</classname> type
+    only occupy 4 bytes of heap memory, plus whatever memory is required for 
+    internal bookkeeping by the execution engine. We will assume the latter 
+    number is 8 bytes, leaving us with 12 bytes per object. Now, the garbage 
+    collector should be able to allocate 42000 * 12 = 504 000 bytes on the heap
+    without even breaking a sweat, and a garbage collection might not occur at
+    all in the timeframe of the loop. But this does not take into account the
+    cost of the unmanaged resource. If
+    <structfield>expensiveUnmanagedResource</structfield> represents a file
+    handle, the underlying operating system will run out of these a long time
+    before the garbage collector runs out of memory on one of its heaps.</para>
+    
+    <para>I will in this thesis investigate the feasibility of introducing a 
+    hybrid model of memory management in the CLR, one in which certain objects
+    can be tracked by a reference counting mechanism instead of the tracing 
+    garbage collector. If <classname>LargeObject</classname> was managed by
+    reference counting instead of the CLR's garbage collector, each instance
+    would be destroyed and its unmanaged resource released at the end of each
+    iteration of the loop.</para>
+    
+    <para>The reason for choosing a hybrid model over a pure reference counted
+    mechanism lies in the fact that reference counting implementations have 
+    drawbacks of their own: they can be inefficient in terms of execution time 
+    and memory, and they do not handle cycles (in which an object directly or
+    indirectly holds a reference to itself) well. There are existing languages
+    that use a hybrid mechanism, of which the most notable is the Python 
+    programming language<xref linkend="python-language"/>, but the 
+    implementation aimed for in this paper differs from these in that the 
+    tracing garbage collector will remain the primary memory management 
+    mechanism, leaving reference counting for specific scenarios in which they
+    are generally useful.</para>
+    
+    <para>Another reason for going with a hybrid is the number of implicit 
+    assumptions made in the CLR regarding the memory model. For example, there
+    is a class in the <firstterm>Base Class Libraries</firstterm> named 
+    <classname>GC</classname>, which allows the programmer to have some control
+    over the tracing garbage collector directly. To completely replace the 
+    memory management model of the CLR would require either removing this 
+    class entirely (which would technically violate the ECMA standard 
+    describing the CLR) or making its methods into no-ops.</para>
+    
+    <para>The primary vehicle for the implementation of such a mechanism in 
+    the CLR will be the <firstterm>Shared Source CLI</firstterm> (SSCLI), a
+    source implementation of the CLR released by Microsoft. My thesis will
+    focus on determining which changes need to be made to the SSCLI in order to
+    support an hybrid memory management model as described above. </para>
+    
+    <para>The SSCLI consists of a large amount of code, and considerable time
+    will have to be spent in getting acquainted with it in order to complete
+    this implementation. This paper will therefore describe the workings of the
+    SSCLI in some detail, as well as going into the workings of the current 
+    tracing garbage collector in some detail.</para>
+    
+  </sect1>  
   
 </chapter>

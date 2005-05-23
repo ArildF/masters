@@ -76,7 +76,7 @@
       need for more and more (and bigger!) objects in even small programs, but
       Jacob Marner makes a good case<xref linkend="marner-2002"/> for why it is
       perfectly conceivable to use a garbage collected language like Java for a
-      soft real-time application like a 3D computer game.</para>
+      soft real-time application such as a 3D computer game.</para>
     </sect2>
     
     
@@ -113,17 +113,18 @@
         memory allocation function like <function>malloc()</function> has: the
         memory heap used for the allocations will get fragmented, and it requires
         quite a lot of bookkeeping merely to keep track of the occupied and vacant
-        areas of the heap. New allocations will have to search through the heap
-        in order to find a section of memory large enough to accommodate the 
-        request. In some cases, there may not be a single segment in the heap 
-        large enough to fit the new object even if the total available amount of
-        memory far exceeds the demands.</para>
+        areas of the heap. New allocations will have to search through a set of lookup
+        tablesin order to find a section of memory large enough to accommodate
+        the request. In some cases, there may not be a single segment in the
+        heap large enough to fit the new object even if the total available
+        amount of memory far exceeds the demands. This is called 
+        <firstterm>fragmentation</firstterm>.</para>
       
         <sect4 id="chapter_2-sect-1.3.1.1">
         
         <title>Compacting garbage collectors</title>
         
-        <para>For this reason, most real garbage collectors also <firstterm>
+        <para>For this reason, garbage collectors in actual use also <firstterm>
           compact</firstterm> the heap when performing a garbage collection. Heap
           compaction in this context means that all <emphasis>live</emphasis>
           objects are copied to and placed together in a single continuous
@@ -134,10 +135,13 @@
           value of this pointer and incrementing it. A <function>new</function>
           statement then merely becomes a pointer increment. This is orders of
           magnitude faster than a traditional <function>malloc()</function>
-          implementation.</para> <para>This scheme also has the added benefit of
-          increased locality. Related objects will be placed close to each other
-          in memory, something that makes it far more likely that the processor
-          can maintain them in one of its caches.</para>
+          implementation.</para> 
+          
+          <para>Such a scheme also has the added benefit of
+          increased locality (although this is dependent on the exact details
+          of the compaction algorithm). Related objects will tend to be placed
+          close to each other in memory, something that makes it far more
+          likely that the processor can maintain them in one of its caches.</para>
         
         </sect4>
         
@@ -152,13 +156,14 @@
           
           <para>A generational garbage collector exploits the fact that most 
           objects have a relatively short life. To do this, it divides the heap
-          into 2 or more <firstterm>generations</firstterm>. Objects are 
-          initially allocated in the first generation. If an object survives a
-          garbage collection, it is copied or <firstterm>promoted</firstterm> 
-          into the next generation. When working in this manner, it can restrict
-          garbage collection runs to a single generation, which can be collected
-          very quickly. Full garbage collections, spanning all generations, 
-          only need to be performed every once in a while.</para>
+          into two or more <firstterm>generations</firstterm>. Objects are 
+          initially allocated in the heap belonging to the first generation. If
+          an object survives a garbage collection, it is copied or
+          <firstterm>promoted</firstterm> into the next higher generation. When
+          working in this manner, the collector can restrict garbage collection
+          runs to a single generation, which can be collected very quickly.
+          Full garbage collections, spanning all generations, only need to be
+          performed every once in a while.</para>
         
         </sect4>
         
@@ -187,15 +192,15 @@
       <sect3 id="chapter_2-sect-1.3.2">
         <title>Reference counting</title>
         <para>Another form of garbage collection, although not commonly referred
-        to as such, is <firstterm>reference counting.</firstterm> In this scheme, 
+        to as such, is <firstterm>reference counting.</firstterm> In this mechanism, 
         each object maintains a count of how many other objects are referring to 
         it. For every time another object obtains a reference to this object, the
         other object is responsible for incrementing this count. Likewise, each
-        time a reference goes out of scope or the object is no longer needed, 
-        this count needs to be decremented by one.</para>
+        time a reference to a reference counted object goes out of scope or the
+        object is no longer needed, this count needs to be decremented by one.</para>
         
-        <para>Obviously, this mechanism breaks down in the case where two 
-        objects reference one another, either directly or indirectly. This is 
+        <para>Obviously, this mechanism breaks down in the case where one  
+        object reference itself, either directly or indirectly. This is 
         called a <firstterm>cycle</firstterm>. Traditional reference counting 
         mechanisms are unable to deal with this case. Languages and environments
         depending on reference counting either supplement the mechanism with a 
@@ -223,8 +228,8 @@
   
     <title>Advantages and disadvantages of the two models</title>
     <para>Obviously, the two schemes of automatic memory management both have 
-    their benefits and disadvantages (otherwise, there wouldn't be two 
-    disparate models in the first place!).</para>
+    their benefits and disadvantages (otherwise, there wouldn't really be a need 
+    for two disparate models in the first place!).</para>
     
     <para>Advantages of tracing garbage collectors include:</para>
     
@@ -243,14 +248,17 @@
       <varlistentry>
         <term>Locality of reference</term>
         <listitem>
-          <para>The allocation strategies of most implementations of garbage 
-          collectors (allocating a new object is often just a matter of 
+          <para>The allocation strategies of most implementations of tracing
+          garbage collectors (allocating a new object is often just a matter of
           incrementing a pointer) will usually lead to related objects being
-          located close to one another in memory. This leads to a greater 
+          located close to one another in memory. This leads to a greater
           chance of objects being in the CPU's cache when accessing them from
-          methods of other objects, as well as reducing the program's working 
-          set and reducing the number of page faults associated with the 
-          program.</para>
+          methods of other objects, as well as reducing the program's working
+          set and reducing the number of page faults associated with the
+          program.</para> 
+          
+          <para>These benefits are highly dependent on factors such as the
+          exact allocation and compaction mechanisms chosen, though.</para>
         </listitem>
       </varlistentry>
     
@@ -263,15 +271,17 @@
       <varlistentry>
         <term>No deterministic destruction</term>
         <listitem>
-          <para>It is not possible to determine <emphasis>when</emphasis> an
+          <para>It is usually not possible to determine <emphasis>when</emphasis> an
           object under the control of a garbage collector is destroyed. In
           quite a few cases, such objects hold onto external resources such as
           files, operating system synchronization primitives, window handles
           etc... Some of these resources are in short supply, and should be
-          disposed of as soon as possible. It is then obvious that we cannot 
-          rely on the garbage collector to release these for us in a timely 
-          fashioon, necessitating an explicit <function>Close()</function> or
-          <function>Dispose()</function> method.</para>
+          disposed of as soon as possible.</para>
+          
+          <para>Programmers cannot then rely on the garbage collector to release 
+          these resources in a timely. They are thus forced to provide an explicit 
+          <function>Close()</function> or <function>Dispose()</function> method 
+          on types with non-trivial finalization requirements.</para>
         </listitem>
       </varlistentry>
       
@@ -326,7 +336,9 @@
         <listitem>
           <para>Every reference counted object needs to have a field
           containing the reference count. In most cases this implies an 
-          overhead of 4 bytes per object.</para>
+          overhead of 4 bytes per object. For environments in which a large
+          number of small objects is the norm, this can amount to quite a bit
+          of overhead.</para>
         </listitem>
       </varlistentry>
       
@@ -340,7 +352,30 @@
           doing collections in a tracing collector.</para>
         </listitem>
       </varlistentry>
+      
+      <varlistentry>
+        <term>Unable to deal with cycles</term>
+        <listitem>
+          <para>A simple reference counting mechanism cannot deal with the
+          case where an object direcly or indirectly contains a reference to 
+          itself:</para>
+          
+          <figure id="chapter_2-fig-1">
+            <title>A reference count cycle</title>
+            <mediaobject>
+              <imageobject>
+                <imagedata fileref="refcountcycle.png" format="png"/> 
+              </imageobject> 
+            </mediaobject>
+          </figure>
+          
+          <para>For this reason, environments using reference counting either
+          prohibit reference cycles altogether or supplement reference counting
+          with a tracing garbage collector. TODO: find more references here</para>
+        </listitem>
+      </varlistentry>
     </variablelist>
+    
   </sect1>
 
 </chapter>

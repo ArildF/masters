@@ -8608,6 +8608,10 @@ void         MethodTable::FinalizeRefCountedFields(Object *obj)
     // go through all the fields
     while ((curField = fdIterator.Next()) != NULL)
     {
+        // we only need to deal with class types
+        if (curField->GetFieldType() != ELEMENT_TYPE_CLASS)
+            continue;
+
         // get the class for this type and check if it has RC fields
         EEClass* fieldType = curField->FindType().AsClass();
         if (fieldType->IsReferenceCounted())

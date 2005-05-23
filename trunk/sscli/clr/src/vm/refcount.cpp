@@ -106,23 +106,21 @@ void ReferenceCountedHeap::Free(void* ptr)
 }
 
 ULONG ReferenceCountHeader::AddRef()
-{
-    m_RefCount++;
-    return m_RefCount;
+{    
+    return InterlockedIncrement(&m_RefCount);;
 }
 
 ULONG ReferenceCountHeader::Release()
 {
-    m_RefCount--;
-    int refcount = m_RefCount;
+    ULONG refcount;
 
-    if (m_RefCount <= 0)
+    if ((refcount = InterlockedDecrement(&m_RefCount)) == 0)
     {
         RCLogFree(GetObject()->GetMethodTable(), GetObject());
 
         // finalize if we have a finalizer
         Finalize();
-
+ 
         // free memory associated with the object
         g_pRCHeap->Free(this);
     }

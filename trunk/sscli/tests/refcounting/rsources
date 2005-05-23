@@ -23,3 +23,4 @@ testfields=TestFields.cs
 teststaticfields=TestStaticFields.cs
 testgcfinalizer=TestGCFinalizer.cs
 testrcfinalizer=TestRCFinalizer.cs
+testconcurrency=TestConcurrency.cs

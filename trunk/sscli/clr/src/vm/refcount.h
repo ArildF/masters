@@ -31,7 +31,7 @@ public:
     Object* GetObject();
 private:
     void Finalize();
-    int m_RefCount;
+    LONG m_RefCount;
 };
 
 OBJECTREF RCAllocateObject( MethodTable* pMT );

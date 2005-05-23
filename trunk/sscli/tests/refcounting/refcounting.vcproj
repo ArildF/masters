@@ -40,6 +40,9 @@
 			RelativePath=".\TestBasic.cs">
 		</File>
 		<File
+			RelativePath=".\TestConcurrency.cs">
+		</File>
+		<File
 			RelativePath=".\TestDestructor.cs">
 		</File>
 		<File

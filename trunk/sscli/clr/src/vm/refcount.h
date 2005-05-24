@@ -21,9 +21,9 @@ public:
     ReferenceCountHeader() : m_RefCount(0)
     {;}
 
-    ULONG AddRef();
-    ULONG Release();
-    ULONG ReferenceCount()
+    LONG AddRef();
+    LONG Release();
+    LONG ReferenceCount()
     {
         return m_RefCount;
     }

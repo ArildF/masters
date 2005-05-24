@@ -32,7 +32,7 @@ inline void RCLogAlloc(MethodTable *pMT, Object* object)
 #endif
 }
 #else
-#define RCLogAlloc(size, pMT, object)
+#define RCLogAlloc(pMT, object)
 #endif
 
 #ifdef  _DEBUG
@@ -57,7 +57,7 @@ inline void RCLogFree(MethodTable *pMT, Object* object)
 #endif
 }
 #else
-#define RCLogFree(size, pMT, object)
+#define RCLogFree(pMT, object)
 #endif
 
 //This function clears a piece of memory
@@ -105,14 +105,14 @@ void ReferenceCountedHeap::Free(void* ptr)
     m_Heap->Free(ptr);
 }
 
-ULONG ReferenceCountHeader::AddRef()
+LONG ReferenceCountHeader::AddRef()
 {    
     return InterlockedIncrement(&m_RefCount);;
 }
 
-ULONG ReferenceCountHeader::Release()
+LONG ReferenceCountHeader::Release()
 {
-    ULONG refcount;
+    LONG refcount;
 
     if ((refcount = InterlockedDecrement(&m_RefCount)) == 0)
     {

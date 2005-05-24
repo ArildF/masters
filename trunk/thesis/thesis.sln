@@ -8,6 +8,7 @@ Global
 		Chunked HTML = Chunked HTML
 		HTML = HTML
 		PDF = PDF
+		PS = PS
 		Release = Release
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
@@ -17,6 +18,8 @@ Global
 		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.HTML.Build.0 = HTML|Win32
 		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.PDF.ActiveCfg = PDF|Win32
 		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.PDF.Build.0 = PDF|Win32
+		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.PS.ActiveCfg = PS|Win32
+		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.PS.Build.0 = PS|Win32
 		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.Release.ActiveCfg = Release|Win32
 		{AAF9CF8F-A91A-4FB6-A274-9B449497A752}.Release.Build.0 = Release|Win32
 	EndGlobalSection

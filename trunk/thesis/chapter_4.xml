@@ -4,9 +4,13 @@
   
   <sect1 id="chapter_4-sect-1">
     <title>ECMA 335</title>
-    <para>In August 2000, while developing their new architecture known as .NET,
+    <para>In August 2000, while developing their new architecture known at that
+    time as the <firstterm>Next Generation Windows Services</firstterm>,
     Microsoft decided to submit the specification of the runtime engine and
-    the new C# language to the European Computer Manufacturers' Association. These
+    the new C# language (which at that time was known by its internal codename,
+    <quote>Cool</quote><footnote><para>Thus the t-shirts with the text 
+    <quote>C# is Cool</quote></para></footnote>) to the European Computer 
+    Manufacturers' Association for standardization. These
     two elements of .NET were ratified by ECMA as ECMA standards 334
     <xref linkend="ecma-334"/> and 335<xref linkend="ecma-335"/> in December 2001;
     ECMA-334 describing the C# language and ECMA-335 describing the execution 
@@ -20,13 +24,17 @@
       the application to take into consideration the unique characteristics 
       of those environments.</para>
     </blockquote>
+    
+    <para>The CLR was also ratified by ISO as a standard, after having gone 
+    through the organization's fast track standardization process.</para>
   </sect1>
   
   <sect1 id="chapter_4-sect-2">
     <title>Rotor</title>
-    <para>The Shared Source Common Language Infrastructure, or 
-    <firstterm>Rotor</firstterm>, is an implementation of ECMA 335 and 
-    ECMA-335 in source form, released by Microsoft in 2002. Rotor contains 
+   <para>The Shared Source Common Language Infrastructure (also affectionately
+    known as <firstterm>Rotor</firstterm>, the internal code name for the
+    project at Microsoft) is an implementation of the ECMA-334 and ECMA-335
+    standards released by Microsoft in 2002 in source form. Rotor contains
     source code for a large set of libraries, tools and compilers, including
     the JIT compiler and the virtual machine.</para>
     
@@ -39,9 +47,6 @@
     libraries outside the scope of the standard such as the ASP.NET web
     framework and the Windows Forms GUI toolkit are not included.</para> 
     
-    <para>This text will henceforth use the terms <quote>Rotor</quote> and 
-    <quote>SSCLI</quote> interchangeably.</para>
-    
     <para>Rotor is provided under a so called <quote>Shared Source</quote> 
     license. This license prohibits any form of commercial use of the libraries
     and tools provided. The stated purpose of Rotor is to serve as an educational 
@@ -53,13 +58,14 @@
     helpful to know that any modifications made to the SSCLI will most likely
     work on the commercial runtime. </para>
     
-    <para>Rotor also contains source code for a C# compiler, implementing
-    the ECMA-334<xref linkend="ecma-334"/> standard. The implementation
-    of reference counting described in this text does not require compiler
-    support, and the compiler will not be covered any further. A potential
-    future expansion on the ideas presented here might also include direct
-    language support (syntactic sugar) for reference counting, and it would 
-    then be natural to use the Rotor C# compiler as a starting point.</para>        
+    <para>Rotor also contains source code for a C# compiler, implementing the
+    ECMA-334<xref linkend="ecma-334"/> standard. In my implementation of
+    reference counting, I have avoided strategies that required support from
+    the language compilers, and the implementation of the compiler will thus
+    not be described further. It would be natural to use the Rotor C# compiler
+    as a starting point if future work on the ideas presented here include
+    introducing direct language support (syntactic sugar) for reference
+    counting.</para> 
   </sect1>
   
   <sect1 id="chapter_4-sect-3">
@@ -96,7 +102,10 @@
         from the build process. There can be several subdirectories beneath 
         <filename>build</filename>, one for each build configuration (one of
         <property>checked</property>, <property>fastchecked</property> or
-        <property>free</property>.</listitem></varlistentry>
+        <property>free</property>. Each of these subdirectories (if created as 
+        the result of a build) will contain a full implementation of the CLR, 
+        with varying support for debugging and logging.</listitem>
+      </varlistentry>
       
       <varlistentry>
         <term><filename>/pal</filename></term>
@@ -160,21 +169,20 @@
   
   <sect1 id="chapter_4-sect-4">
     <title>The SSCLI type system</title>
-      <para> The CLR's type system reflects the fact that it is targetted
+      <para> The CLR's type system reflects the fact that it is targeted
       primarily (but not exclusively) towards object-oriented languages. It
       supports two main categories of types:</para>
-      <para>XXX: This section is taken a verbo from the generics essay</para>
       <variablelist>
           <varlistentry><term>objects</term>
               <listitem>Object types are always allocated on the heap. Any
               representation of an object as a local variable merely consists
-              of a pointer to the object. In addition to the instance data, 
-              an object also contains a pointer to a 
-              <firstterm>method table</firstterm>(used for dispatching virtual
-              methods) and a <firstterm>sync block.</firstterm>The latter is 
+              of a pointer to the object. Objects thus have reference semantics. 
+              In addition to the instance data, an object also contains a pointer to a 
+              <firstterm>method table</firstterm> (used for dispatching virtual
+              methods) and a <firstterm>sync block</firstterm>. The latter is 
               used for thread synchronization, for example with the C# keyword
-              <token>lock</token>. These two pointers give each allocated 
-              heap object an overhead of 8 bytes(on a 32 bit platform).
+              <function>lock</function>. These two pointers give each allocated 
+              heap object an overhead of 8 bytes (on a 32 bit platform).
               </listitem>
           </varlistentry>
           <varlistentry><term>value types</term>
@@ -186,12 +194,13 @@
               interfaces. Since the inheritance hierarchy is never more than one
               level deep, all method calls can be resolved at compile time and there
               is no need for a method table. Additionally, they do not have a 
-              sync block, and cannot be used for thread synchronization(Technically,
-              the compiler allows it, but you will merely end up boxing the value
+              sync block, and cannot be used for thread synchronization (Technically,
+              a compiler will allow it, but you will merely end up boxing the value
               type into a freshly allocated anonymous object, which is completely
-              useless). All primitive types, such as integers and
-              floats, are represented in the CLR type system as value
-              types. C#, for example, allows you to write this: 
+              useless, since no other thread will be able to access the object). 
+              All primitive types, such as integers and floats, are represented
+              in the CLR type system as value types. C#, for example, allows
+              you to write this: 
               <programlisting>string s = 42.ToString();</programlisting></listitem>
           </varlistentry>
       </variablelist>
@@ -199,7 +208,7 @@
       <para>Since only objects are allocated dynamically, they are the only 
       types that are garbage collected, and thus of interest when implementing
       reference counting. Value types live either on the runtime stack or as 
-      part of other objects, and their lifetimes are thereby already 
+      part of other objects, and their lifetimes are therefore already 
       deterministic.</para>
       
       <sect2>
@@ -208,7 +217,9 @@
         class, in <filename>clr/src/vm/object.h</filename>. This class has a 
         single field; a pointer to a <classname>MethodTable</classname> object:</para>
         
-        <example><programlisting><![CDATA[
+        <example>
+        <title>The <classname>Object</classname> class</title>
+        <programlisting><![CDATA[
 class Object
 {
   protected:
@@ -219,8 +230,8 @@ class Object
     
         ]]>
         </programlisting></example>
-        <para>Obviously, that's not the whole story. The <classname>Object</classname>
-        class has a large number of methods, and there is a 
+        <para>Obviously, that's not the whole story. The class <classname>Object</classname>
+        has a large number of methods, and there is a 
         <quote>hidden</quote> field associated with each object, located at a
         <emphasis>negative</emphasis> offset from the object itself:</para>
         
@@ -233,11 +244,15 @@ class Object
           </mediaobject>
         </figure>
         
-        <para>Every time an object is allocated, the <classname>ObjHeader</classname> is 
-        allocated with it. If you have a pointer to an <classname>Object</classname>, you 
-        can access the <classname>ObjHeader</classname> through some pointer trickery:
+        <para>Every time an object is allocated, the
+        <classname>ObjHeader</classname> is allocated with it. If you have a
+        pointer to an <classname>Object</classname>, you can access the
+        <classname>ObjHeader</classname> through some pointer manipulation: 
         </para>
-<example><programlisting><![CDATA[
+        
+<example>
+  <title>Accessing an <classname>Object</classname>'s <classname>ObjHeader</classname></title>
+<programlisting><![CDATA[
 ObjHeader   *GetHeader()
 {
     return ((ObjHeader *) this) - 1;
@@ -253,22 +268,40 @@ ObjHeader   *GetHeader()
         the sole member field of <classname>Object</classname> is shared among all 
         instances of a class. It determines the type identity of an object, i.e.,
         if <programlisting>obj1->p_methTab == obj2->p_methTab</programlisting>
-        holds, the objects are of the same type.</para>
+        holds, <varname>obj1</varname> and <varname>obj2</varname> are of the same type.</para>
         
         <para>Further, it contains data and methods to acquire information about 
-        the fields and methods associated with the type.</para>      
+        the fields and methods associated with the type. At runtime, the 
+        <classname>MethodTable</classname> is used to dispatch virtual method
+        calls (thus its name).</para> 
+             
         
-        <para><classname>MethodTable</classname> also contains a pointer to an 
-        <classname>EEClass</classname> instance. Like <classname>MethodTable</classname>, 
-        <classname>EEClass</classname> also contains information about types. There is a
-        1-1 relationship between <classname>EEClass</classname> instances and 
-        <classname>MethodTable</classname> instances; there is one of each for every type
-        loaded. However, while <classname>MethodTable</classname> contains data and 
-        operations that are designed to be accessed quickly at runtime, 
-        <classname>EEClass</classname> contains the data that are typically only needed
-        by compilers and other tools that need to be able to introspect into
-        the type system. The separation between the two allow better cache
-        coherency.</para>        
+       <para><classname>MethodTable</classname> also contains a pointer to an
+        <classname>EEClass</classname> instance. Like
+        <classname>MethodTable</classname> objects,
+        <classname>EEClass</classname> instances also contain information about
+        types. There is a 1-1 relationship between
+        <classname>EEClass</classname> instances and
+        <classname>MethodTable</classname> instances; there is one of each for
+        every type loaded. However, while <classname>MethodTable</classname>
+        contains data and operations that are designed to be accessed quickly
+        at runtime, <classname>EEClass</classname> contains the data that are
+        typically only needed by compilers and other tools that need to be able
+        to introspect into the type system. The separation between the two
+        allow better cache coherency. Not touching the 
+        <classname>EEClass</classname> instance at runtime keeps it out of the 
+        process' working set.</para> 
+        
+        <figure id="figure-eeclass">
+          <title>The relationship between an object and its 
+          <classname>MethodTable</classname> and <classname>EEClass</classname></title>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="eeclass.svg" format="svg"/> 
+            </imageobject> 
+          </mediaobject>
+        </figure>
+        
       </sect2>
   </sect1>
 </chapter>

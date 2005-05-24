@@ -5,38 +5,43 @@
   <sect1 id="chapter_5-sect-1">
     <title>Introducing reference counting into the CLR</title>
     
-    <para>Obviously, the Rotor code base is largely built around the assumption
-    that the implementation will be garbage collected. Locating all the places
-    where these assumptions have been made and ripping them out to create a 
-    pure reference counted runtime would be an enormous task. I therefore 
-    decided on creating a dual type system in which both reference counted 
+    <para>The Rotor code base is largely built around the assumption
+    that the implementation will be garbage collected. I have decided to
+    create a dual type system in which both reference counted 
     types and types tracked by the current garbage collector exist side by 
-    side.
+    side. This allows existing code, which may have made some assumptions about
+    the behavior of the memory model, to work unchanged on the reference counted
+    implementation. Of course, this also means that existing code does not 
+    gain any of the benefits of reference counting.
     </para>
     
     <sect2 id="chapter_5-sect-1.1">
       <title>Telling the runtime about reference counted types</title>
-      <para>If the runtime is going to support both reference counted and types
+      <para>If the runtime is going to support both reference counted types and types
       tracked by a classic garbage collector simultaneously, there needs to be 
       a way for it to tell the difference between the two types. One possible
       approach might be to introduce new IL instructions to allocate and 
-      initialize reference counted types. Instructions could also be added to 
-      explicitly manage the reference counts.</para>
+      initialize reference counted types. One could also add new
+      instructions to explicitly manage the reference counts. Having such 
+      instructions would give a compiler targeting the CLR a large amount of
+      flexibility to perform a variety of optimizations, given its superior 
+      knowledge of object lifetimes.</para>
       
       <para>I have decided against this approach because of its rather invasive
       nature, and because of the massive amount of changes required to the 
       runtime. It would also require all compilers targeting the runtime to be 
       modified to emit the new instructions, something which is clearly not 
-      feasible considering the large amount of compilers out there targetting
-      IL. A less invasive approach would be far more desirable.</para>
+      feasible considering the large amount of existing compilers out there
+      targeting the CLR. A less invasive approach would be far more 
+      desirable.</para>
       
-      <para>What is needed in this case is a way to tell the runtime that "hey,
-      this type should not be tracked by the garbage collector". A specific 
-      type could be labelled in this way and the runtime would treat the type
-      as a special case, tracking it using reference counting rather than 
-      the garbage collector. This would ideally not require any changes to 
+      <para>What is needed in this case is a way to tell the runtime that
+      "hey, this type should not be tracked by the tracing garbage collector".
+      A specific type could be labelled in this way and the runtime would treat
+      the type as a special case, tracking it using reference counting rather
+      than the garbage collector. This would ideally not require any changes to
       existing compilers, allowing even these to take advantage of the new
-      reference counting mechanism..</para>
+      reference counting mechanism.</para>
       
       <para>Fortunately, the CLI already provides a mechanism that allows us
       to annotate types (and methods, fields, parameters etc) with arbitrary
@@ -85,7 +90,9 @@
         example, the <classname>Serializable</classname> attribute indicates to
         the runtime that a type can be serialized:</para>
         
-        <example><programlisting><![CDATA[
+        <example>
+          <title>Using the <classname>Serializable</classname> attribute</title>
+          <programlisting><![CDATA[
 [Serializable]
 public class Foo
 {
@@ -96,7 +103,9 @@ public class Foo
         <para><classname>Serializable</classname> is an attribute that does not
         contain any information beyond its mere presence. It is declared like 
         this:</para>
-<example><programlisting><![CDATA[
+<example id="example-serializable">
+  <title>The <classname>Serializable</classname> attribute</title>
+  <programlisting><![CDATA[
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct |
    AttributeTargets.Enum | AttributeTargets.Delegate)]
 public sealed class SerializableAttribute : Attribute     
@@ -104,15 +113,36 @@ public sealed class SerializableAttribute : Attribute
    // ...
 } 
 ]]></programlisting></example>
+        <para>Another attribute with special meaning to the runtime is 
+        <classname>System.Runtime.InteropServices.FieldOffsetAttribute</classname>. 
+        It is used when the fields of a struct need to be located at specific
+        offsets (for example for interoperating with unmanaged code):</para>
+        
+        <example>
+  <title>The <classname>FieldOffset</classname> attribute</title>
+  <programlisting><![CDATA[
+[StructLayout(LayoutKind.Explicit)]
+public class SYSTEM_INFO
+{
+  [FieldOffset(0)] public ulong OemId;
+  [FieldOffset(4)] public ulong PageSize;
+  [FieldOffset(16)] public ulong ActiveProcessorMask;
+  [FieldOffset(20)] public ulong NumberOfProcessors;
+  [FieldOffset(24)] public ulong ProcessorType;
+}
+]]></programlisting></example>
+        <para>Here we see how attributes can contain data, in this case the 
+        actual offsets.</para>
+        
         <para>It is interesting to note that declaring custom attributes also
         requires the use of attributes to constrain which kinds of types they
-        can be applied to. We can see here that
+        can be applied to. We see in <xref linkend="example-serializable"/> that
         <classname>Serializable</classname> can be applied to classes, structs,
         enums and delegates.</para> 
         
       </sidebar>
       
-      <para>I have therefore decided to use a custom attribute to signify that
+      <para>I have therefore decided to use such a custom attribute to signify that
       a given type should be reference counted rather than garbage collected.
       Since this attribute is rather central to the runtime, I have placed it
       in the <classname>System</classname> namespace, as part of the core
@@ -120,7 +150,9 @@ public sealed class SerializableAttribute : Attribute
       The implementation can be found in
       <filename>clr/src/bcl/system/referencecountedattribute.cs</filename> and
       looks like this:</para>
-<example><programlisting><![CDATA[
+<example>
+  <title>The implementation of <classname>ReferenceCountedAttribute</classname></title>
+<programlisting><![CDATA[
 namespace System
 {
     /// <summary>
@@ -143,7 +175,8 @@ namespace System
       applying it. All attribute types are required to have this suffix in the
       name, though.</para></footnote>: </para>
       
-      <example><programlisting><![CDATA[
+      <example>
+        <title>Using the <classname>ReferenceCounted</classname> attribute</title><programlisting><![CDATA[
 [ReferenceCounted]
 public class Foo
 {
@@ -154,15 +187,16 @@ public class Foo
       <para>The attribute does not carry any information beyond its presence on
       a class. It is restricted to classes (reference types) only; as I have 
       mentioned before, value types are allocated either on the stack or as 
-      part of reference types, and thus already have predictable life times.
-      XXX: Apply on interfaces?</para>
+      part of reference types, and thus already have predictable life times.</para>
       
       <para>As can be inferred from the <classname>AttributeUsage</classname>
       attribute applied on <classname>ReferenceCountedAttribute</classname>, I
       have chosen to let the attribute be inherited to subclasses. As an
       example, let's say we have the following classes:</para> 
       
-      <example><programlisting><![CDATA[
+      <example>
+        <title><classname>ReferenceCounted</classname> and inheritance</title>
+        <programlisting><![CDATA[
 [ReferenceCounted]
 public class Base
 {
@@ -177,7 +211,7 @@ public class Derived : Base
 
     <para>In my implementation, instances of both
     <classname>Derived</classname> and <classname>Base</classname> will be
-    reference counted.</para>
+    treated by the execution engine as reference counted types.</para>
       
     </sect2>
   </sect1>
@@ -194,7 +228,7 @@ public class Derived : Base
     
     <para>Obviously, having tools be able to extract this information is nice 
     and all, but ultimately worthless unless the execution engine itself 
-    detects the attribute and acts on it.</para>
+    can detect the attribute and act on it.</para>
     
     <sect2 id="chapter_5-sect.2.1"> 
       <title>The SSCLI class loader</title>
@@ -205,8 +239,8 @@ public class Derived : Base
       as described in the previous chapter.</para>
       
       <para>When a managed executable is run by the 
-      <application>clix</application> executable launcher, the <application>
-      sscoree</application> dynamic library is loaded and the 
+      <application>clix</application> executable launcher, the <literal>
+      sscoree</literal> dynamic library is loaded and the 
       <function>_CorExeMain2</function> function is called. This function 
       initializes the runtime and eventually ends up calling the 
       <methodname>ClassLoader::ExecuteMainMethod</methodname> method. 
@@ -225,21 +259,37 @@ public class Derived : Base
       <classname>EEClass</classname> instance (and by extension, a
       <classname>MethodTable</classname> instance). The 
       <classname>EEClass</classname>/<classname>MethodTable</classname> pair
-      is then used by the runtime to create instances of the type.</para>    
+      is then used by the runtime to create instances of the type.</para> 
+      
+      <para>The class loading process, as well as the runtime interaction 
+      between the JIT compiler and the rest of the execution engine, is shown in 
+      <xref linkend="figure-typeloading"/>.</para>  
+      
+      <figure id="figure-typeloading">
+      <title>The type loading mechanism</title>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="typeloading.svg" scale="50%"  format="svg"/> 
+        </imageobject> 
+      </mediaobject>
+    </figure> 
+      
+      
     </sect2>
     
     <sect2 id="chapter_5-sect.2.2">
       <title>Detecting reference counted types</title>
-      <para>In order to determine whether a type is reference counted, I need
-      to check whether the <classname>ReferenceCounted</classname> attribute is
-      present on that type. </para>
+      <para>In order to determine whether a type is reference counted, the
+      runtime needs to check whether the
+      <classname>ReferenceCounted</classname> attribute is present on that
+      type. </para>
       
       <sect3 id="chapter_5-sect.2.2.1">
         <title>The SSCLI metadata APIs</title>
-        <para>The SSCLI provides an API that allows you to manipulate, emit and 
-        inspect the metadata for an API. This API is public and intended for use
-        by writers of compilers and other tools, but is also used extensively 
-        internally in the execution engine.</para>
+        <para>The SSCLI provides an API that allows you to manipulate, emit and
+        inspect the metadata for an assembly or a module. This API is public
+        and intended for use by writers of compilers and other tools, but is
+        also used extensively internally in the execution engine.</para>
         
         <para>The metadata API is COM-based and the relevant interfaces can be 
         found in <filename>/clr/src/inc/cor.h</filename>. The interface used 
@@ -258,7 +308,8 @@ public class Derived : Base
       is applied to it. The implementation resides in 
       <filename>/clr/src/vm/nstruct.cpp</filename> and looks like this:</para>
       
-      <example><programlisting><![CDATA[
+      <example>
+        <title>The <function>IsReferenceCounted()</function> function</title><programlisting><![CDATA[
 HRESULT IsReferenceCounted(IMDInternalImport *pInternalImport, mdTypeDef cl )
 {
     const void *pData;
@@ -278,9 +329,11 @@ HRESULT IsReferenceCounted(IMDInternalImport *pInternalImport, mdTypeDef cl )
     
     <para><classname>EEClass</classname> contains a series of bitflags 
     describing various attributes of the type in question. I added a new flag
-    indicating a reference counted class (in <filename>/clr/src/vm/class.cpp
-    </filename>:</para>
-<example><programlisting><![CDATA[
+    indicating a reference counted class (in 
+    <filename>/clr/src/vm/class.cpp</filename>:</para>
+<example>
+  <title>Flags in <classname>EEClass</classname></title>
+<programlisting><![CDATA[
 VMFLAG_ISSINGLEDELEGATE                = 0x10000000,
 VMFLAG_ISMULTIDELEGATE                 = 0x20000000,
 VMFLAG_PREFER_ALIGN8                   = 0x40000000, // Would like to have 8-byte alignment
@@ -299,9 +352,9 @@ inline void EEClass::SetReferenceCounted()
 }
 ]]>
 </programlisting></example>
-      <para>I also added similar flags and accessors on <classname>MethodTable
-      </classname>. Obviously, this is a duplication of information since it 
-      could also be accessed through the  
+      <para>I also added similar flags and accessors on 
+      <classname>MethodTable</classname>. Obviously, this is a duplication of
+      information since it could also be accessed through the 
       <classname>MethodTable</classname>'s pointer to the 
       <classname>corresponding</classname> EEClass, but there is ample 
       precedent in the existing code for doing it this way. I can only assume
@@ -312,7 +365,9 @@ inline void EEClass::SetReferenceCounted()
       <function>IsReferenceCounted</function> and set the flag accordingly in 
       <methodname>ClassLoader::LoadTypeHandleFromToken()</methodname>
       (<filename>/clr/src/vm/clsload.cpp</filename>):</para>  
-<example><programlisting><![CDATA[
+<example>
+  <title>Determining whether a type is reference counted</title>
+<programlisting><![CDATA[
 // is the type reference counted?    
 hr = IsReferenceCounted(pInternalImport, cl);
 
@@ -368,14 +423,17 @@ if (fIsReferenceCounted)
     implementations might serve as a good topic for further work on this
     research. </para>
     
-    <para>The implementation of the heap used for the LOH is located in 
-    <filename>/clr/src/vm/gmheap.cpp</filename>. I created a class 
-    <classname>ReferenceCountedHeap</classname> in 
-    <filename>clr/src/vm/refcount.[cpp|h]</filename>, which encapsulates this 
+    <para>The implementation of the heap used for the large object heapis
+    located in <filename>/clr/src/vm/gmheap.cpp</filename>. I created a class
+    <classname>ReferenceCountedHeap</classname> in
+    <filename>clr/src/vm/refcount.[cpp|h]</filename>, which encapsulates this
     implementation and provides the operations necessary to support allocation
     and deallocation of reference counted objects: </para>
     
-    <example><programlisting><![CDATA[
+    <example>
+    
+      <title>The <classname>ReferenceCountedHeap</classname> class</title>
+      <programlisting><![CDATA[
 class ReferenceCountedHeap
 {
 public:
@@ -402,10 +460,11 @@ private:
     <varname>g_pGCHeap</varname>. An accessor function in 
     <filename>refcount.cpp</filename> is used to allocate objects from the 
     reference counted heap:</para>
-    <example><programlisting><![CDATA[
+    <example>
+      <title><function>RCAllocateObject</function></title>
+    <programlisting><![CDATA[
 OBJECTREF RCAllocateObject( MethodTable* pMT )
 {
-    // TODO: locking
     THROWSCOMPLUSEXCEPTION();
 
     // allocate memory for it
@@ -455,10 +514,10 @@ OBJECTREF RCAllocateObject( MethodTable* pMT )
     </constant>and injected this code into <methodname>CEEInfo::getNewHelper():
     </methodname></para>
     
-    <example><programlisting><![CDATA[
+    <example>
+    <title><methodname>CEEInfo::getNewHelper()</methodname></title>
+    <programlisting><![CDATA[
     
-// ...
-
 // is this a reference counted object?
 if (pMT->IsReferenceCounted())
 {
@@ -496,7 +555,13 @@ if (pMT->IsReferenceCounted())
     
     <para>Another solution might be to create a subclass of 
     <classname>Object</classname>, <classname>ReferenceCountedObject</classname>,
-    containing this field. XXX more here</para>
+    containing this field. However, a large number of places in the SSCLI 
+    codebase makes assumptions about the binary layout of an object, and expects
+    the instance data to start at a given offset from the object address. 
+    Creating such a subclass with the reference count as an instance field 
+    would throw off such code. Even if it was practical to patch all locations
+    in the code which made these assumptions, this would make a hybrid model
+    much harder to implement.</para>
     
     <para>The solution I eventually landed on was to replicate the mechanism
     used to allocate and place the <classname>ObjHeader</classname>; i.e., placing 
@@ -523,16 +588,18 @@ if (pMT->IsReferenceCounted())
       has a design that resembles that of COM's <classname>IUnknown:</classname>
       </para>
       
-      <example><programlisting><![CDATA[
+      <example>
+        <title>The <classname>ReferenceCountHeader</classname> class</title>
+        <programlisting><![CDATA[
 class ReferenceCountHeader
 {
 public:
     ReferenceCountHeader() : m_RefCount(0)
     {;}
 
-    ULONG AddRef();
-    ULONG Release();
-    ULONG ReferenceCount()
+    LONG AddRef();
+    LONG Release();
+    LONG ReferenceCount()
     {
         return m_RefCount;
     }
@@ -540,7 +607,7 @@ public:
     Object* GetObject();
 private:
     void Finalize();
-    int m_RefCount;
+    LONG m_RefCount;
 };
 ]]></programlisting></example>
 
@@ -552,7 +619,9 @@ private:
       It uses some pointer arithmetic to retrieve the pointer to the actual 
       <classname>Object</classname> instance associated with this object:</para>
       
-      <example><programlisting><![CDATA[
+      <example>
+        <title><methodname>ReferenceCountHeader::GetObject()</methodname></title>
+        <programlisting><![CDATA[
 Object* ReferenceCountHeader::GetObject()
 {
     return (Object*) ((ObjHeader*)(this + 1) + 1);
@@ -565,7 +634,9 @@ Object* ReferenceCountHeader::GetObject()
        already incorporates the size of the <classname>ObjHeader</classname>
        instance.</para></footnote>:</para>
        
-<example><programlisting><![CDATA[
+<example>
+  <title><methodname>ReferenceCountedHeap::Alloc()</methodname></title>
+  <programlisting><![CDATA[
 Object* ReferenceCountedHeap::Alloc(DWORD size)
 {
     // we need some space for our accounting needs too
@@ -597,7 +668,9 @@ Object* ReferenceCountedHeap::Alloc(DWORD size)
       a .NET developer to query the runtime for the current reference count
       of a reference counted object. It is implemented as an internal call
       into the runtime:</para>
-      <example><programlisting><![CDATA[
+      <example>
+        <title><methodname>GC.ReferenceCount()</methodname></title>
+        <programlisting><![CDATA[
 [MethodImplAttribute(MethodImplOptions.InternalCall)]
 private static extern int nativeReferenceCount(Object o);
 
@@ -618,7 +691,10 @@ public static int ReferenceCount(Object o)
       method on the  <classname>ReferenceCountHeader</classname> associated
       with the object, after verifying that it actually is a reference counted
       object (<filename>clr/src/vm/comutilnative.cpp</filename>):</para>     
-      <example><programlisting><![CDATA[
+      
+      <example>
+        <title><methodname>GCInterface::ReferenceCount</methodname></title>
+        <programlisting><![CDATA[
 FCIMPL1(int, GCInterface::ReferenceCount, Object *obj)	
 {	
  	  THROWSCOMPLUSEXCEPTION();	
@@ -650,7 +726,8 @@ FCIMPL1(int, GCInterface::ReferenceCount, Object *obj)
     transparent as possible, while still providing a very deterministic life 
     time and finalization for such objects. Take the following example:</para>
     
-    <example><programlisting><![CDATA[
+    <example>
+      <title>Allocating a large number of objects in a loop</title><programlisting><![CDATA[
 
 for( int i = 0; i < BigConstant; i++ )
 {
@@ -686,7 +763,8 @@ for( int i = 0; i < BigConstant; i++ )
     <para>I proceeded to create two JIT helper functions, JIT_AddRef and JIT_Release 
     (<filename>/clr/src/vm/jitinterface.cpp</filename>):</para>
     
-    <example><programlisting><![CDATA[
+    <example>
+      <title><function>JIT_AddRef()</function></title><programlisting><![CDATA[
 HCIMPL1(void, JIT_AddRef,  Object* obj)
 {
     if (obj == NULL)
@@ -704,7 +782,9 @@ HCIMPLEND
     
     ]]></programlisting></example>
     
-    <para><function>JIT_Release</function> is similar.</para>
+    <para><function>JIT_Release()</function> is similar. 
+    Calling <function>JIT_AddRef()</function> or <function>JIT_Release()</function> 
+    on a null pointer is defined as a no-op.</para>
     
     <sect2>
       <title>The JIT compiler</title>
@@ -718,13 +798,16 @@ HCIMPLEND
      <para>The implementation of the JIT compiler mostly consists of a large
       switch statement over the various IL opcodes. The switch calls various
       helper methods, which in turn emits the native code through several
-      layers ofincreasingly processor-specific macros. The extensive use of the
+      layers of increasingly processor-specific macros. The extensive use of the
       C++ macro mechanism here makes working with the code a lot harder than it
       should be, since the macros are not very friendly to debuggers and it is
       sometimes very hard to see what code is actually being executed. Working
       with this part of the code was one of the hardest parts of implementing
       reference counting, and it often took me days to figure out how to do 
       some of these things.</para>
+      
+      <para>In my implementation I have focused solely on the x86 part of the
+      JIT compiler.</para>
     </sect2>
     
     <sect2>
@@ -735,15 +818,18 @@ HCIMPLEND
       execution stack does not actually exist in the emitted native code, but 
       the semantics of it are mostly emulated by the processor stack. For 
       example, a <function>ldloc</function> usually translates into 
-      something like this:</para>
+      something like this (on the Intel architecture):</para>
       
-      <example><programlisting><![CDATA[
+      <example>
+      <title>Assembly emitted for the <function>ldloc</function> instruction</title>
+      <programlisting><![CDATA[
 mov         eax,dword ptr [ebp-10h]
 push        eax
       ]]></programlisting></example>
       
-      <para>In other words, the local is retrieved from the stack frame and 
-      pushed onto the stack. The JIT does not push the local onto the stack in 
+      <para>In other words, the local variable is retrieved from the 
+      method stack frame and 
+      pushed onto the stack. The JIT does not push the local variable onto the stack in 
       all cases, though. If it is to be reused instantly, for example in some
       calculation, it is merely kept in the CPU register. The JIT constantly
       keeps track of whether the <firstterm>Top Of Stack</firstterm> (TOS) is
@@ -757,7 +843,9 @@ push        eax
       </function> or <function>Release()</function> depending on 
       whether the local variable is a reference counted object or not:</para>
       
-      <example><programlisting><![CDATA[
+      <example>
+      <title><methodname>FJit::compileDO_STLOC</methodname></title>
+      <programlisting><![CDATA[
 // make sure to call .Release() on the old object in the var
 maybeReleaseArgOrVar(varInfo);    
 
@@ -766,13 +854,14 @@ trackedType = varInfo->type;
 TYPE_SWITCH_PRECISE(trackedType,emit_STVAR, (varInfo->offset));
 
 // emit a call to increase the reference count if the new object is reference counted
-maybeAddRefArgOrVar(varInfo);      
+maybeAddRefArgOrVar(varInfo);   
+]]></programlisting></example>
       
-      ]]></programlisting></example>
+      <para><methodname>maybeAddRefArgOrVar()</methodname> looks like this:</para>
       
-      <para><methodname>maybeAddRefArgOrVar() looks like this:</methodname></para>
-      
-      <example><programlisting><![CDATA[
+      <example>
+        <title><methodname>FJit::maybeAddRefArgOrVar()</methodname></title>
+        <programlisting><![CDATA[
 FJitResult FJit::maybeAddRefArgOrVar(stackItems* varInfo) {
     if (isRefCounted(varInfo->type))
     {                               
@@ -790,7 +879,7 @@ FJitResult FJit::maybeAddRefArgOrVar(stackItems* varInfo) {
       </function> instruction to load the value of the variable so it can
       be passed on the CPU stack for the call to the helper function.</para>
       
-      <para><methodname>isRefCounted</methodname> is a helper function which 
+      <para><methodname>isRefCounted()</methodname> is a helper function which 
       calls into the execution engine to determine whether the local is a 
       reference counted object. Doing this at JIT time instead of at runtime
       has some interesting implications, a topic which I will revisit later.</para>
@@ -818,8 +907,10 @@ FJitResult FJit::maybeAddRefArgOrVar(stackItems* varInfo) {
       <methodname>FJit::compileMethod</methodname> method. At the beginning I
       insert a call to this emitParameterAddRefCalls():</para>
       
-      <example><programlisting><![CDATA[
-FJitResult FJit::emitParameterAddRefCalls() {
+      <example>
+        <title><methodname>FJit::emitParameterAddRefCalls()</methodname></title>
+        <programlisting><![CDATA[
+FJitResult FJit::() {
     int paramCount = methodInfo->args.numArgs;
     stackItems* paramInfo;
 

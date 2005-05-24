@@ -98,13 +98,31 @@ make chunked-html"
 			Name="images"
 			Filter="">
 			<File
+				RelativePath=".\drawings.vsd">
+			</File>
+			<File
+				RelativePath=".\eeclass.svg">
+			</File>
+			<File
+				RelativePath=".\eeclass.vsd">
+			</File>
+			<File
 				RelativePath=".\objectobjheader.png">
 			</File>
 			<File
 				RelativePath=".\refcountheader.png">
 			</File>
 			<File
+				RelativePath=".\refcountheader.vsd">
+			</File>
+			<File
 				RelativePath=".\ssclisrctree.png">
+			</File>
+			<File
+				RelativePath=".\typeloading.svg">
+			</File>
+			<File
+				RelativePath=".\typeloading.vsd">
 			</File>
 		</Filter>
 		<File

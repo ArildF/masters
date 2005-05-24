@@ -1,9 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <chapter id="chapter_3">
-  <title>Garbage collection in the CLR</title>
+  <title>The CLR and garbage collection</title>
   <sect1 id="chapter_3-sect-1">
+    <title>The CLR</title>
+    <para>The <firstterm>Common Language Runtime</firstterm> is an effort by
+    Microsoft to create an execution engine and a class library and framework
+    that allows a wide variety of languages to interoperate in a virtually 
+    seamless manner. The CLR is generally considered to be the successor to 
+    Microsoft's <firstterm>Component Object Model</firstterm> (COM) technology.
+    <footnote><para>Not surprisingly, given this position as a successor to COM, 
+    the Microsoft implementation of the CLR has comprehensive support for 
+    interoperating with COM, including support for both consuming and
+    producing COM components.</para></footnote></para>
+    
+    <para>One of the defining features of the CLR is the support for multiple
+    languages. Components written in one language can be consumed directly by
+    components written in another language as long as they both target the
+    <firstterm>Common Language Subset(CLS)</firstterm>. The CLS represents a
+    subset of the features of the CLR. In .NET parlance, a <firstterm>CLS
+    consumer</firstterm> is a language that can utilize all the functionality
+    in the CLS. Similarly, a <firstterm>CLS producer</firstterm> is a language
+    that can produce code consumable by .NET consumers. Most .NET languages are
+    both CLS consumers and producers.</para>
+    
+    <para>The CLR is standardized by the 
+    <firstterm>European Computer Manufacturers Association</firstterm> (ECMA) and
+    the <firstterm>International Organization for Standardization</firstterm>
+    (ISO). As an open standard, it can be implemented by anyone under  
+    <firstterm>Reasonable And Non Discriminatory (RAND) terms.</firstterm>
+    At the time of writing, implementations of the CLR include Microsoft .NET, 
+    Mono<xref linkend="mono"/>, Portable .NET<xref linkend="portabledotnet"/> and 
+    the Shared Source CLI<xref linkend="sscli"/>.</para>
+  </sect1>
+  
+  
+  <sect1 id="chapter_3-sect-2">
+    <title>Garbage collection in the CLR</title>
     <para>The ECMA standard that defines the Common Language Runtime is 
-    remarkably silent on the subject of garbage collection. Volume 1, 
+    rather silent on the subject of garbage collection. Volume 1, 
     Architecture<xref linkend="ecma-vol-1"/> only mentions the term
     <quote>garbage collection</quote> once, and even then very briefly.
     The detailed specification<xref linkend="ecma-bcl-detailed"/> of 
@@ -22,31 +56,29 @@
     and may free objects that are being used exclusively in unmanaged code
     unless explicitly prevented from doing so.</para></blockquote>
     
-    <para>Even so, the lack of a detailed specification of the memory 
-    management model in the main specification implies a considerable flexibility 
-    in how a CLR-conforming implementation manages memory. However,
-    all the existing implementations of the CLR<footnote><para>At the time of
-    writing, these include Microsoft .NET, Mono<xref linkend="mono"/>, 
-    Portable .NET<xref linkend="portabledotnet"/> and the Shared Source 
-    CLI<xref linkend="sscli"/>.</para></footnote> use a tracing garbage 
-    collector, as described in the previous chapter.</para>
+    <para>Even so, the lack of a detailed specification of the memory
+    management model in the main specification implies a considerable
+    flexibility in how a CLR-conforming implementation manages memory. However,
+    all the existing implementations of the
+    CLR use a tracing garbage collector, as
+    described in the previous chapter.</para>
   </sect1>
   
-  <sect1 id="chapter_3-sect-2">
+  <sect1 id="chapter_3-sect-3">
     <title>Finalization</title>
     <para>A large number of .NET classes hold onto resources beyond the actual 
-    memory they occupy in the managed heap. For example, the .NET 
-    <classname>System.IO.FileStream</classname> class owns an operating system file 
-    handle. Likewise, the <classname>System.Windows.Forms.Control</classname> class
-    (with descendants) holds onto a window handle (a <classname>HWND</classname>).
-    The <classname>System.Drawing.Brush</classname> class keeps a reference to a Windows
+    memory they occupy in the managed heap. For example, objects of the .NET 
+    <classname>System.IO.FileStream</classname> type own an operating system file 
+    handle. Likewise, <classname>System.Windows.Forms.Control</classname> objects
+    (with descendants) hold onto a window handle (a <classname>HWND</classname>).
+    <classname>System.Drawing.Brush</classname> objects keep a reference to a Windows
     brush object (a <classname>HBRUSH</classname>).</para>
     
     <para>These resources are not available in infinite supply. The operating 
     system has a limited number of them, and it is important that code that
     acquires such a resource also releases it in a timely fashion.</para>    
     
-    <sect2 id="chapter_3-sect-2-1">
+    <sect2 id="chapter_3-sect-3-1">
       <title><function>Finalize()</function></title>
       <para>To ensure these kinds of resources can be released, the CLR 
       <classname>Object</classname> type declares a virtual method called 
@@ -56,7 +88,9 @@
       destroyed and its memory released back to the managed heap. A typical 
       Finalize() implementation might look like this:</para>
       
-      <example><programlisting><![CDATA[
+      <example>
+        <title>A class with a finalizer</title>
+        <programlisting><![CDATA[
 
 public class Brush
 {
@@ -79,10 +113,12 @@ public class Brush
       
       <para>In C# and C++, two of the languages that run on the CLR, the 
       <function>Finalize()</function> method is declared using the same syntax
-      as C++ destructors. The finalizer from the above example could then look
-      like this:</para>
+      as C++ destructors. The finalizer from the above example would then look
+      like this (in C#):</para>
       
-      <example><programlisting><![CDATA[
+      <example>
+        <title>Finalizer destructor syntax</title>
+        <programlisting><![CDATA[
     ~Brush()
     {
       Win32.CloseHandle( this.handle );
@@ -91,7 +127,7 @@ public class Brush
       </programlisting></example>
     </sect2>
     
-    <sect2 id="chapter_3-sect-2-2">
+    <sect2 id="chapter_3-sect-3-2">
       <title>The finalizer queue</title>
       <para>When a GC heap is collected, objects that have a finalizer are
       <emphasis>not</emphasis> collected right away. Instead they are put in a
@@ -101,7 +137,9 @@ public class Brush
       <function>Finalize</function> methods. If the act of finalizing them 
       doesn't revive them (make them accessible again from some other object),
       they are again marked for garbage collection and picked up by the 
-      collector on its next run.</para>
+      collector on its next run. If they are resuscitated, they will be placed
+      back on the finalizer queue, awaiting the next garbage collection in 
+      which they are collected.</para>
       
       <para>The behavior just described causes objects with a finalizer to 
       have a longer life than objects without one. If you have a large number
@@ -115,7 +153,7 @@ public class Brush
       
       <para>One other thing about finalization is that there is no 100%
       guarantee that it will happen. In some cases, the program might
-      exit without having run all of its finalizers. When a program is exitting,
+      exit without having run all of its finalizers. When a program is exiting,
       the runtime gives a certain amount of time for remaining finalizers to 
       run. When the time runs out, the finalizer thread is killed off and the
       runtime (and the program with it) is shut down anyway). There is only a
@@ -123,19 +161,21 @@ public class Brush
       remaining ones from running by taking too long to execute. </para>      
     </sect2>
     
-    <sect2 id="chapter_3-sect-2-3">
+    <sect2 id="chapter_3-sect-3-3">
       <title>The IDisposable pattern</title>      
       <para>As the previous section describes, relying on the finalizer to 
       take care of your external resources has some drawbacks: it is 
       non-deterministic in that you never know when (or even if) it will run, 
-      and it causes objects to linger and hold onto memory for a longer time
+      and it causes objects to linger and hold on to memory for a longer time
       than necessary. To support a more deterministic way of releasing said
       resources, the designers of the .NET framework provided the 
       <firstterm>IDisposable pattern.</firstterm></para>
       
       <para><classname>System.IDisposable</classname> is an interface defining a single
       method, <function>Dispose()</function>:</para>
-      <example><programlisting><![CDATA[
+      <example>
+        <title>The <classname>IDisposable</classname> interface</title>
+        <programlisting><![CDATA[
 namespace System
 {
   public interface IDisposable
@@ -151,7 +191,11 @@ namespace System
       appropriate name and have it call <function>Dispose()</function> (or the 
       other way around). For example, the <classname>FileStream</classname> class 
       implements <classname>IDisposable</classname>, but provides a <function>Close()
-      </function> method intended for the consumer to use.</para>
+      </function> method intended for the consumer to use. Quite a few of the 
+      types in the Base Class Libraries implement <classname>IDisposable</classname>,
+      but any application programmer designing types with non-trivial 
+      finalization requirements are also encouraged to make use of this 
+      interface.</para>
       
       <para>A strategy of implementing <emphasis>only </emphasis>
       <classname>IDisposable</classname> can be a bit dangerous, though. You have no 
@@ -174,7 +218,9 @@ namespace System
       </function> method once it has disposed of the unmanaged resource: 
       </para>
       
-      <example><programlisting><![CDATA[ 
+      <example id="example-suppressing-finalization">
+        <title>Suppressing finalization</title>
+      <programlisting><![CDATA[ 
 public class Foo : IDisposable
 {
     public Foo()
@@ -216,8 +262,30 @@ public class Foo : IDisposable
       ]]>
       </programlisting></example>
       
-      <para>One could then use this object like this:</para>
-      <example><programlisting><![CDATA[
+      <para>When <methodname>IDisposable.Dispose()</methodname> is called in
+      the <classname>Foo</classname> class in the above example, it ensures
+      that the object is removed from the finalizer queue. This avoids the
+      problems associated with finalizers, in which the presence of a finalizer
+      on a type causes the object to linger for a much longer time than
+      otherwise necessary.</para> 
+      
+      <sidebar>
+        <para>The <classname>DllImport</classname> attribute applied on the 
+        <methodname>CreateResource()</methodname> and 
+        <methodname>FreeResource()</methodname> methods in 
+        <xref linkend="example-suppressing-finalization"/> indicates to the 
+        runtime that these are not implemented in managed code. Instead they 
+        are routines provided in dynamic libraries (<filename>os.dll</filename>
+        in this case). This is yet another example
+        of how versatile the CLR metadata mechanism is.</para>
+      </sidebar>
+      
+      
+      <para>A typical use of the <classname>Foo</classname> class would be like
+      this:</para>
+      <example>
+        <title>Using an <classname>IDisposable</classname> object</title>
+      <programlisting><![CDATA[
 
 Foo foo;
 try
@@ -231,14 +299,16 @@ finally
     foo.Dispose();
 }
 ]]></programlisting></example>
-      <para>Putting the <function>Dispose()</function> call in a finally 
+      <para>Putting the <methodname>Dispose()</methodname> call in a finally 
       ensures that the object will be cleaned up even if the code in the try 
       block throws an exception.</para>
       
       <para>The <function>using</function> construct in C# makes the 
       IDisposable pattern even easier to use. The following C# code is 
       equivalent to the above example:</para>
-<example><programlisting><![CDATA[
+<example>
+  <title>The <function>using</function> statement</title>
+<programlisting><![CDATA[
 using( Foo foo = new Foo() )
 {
     // use foo here

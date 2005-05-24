@@ -1,4 +1,543 @@
 <?xml version="1.0" encoding="utf-8"?>
 <chapter id="chapter_6">
   <title>Evaluating the results</title>
+  <sect1 id="chapter_6-sect-1">
+    <title>Performance</title>
+    <sect2 id="chapter_6-sect-1.1">
+      <title>The <classname>Timer</classname> class</title>
+      <para>To perform the benchmarks, I wrote a class called 
+      <classname>Timer</classname> that uses the 
+      <function>QueryPerformanceCounter</function> and 
+      <function>QueryPerformanceFrequency</function> Win32 API calls. These 
+      provide an extremely accurate timer. However, the use of these calls means
+      that the <classname>Timer</classname> class is not portable.</para>
+    </sect2>
+    
+    <sect2 id="chapter_6-sect-1.2">
+      <title>Handling a large number of allocations</title>
+      <para>I wrote a benchmark that allocated a very large number of objects 
+      in a loop for then to immediately let them go out of scope. I ran this 
+      loop with both a reference counted type and a type tracked by the tracing
+      garbage collector:</para>
+      
+      <example>
+        <title>Large number of allocations</title>
+        <programlisting><![CDATA[
+public static void DoBenchmark()
+{
+    Timer t = new Timer();
+    
+    t.Start();
+    for( int i = 0; i < NumIterations; i++ )
+    {
+        ReferenceCounted rc = new ReferenceCounted();
+        rc.Method();            
+    }
+    t.End();
+    Console.WriteLine( "Reference counted: {0}", t.Interval );
+    
+    t.Start();
+    for( int i = 0; i < NumIterations; i++ )
+    {
+        TracingGC gc = new TracingGC();
+        gc.Method();            
+    }
+    t.End();
+    Console.WriteLine( "Tracing GC: {0}", t.Interval );
+}            
+        ]]></programlisting>
+      </example>
+      
+      <para>Both the objects are the same size in terms of instance fields.</para>
+      
+      <para>With <structfield>NumIterations</structfield> set to 100 000, and 
+      running a free<footnote><para>A <quote>free</quote> build is one which is 
+      compiled with optimizations and with all logging features turned off.</para>
+      </footnote> build of the SSCLI, I would get results indicating that the
+      reference counting mechanism was about twice as fast as the tracing 
+      mechanism.</para>
+      
+      <table>
+        <title>Results of benchmark</title>
+        <tgroup cols="3">
+          <thead>
+            <row>
+              <entry>Run</entry>
+              <entry>Reference counting</entry>
+              <entry>Tracing GC</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>1</entry>
+              <entry>0,20s</entry>
+              <entry>0.48s</entry>
+            </row>
+            
+            <row>
+              <entry>2</entry>
+              <entry>0.27s</entry>
+              <entry>0.43s</entry>
+            </row>
+            
+            <row>
+              <entry>3</entry>
+              <entry>0.26s</entry>
+              <entry>0.45s</entry>
+            </row>
+            
+            <row>
+              <entry>4</entry>
+              <entry>0.24s</entry>
+              <entry>0.38s</entry>
+            </row>
+            
+            <row>
+              <entry>5</entry>
+              <entry>0.26s</entry>
+              <entry>0.49s</entry>
+            </row>
+            
+            <row>
+              <entry>6</entry>
+              <entry>0.26s</entry>
+              <entry>0.55s</entry>
+            </row>
+            
+            <row>
+              <entry>7</entry>
+              <entry>0.24s</entry>
+              <entry>0.52s</entry>
+            </row>
+            
+            <row>
+              <entry>8</entry>
+              <entry>0.25s</entry>
+              <entry>0.40s</entry>
+            </row>
+            
+            <row>
+              <entry>9</entry>
+              <entry>0.27s</entry>
+              <entry>0.51s</entry>
+            </row>
+            
+            <row>
+              <entry>10</entry>
+              <entry>0.25s</entry>
+              <entry>0.41s</entry>
+            </row>
+            
+            
+          </tbody>
+        </tgroup>
+      </table>
+      
+      <para>Raising <structfield>NumIterations</structfield> to ten millions
+      did not change the relationship between the two mechanisms in any 
+      significant way - reference counting was still twice as fast as the 
+      tracing garbage collector.</para>
+      
+      <para>By running a checked<footnote><para>A <quote>checked</quote>
+      build is one where all logging and debugging features are turned on, and
+      the runtime is compiled without optimizations.</para></footnote> build
+      and turning on logging for the reference counting mechanism, I can see
+      that there are only two objects allocated on the reference counted heap
+      at any given time, and that the same two locations on this heap are
+      reused over and over. There is no pressure on the reference counted heap 
+      in this case, and its size never grows over 
+      <literal>sizeof(ReferenceCounted)*2</literal>.</para>
+      
+      <para>The same does not apply to the tracing collector. Each new object 
+      is allocated to a new address on the GC heap,and it takes a long time
+      before the memory belonging to an object is finally reclaimed.</para>
+      
+    </sect2>
+    
+    <sect2>
+      <title>Assignments to local variables</title>
+      <para>The next benchmark shows what an impact the constant incrementing
+      and decrementing of reference counts has. This test merely juggles
+      a single object between various local variables:</para>
+      
+      <example>
+        <title>Assignments to local variables</title>
+        <programlisting><![CDATA[
+private static void DoBenchmark()
+{
+  Timer t = new Timer();
+  
+  t.Start();
+  ReferenceCounted rc = new ReferenceCounted();
+  for( int i = 0; i < NumIterations; i++ )
+  {
+      ReferenceCounted rc2 = rc;
+      ReferenceCounted rc3 = rc2;
+      rc = rc3;
+      rc3 = rc;
+  }
+  t.End();
+  Console.WriteLine( "Reference counted: {0}", t.Interval );
+  
+  t.Start();
+  TracingGC gc = new TracingGC();
+  for( int i = 0; i < NumIterations; i++ )
+  {
+      TracingGC gc2 = gc;
+      TracingGC gc3 = gc2;
+      gc = gc3;
+      gc3 = gc;
+  }
+  t.End();
+  Console.WriteLine( "Tracing GC: {0}", t.Interval ); 
+}         
+        ]]></programlisting>
+      </example>
+      
+      <para>This benchmark only creates a single object from each type, so it
+      does not stress the allocator mechanism. Further, none of the types have 
+      a finalizer.</para>
+      
+      <para>Results from running this benchmark under a checked build shows that
+      the tracing collector is approximately 17-18 times faster than the 
+      reference counted mechanism:</para>
+      
+      <table>
+        <title>Results of benchmark</title>
+        <tgroup cols="3">
+          <thead>
+            <row>
+              <entry>Run</entry>
+              <entry>Reference counting</entry>
+              <entry>Tracing GC</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>1</entry>
+              <entry>8.44s</entry>
+              <entry>0.47s</entry>
+            </row>
+            
+            <row>
+              <entry>2</entry>
+              <entry>8.48s</entry>
+              <entry>0.46s</entry>
+            </row>
+            
+            <row>
+              <entry>3</entry>
+              <entry>8.63s</entry>
+              <entry>0.48s</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>                
+      
+    </sect2>
+    
+    <sect2>
+      <title>Field assignments</title>
+      <para>This benchmark is quite similar to the previous one, only using 
+      fields instead of local variables:</para>
+      
+      <programlisting><![CDATA[
+private static void DoBenchmark()
+{
+  Timer t = new Timer();
+  
+  t.Start();
+  rc = new ReferenceCounted();
+  for( int i = 0; i < NumIterations; i++ )
+  {
+    rc2 = rc;
+    rc3 = rc2;
+    rc = rc3;
+    rc3 = rc;
+      
+  }        
+  t.End();
+  Console.WriteLine( "Reference counted: {0}", t.Interval );
+  
+  t.Start();
+  gc = new TracingGC();
+  for( int i = 0; i < NumIterations; i++ )
+  {
+    gc2 = gc;
+    gc3 = gc2;
+    gc = gc3;
+    gc3 = gc;
+  }
+  t.End();
+  Console.WriteLine( "Tracing GC: {0}", t.Interval ); 
+}
+
+private static ReferenceCounted rc, rc2, rc3;
+private static TracingGC gc, gc2, gc3;
+    ]]></programlisting>
+    
+    <para>Here, the tracing garbage collector is only about 4 times faster than the
+    reference counting mechanism:</para>
+    
+    <table>
+        <title>Results of benchmark</title>
+        <tgroup cols="3">
+          <thead>
+            <row>
+              <entry>Run</entry>
+              <entry>Reference counting</entry>
+              <entry>Tracing GC</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry>1</entry>
+              <entry>10,30s</entry>
+              <entry>2,54s</entry>
+            </row>
+            
+            <row>
+              <entry>2</entry>
+              <entry>10,36s</entry>
+              <entry>2,80s</entry>
+            </row>
+            
+            <row>
+              <entry>3</entry>
+              <entry>10,55s</entry>
+              <entry>2,75s</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>  
+    </sect2>
+  </sect1> 
+  
+  
+  <sect1 id="chapter_6-sect-2">
+    <title>Missing features</title>
+    
+    <sect2 id="chapter_6-sect-2.1">
+      <title>Reference counted arrays</title>
+      <para>As of now, there is no support for reference counting in arrays at
+      all. Array objects are not reference counted, and reference counted 
+      objects placed in arrays are not properly tracked. This is obviously a 
+      serious setback, and one that would have to be dealt with before the 
+      implementation could be used in a real environment.</para>
+      
+    </sect2>
+    
+    <sect2 id="chapter_6-sect-2.2">
+      <title><classname>object</classname> references pointing to reference counted
+      objects</title>
+      
+      <para>One serious implication of the hybrid implementation is that it is 
+      possible to refer to reference counted objects through references that 
+      aren't typed as a reference counted type. In the CLR, the 
+      <classname>Object</classname> class is the supertype of all other types, 
+      and a reference to <classname>Object</classname> can be used to point
+      to all objects. Consider the following situation:</para>
+      
+      <example>
+        <title>An <classname>Object</classname> reference pointing to a 
+        reference counted object</title>
+        <programlisting><![CDATA[   
+public void Method()       
+{
+  this.Create();
+  obj.Foo();
+}
+
+private RefCounted Create()
+{
+  RefCounted rc = new RefCounted();
+  this.obj = rc;
+}   
+
+private Object obj;     
+        ]]></programlisting>
+      </example>
+      <para>Since the <structfield>obj</structfield> field is typed as 
+      <classname>Object</classname>, assigning the reference counted object to
+      it does not increment its reference count. At the end of the 
+      <methodname>Create()</methodname> method, the only reference to the 
+      object goes out of scope, and the object is destroyed. Since the 
+      <structfield>obj</structfield> field now points to a destroyed
+      object, the call to <methodname>Foo()</methodname> blows up.</para>
+      
+      <para>There is no obvious solution to this problem. The brute force
+      way would be to emit code that checks whether an object is reference
+      counted for each and every field, parameter and local variable assignment.
+      However, this would cause massive bloat of the emitted code, and having 
+      to perform this call for every single assignment would seriously degrade
+      runtime performance. It is safe to assume that this is not a feasible 
+      way of dealing with the issue.</para>
+      
+      <para>A more practical solution might be to just disallow assignments 
+      of reference counted types to references not typed as such altogether. 
+      Such a check could be performed in the JIT compiler, and would not impact
+      runtime performance like the previous alternative would.</para>
+      
+      <para>However, this leaves us in the undesirable situation where the JIT
+      compiler rejects code that is valid according to the various language
+      compilers already in existence. Although this check happens in the JIT
+      compiler, from the user's perspective this is not distinguishable from 
+      what happens at runtime. It might be hard to convince users that code 
+      that compiles by a compiler that conforms to the standard can be rejected
+      by the JIT compiler at run/load-time.</para>
+      
+      <para>This leads naturally to a third option: modify existing compilers
+      to treat reference counted types as a special case, disallowing unsafe
+      assignments. Unfortunately, this is as unpractical as the first 
+      alternative. There is a large amount of compilers out there, and 
+      expecting them all to change in order to support reference counting is
+      not realistic.</para>
+      
+      <para>TODO: more here</para>
+    </sect2>
+  </sect1>
+  
+  <sect1 id="chapter_6-sect-3">
+    <title>Possible enhancements</title>
+   <sect2 id="chapter_6-sect-3.1">
+    <title>Inlining calls to <methodname>AddRef()</methodname> and 
+      <methodname>Release()</methodname></title>
+    <para>The current implementation implements reference counting through 
+    emitting function calls in the Just In Time compiler to a helper function,
+    which then in turn calls either <methodname>AddRef()</methodname> or
+    <methodname>Release()</methodname>.</para>
+    
+    <para>Since incrementing and decrementing reference counts is a quite
+    frequent operation, there is a lot of overhead involved in setting up two
+    call frames and executing the calls. The implementation of 
+    <methodname>AddRef()</methodname> is quite simple:</para>
+    
+    <example>
+      <title>The implementation of <methodname>AddRef()</methodname></title>
+      <programlisting><![CDATA[
+LONG ReferenceCountHeader::AddRef()
+{    
+    return InterlockedIncrement(&m_RefCount);;
+}
+]]>   
+      </programlisting>
+    </example>
+    
+    <para><methodname>AddRef()</methodname> would be fairly simple to implement
+    by making the JIT compiler emit code to perform the increment directly. If the
+    address of the object is in the <varname>eax</varname> register, the JIT 
+    could emit the following IA/32 code:</para>
+    <example>
+      <title>Implementing <methodname>AddRef()</methodname> inline</title>
+      <programlisting><![CDATA[
+    lock xadd dword ptr[eax-offset], 1
+]]>   
+      </programlisting>
+    </example>
+    
+    <para>It can be argued that this would require the JIT compiler to have
+    more knowledge of the binary layout of the runtime objects than it
+    currently has, and that doing this inline would violate the encapsulation
+    that exists between the JIT and the rest of the execution engine. We
+    remember from <xref linkend="figure-typeloading"/> that the JIT and the
+    execution engine exists in two separate libraries, and that the JIT
+    compiler only communicates with the execution engine through the
+    <classname>ICorJitInfo</classname> interface (which is implemented by the
+    <classname>CEEInfo</classname> class).</para>
+    
+    <para>However, for something that's so performance critical as this, I think
+    allowing the JIT to have a little more intimate knowledge of the object 
+    internals would be worth the cost.</para>
+    
+    <para><methodname>Release()</methodname>, however, would be harder to 
+    inline. The implementation currently looks like this:</para>
+    <example>
+      <title>The implementation of <methodname>Release()</methodname></title>
+      <programlisting><![CDATA[
+LONG ReferenceCountHeader::Release()
+{
+    LONG refcount;
+
+    if ((refcount = InterlockedDecrement(&m_RefCount)) == 0)
+    {
+        RCLogFree(GetObject()->GetMethodTable(), GetObject());
+
+        // finalize if we have a finalizer
+        Finalize();
+ 
+        // free memory associated with the object
+        g_pRCHeap->Free(this);
+    }
+    return refcount;
+}
+]]>   
+      </programlisting>
+    </example>
+    
+    <para>Inserting all of that into the generated code at every spot where an
+    object goes out of scope would cause serious code bloat, something that
+    would probably affect performance in a negative way. However, if the
+    contents of the <literal>if</literal> block was factored out to a separate
+    function, code similar to the following could be emitted by the JIT 
+    compiler:</para>
+    
+    <example>
+      <title>Implementing <methodname>Release()</methodname> inline:</title>
+      <programlisting><![CDATA[
+    lock xadd dword ptr[eax-offset], -1
+    jnz notzero      
+    push eax
+    call FreeObject
+notzero:
+    ....   
+      ]]></programlisting>
+    </example>
+    <para>Here, the <function>FreeObject</function> function performs the
+    equivalent of the <literal>if</literal> block in the current
+    implementation. Four instructions inserted for every object release would
+    most likely be acceptable, especially considering there is already some 
+    overhead with regards to getting the old values of fields, parameters and
+    local variables.</para> 
+    
+   </sect2>
+   
+   <sect2 id="chapter_6-sect-3.2">
+    <title>Replacing the allocator</title>
+    <para>The memory allocator used by the reference counted heap in the 
+    current implementation of reference counting is the same as that which is
+    used for the large object heap in the tracing garbage collector. This 
+    allocator is obviously not tuned for the needs of quickly allocating a 
+    large number of small objects.</para>
+    
+    <para>Further research could be vested into the possibility of either
+    enhancing this allocator with an eye to making it more suitable for the 
+    needs of the reference counted heap. </para>
+   </sect2>
+  </sect1>
+  
+  <sect1 id="chapter_6-sect-4">
+    <title>Conclusion</title>
+    <para>Through my work on this paper and the accompanying implementation, 
+    I have shown that it is indeed feasible to introduce reference counting as 
+    an additional memory management mechanism in the common language runtime.
+    While the hybrid model does pose some unique problems, these are not 
+    insurmountable. </para>
+    
+    <para>Reference counting could be the mechanism of choice for types where
+    prompt finalization is of paramount importance. This includes classes that
+    hold references to scarce operating system resources, such as file handles.
+    Reference counting is also a likely candidate for scenarios in which a 
+    large number of objects need to be allocated quickly, but where the 
+    references to individual instances quickly go out of scope. In this case, 
+    a tracing GC may allow quite a large number of live objects to exist before
+    the memory pressure gets big enough to trigger a collection. If these 
+    objects also have a finalizer, the memory allocated for the objects will 
+    not be freed until the finalizers have been run.</para>
+    
+    <para>The benchmarks show that the reference counting mechanism is 
+    considerably slower than the tracing garbage collector for operations like
+    assigning objects to local variables and fields. However, in real code
+    such assignments are a relatively rare event, mitigating the extra cost of
+    reference counting to some extent.</para>
+  </sect1>
 </chapter>

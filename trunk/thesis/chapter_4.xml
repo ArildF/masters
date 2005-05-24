@@ -121,7 +121,7 @@
       <varlistentry>
         <term><filename>/palrt</filename></term>
         <listitem>The <filename>palrt</filename> directory contains shared PAL 
-        code that has no dependencies on the underlying file system.        
+        code that has no dependencies on the underlying operating system.        
         </listitem>     
       </varlistentry>
       

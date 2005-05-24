@@ -882,10 +882,7 @@ FJitResult FJit::maybeAddRefArgOrVar(stackItems* varInfo) {
       <para><methodname>isRefCounted()</methodname> is a helper function which 
       calls into the execution engine to determine whether the local is a 
       reference counted object. Doing this at JIT time instead of at runtime
-      has some interesting implications, a topic which I will revisit later.</para>
-      
-      <para>XXX: more here</para>
-      
+      has some interesting implications, a topic which I will revisit later.</para>      
    </sect2>
    
    <sect2>

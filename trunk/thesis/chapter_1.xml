@@ -69,7 +69,7 @@
      C programmers have long understood that memory management is so critical
      it can't be left up to the system, and Lisp programmers have long understood
      that memory management is so critical, it can't be left up to the 
-     programmers. TODO-source</para></footnote> it is becoming more and more
+     programmers.</para></footnote> it is becoming more and more
      clear that automatic memory management, in various implementations, is
      here to stay. The past couple of years have seen a steady shift towards
      the use of higher level programming languages and tools for all but the 

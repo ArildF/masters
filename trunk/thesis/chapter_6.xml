@@ -25,25 +25,25 @@
         <programlisting><![CDATA[
 public static void DoBenchmark()
 {
-    Timer t = new Timer();
-    
-    t.Start();
-    for( int i = 0; i < NumIterations; i++ )
-    {
-        ReferenceCounted rc = new ReferenceCounted();
-        rc.Method();            
-    }
-    t.End();
-    Console.WriteLine( "Reference counted: {0}", t.Interval );
-    
-    t.Start();
-    for( int i = 0; i < NumIterations; i++ )
-    {
-        TracingGC gc = new TracingGC();
-        gc.Method();            
-    }
-    t.End();
-    Console.WriteLine( "Tracing GC: {0}", t.Interval );
+  Timer t = new Timer();
+  
+  t.Start();
+  for( int i = 0; i < NumIterations; i++ )
+  {
+    ReferenceCounted rc = new ReferenceCounted();
+    rc.Method();            
+  }
+  t.End();
+  Console.WriteLine( "Reference counted: {0}", t.Interval );
+  
+  t.Start();
+  for( int i = 0; i < NumIterations; i++ )
+  {
+    TracingGC gc = new TracingGC();
+    gc.Method();            
+  }
+  t.End();
+  Console.WriteLine( "Tracing GC: {0}", t.Interval );
 }            
         ]]></programlisting>
       </example>
@@ -58,7 +58,7 @@ public static void DoBenchmark()
       mechanism.</para>
       
       <table>
-        <title>Results of benchmark</title>
+        <title>Results of benchmark 1</title>
         <tgroup cols="3">
           <thead>
             <row>
@@ -391,9 +391,7 @@ private Object obj;
       assignments. Unfortunately, this is as unpractical as the first 
       alternative. There is a large amount of compilers out there, and 
       expecting them all to change in order to support reference counting is
-      not realistic.</para>
-      
-      <para>TODO: more here</para>
+      not realistic.</para>      
     </sect2>
   </sect1>
   
@@ -456,19 +454,19 @@ LONG ReferenceCountHeader::AddRef()
       <programlisting><![CDATA[
 LONG ReferenceCountHeader::Release()
 {
-    LONG refcount;
+  LONG refcount;
 
-    if ((refcount = InterlockedDecrement(&m_RefCount)) == 0)
-    {
-        RCLogFree(GetObject()->GetMethodTable(), GetObject());
+  if ((refcount = InterlockedDecrement(&m_RefCount)) == 0)
+  {
+    RCLogFree(GetObject()->GetMethodTable(), GetObject());
 
-        // finalize if we have a finalizer
-        Finalize();
- 
-        // free memory associated with the object
-        g_pRCHeap->Free(this);
-    }
-    return refcount;
+    // finalize if we have a finalizer
+    Finalize();
+
+    // free memory associated with the object
+    g_pRCHeap->Free(this);
+  }
+  return refcount;
 }
 ]]>   
       </programlisting>

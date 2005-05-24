@@ -16,7 +16,7 @@
       </para>
       
       <screen><![CDATA[
-      C:>svn checkout http://ankhsvn.com/svn/masters/trunk/sscli/    
+C:\>svn checkout http://ankhsvn.com/svn/masters/trunk/sscli/    
       ]]></screen>
       
       <para>The repository can also be browsed in a regular web browser by pasting
@@ -29,7 +29,7 @@
       source code can be viewed using the <command>svn log</command> command:</para>
       
       <screen><![CDATA[
-      C:\sscli>svn log    
+C:\sscli>svn log    
       ]]></screen>
     </sect2>  
     
@@ -39,7 +39,7 @@
       be viewed in unified diff format:</para>
       
       <screen><![CDATA[
-      C:\sscli>svn diff -r 1:HEAD    
+C:\sscli>svn diff -r 1:HEAD    
       ]]></screen>
     </sect2>   
   </sect1>
@@ -47,7 +47,7 @@
   <sect1>
     <title>Statistics</title>
     <para>In the process of implementing reference counting in the CLR, I have
-    added 1604 lines to the source and removed 269. This does not include 
+    added 1704 lines to the source and removed 269. This does not include 
     project files and other auxilliary files.</para>
   </sect1>
 </appendix>

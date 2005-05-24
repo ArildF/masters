@@ -94,7 +94,7 @@
         <para>A tracing garbage collector operates on the principle that an
         object that cannot be reached from any other reachable object in the
         system is garbage. In other words, an object that cannot be part of any
-        future computation can be disposed of. It determines which objects
+        future computation can be safely disposed of. It determines which objects
         fulfil this criterion by building a graph of object references starting
         from a set of well-known <quote><firstterm>roots</firstterm></quote>.
         These roots usually include local method/function variables in stack 
@@ -114,7 +114,7 @@
         memory heap used for the allocations will get fragmented, and it requires
         quite a lot of bookkeeping merely to keep track of the occupied and vacant
         areas of the heap. New allocations will have to search through a set of lookup
-        tablesin order to find a section of memory large enough to accommodate
+        tables in order to find a section of memory large enough to accommodate
         the request. In some cases, there may not be a single segment in the
         heap large enough to fit the new object even if the total available
         amount of memory far exceeds the demands. This is called 
@@ -172,7 +172,7 @@
           <para>One other categorization of garbage collectors goes to the 
           <quote>exactness</quote> of its ability to detect garbage. A 
           <firstterm>conservative garbage collector</firstterm> assumes that 
-          any bit pattern inside an object that if interpreted as a pointer, 
+          any bit pattern inside an object that, if interpreted as a pointer, 
           points to a valid object, is in fact such a pointer. A conservative
           collector usually has no knowledge of the exact binary layout of an 
           object, and is therefore the only choice in garbage collectors for
@@ -200,7 +200,7 @@
         object is no longer needed, this count needs to be decremented by one.</para>
         
         <para>Obviously, this mechanism breaks down in the case where one  
-        object reference itself, either directly or indirectly. This is 
+        object references itself, either directly or indirectly. This is 
         called a <firstterm>cycle</firstterm>. Traditional reference counting 
         mechanisms are unable to deal with this case. Languages and environments
         depending on reference counting either supplement the mechanism with a 
@@ -371,7 +371,7 @@
           
           <para>For this reason, environments using reference counting either
           prohibit reference cycles altogether or supplement reference counting
-          with a tracing garbage collector. TODO: find more references here</para>
+          with a tracing garbage collector.</para>
         </listitem>
       </varlistentry>
     </variablelist>

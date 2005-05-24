@@ -27,7 +27,7 @@
     <firstterm>European Computer Manufacturers Association</firstterm> (ECMA) and
     the <firstterm>International Organization for Standardization</firstterm>
     (ISO). As an open standard, it can be implemented by anyone under  
-    <firstterm>Reasonable And Non Discriminatory (RAND) terms.</firstterm>
+    <firstterm>Reasonable And Non Discriminatory</firstterm> (RAND) terms.
     At the time of writing, implementations of the CLR include Microsoft .NET, 
     Mono<xref linkend="mono"/>, Portable .NET<xref linkend="portabledotnet"/> and 
     the Shared Source CLI<xref linkend="sscli"/>.</para>
@@ -200,7 +200,7 @@ namespace System
       <para>A strategy of implementing <emphasis>only </emphasis>
       <classname>IDisposable</classname> can be a bit dangerous, though. You have no 
       guarantees that the user will ever bother calling 
-      <function>Dispose() </function>, even if you write it in bold red type in
+      <function>Dispose()</function>, even if you write it in bold red type in
       the documentation (programmers can't read, and even if they could, they 
       wouldn't want to). Most such types will therefore also implement a 
       finalizer, in case the <function>Dispose()</function> method is 
@@ -208,7 +208,7 @@ namespace System
       
       <para>Obviously, having 
       <emphasis>both</emphasis> <function>Dispose()</function> and 
-      <function>Close()</function> being called would be 
+      the finalizer being called would be 
       pretty wasteful. Yes, you would dispose of the unmanaged resource, but
       the problem of having finalizable objects linger for a much longer time
       than necessary would remain. Fortunately, you can tell the garbage 
@@ -270,6 +270,7 @@ public class Foo : IDisposable
       otherwise necessary.</para> 
       
       <sidebar>
+        <title><classname>DllImport</classname></title>
         <para>The <classname>DllImport</classname> attribute applied on the 
         <methodname>CreateResource()</methodname> and 
         <methodname>FreeResource()</methodname> methods in 

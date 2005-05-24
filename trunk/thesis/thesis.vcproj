@@ -59,6 +59,21 @@ make chunked-html"
 				CleanCommandLine="make clean"
 				Output="chunked-html\index.html"/>
 		</Configuration>
+		<Configuration
+			Name="PS|Win32"
+			OutputDirectory="$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="0">
+			<Tool
+				Name="VCNMakeTool"
+				BuildCommandLine="taskkill /im acrord32.exe
+make ps"
+				ReBuildCommandLine="taskkill /im acrord32.exe
+make clean
+make ps"
+				CleanCommandLine="make clean"
+				Output="ps\thesis.ps"/>
+		</Configuration>
 	</Configurations>
 	<References>
 	</References>

@@ -17,6 +17,6 @@ chunked-html/index.html: $(SOURCES) $(MAKEFILES) $(CHUNKEDHTMLXSLT)
 pdf/thesis.pdf: thesis.fo 
 	$(FOP) -fo $< -pdf $@
 
-ps/%.ps: $(SOURCES)
-	$(PROC) --docbook --output $@ $(FOXSLT) $< 
+ps/thesis.ps: thesis.fo
+	$(FOP) -fo $< -pdf $@ 
 

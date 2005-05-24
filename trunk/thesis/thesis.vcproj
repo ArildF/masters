@@ -67,6 +67,12 @@ make chunked-html"
 			Name="docbook"
 			Filter="*.xml">
 			<File
+				RelativePath=".\appa.xml">
+			</File>
+			<File
+				RelativePath=".\appb.xml">
+			</File>
+			<File
 				RelativePath=".\bibliography.xml">
 			</File>
 			<File
@@ -108,6 +114,9 @@ make chunked-html"
 			</File>
 			<File
 				RelativePath=".\objectobjheader.png">
+			</File>
+			<File
+				RelativePath=".\refcountcycle.png">
 			</File>
 			<File
 				RelativePath=".\refcountheader.png">

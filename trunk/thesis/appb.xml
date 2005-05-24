@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appendix id="appendix_b">
+  <title>Testing</title>
+  <sect1 id="appendix_b-sect-1">
+    <title>The SSCLI test suites</title>
+    <para>The SSCLI comes with a rather large battery of tests. These are 
+    divided into two categories:</para>
+    
+    <variablelist>
+      <varlistentry>
+        <term>PAL test suite</term>
+        <listitem>This suite tests the Platform Adaptation Layer, the SSCLI's primary 
+        portability layer.</listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term>SSCLI quality test suite</term>
+        <listitem>This suite tests pretty much everything else. For a large part,
+        it consists of C# classes that stress various features of the execution
+        engine. </listitem>
+      </varlistentry>
+    </variablelist>
+  </sect1>
+  
+  <sect1>
+    <title>The SSCLI test harness</title>
+    <para>The tests in the SSCLI quality suite are driven by a test harness
+    written in Perl. The main driver is <command>rrun.pl</command> which 
+    resides in the <filename>tests\</filename> directory. To run all the tests:
+    </para>
+    
+    <screen><![CDATA[
+C:\sscli\tests>perl rrun.pl    
+        
+    ]]>
+    </screen>
+    
+    <para>Specific tests can also be run by specifying the name of the test as
+    an argument to <command>rrun.pl</command>. The test names are defined in 
+    files called <filename>rsources</filename> which exist in every directory
+    in the test directory tree.</para>
+  </sect1>
+  
+  <sect1>
+    <title>Reference counting tests</title>
+    <para>The development of the reference counted mechanism was entirely 
+    driven by tests. No feature was added before I had a failing test.</para>
+    
+    <para>The reference counting tests are located in the 
+    <filename>tests\refcounting</filename> directory. These tests can be run
+    by executing <command>rrun.pl</command> from this directory.</para>
+    
+    <para>The tests are as follows:</para>
+    
+    <variablelist>
+      <varlistentry>
+        <term>testbasic</term>
+        <listitem>This simple tests merely verifies that the SSCLI still behaves in a
+        sane way after introducing the <classname>ReferenceCounted</classname>
+        attribute.</listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term>testdestructor</term>
+        <listitem>This test verifies that the destructor of a reference counted
+        object is called when its reference count reaches zero.</listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term>massiveallocations</term>
+        <listitem>This test checks that the reference counted heap can deal
+        with a large number of big objects.</listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term>testgcreferencecount</term>
+        <listitem>This tests the new <methodname>ReferenceCount</methodname>
+        method on the <classname>System.GC</classname> class.</listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term>testparameterpassing</term>
+        <listitem>This tests that reference counts are correctly incremented
+        and decremented for parameters of methods.</listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term>testparameterpassing2</term>
+        <listitem>Another test for method parameters.</listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term>testreferencecount1</term>
+        <listitem>This test tests reference counts for local variables.</listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term>testfields</term>
+        <listitem>This tests reference counts for assignments to instance
+        fields of class objects.</listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term>teststaticfields</term>
+        <listitem>This tests reference counts for assignments to static 
+        fields of classes.</listitem>
+      </varlistentry>
+      
+      <varlistentry>
+        <term>testrcfinalizer</term>
+        <listitem>Another test that verifies finalizers are called when a
+        reference counted object is destroyed.</listitem>          
+      </varlistentry>
+      
+      <varlistentry>
+        <term>testconcurrency</term>
+        <listitem>This verifies that reference counts are correctly maintained
+        even when a large number of threads access and manipulate the same 
+        reference counted objects.</listitem>
+      </varlistentry>
+      
+    </variablelist>
+  </sect1>    
+  
+</appendix>

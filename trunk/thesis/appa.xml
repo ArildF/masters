@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appendix id="appendix_a">
+  <title>The source code</title>
+  <sect1>
+    <title>Subversion repository</title>
+    <para>The source for the SSCLI with my changes incorporated are maintained
+    using the Subversion version control system. The Subversion command line client
+    is available for a large number of platforms, including Windows, and can be 
+    obtained from <ulink url="http://subversion.tigris.org">http://subversion.tigris.org</ulink>
+    </para>
+    <sect2>
+      <title>Checking out the source</title>
+      <para>Using the <command>svn</command> command line
+      client, the source code can be obtained from 
+      <ulink url="http://ankhsvn.com/svn/masters/trunk/sscli/">http://ankhsvn.com/svn/masters/trunk/sscli/</ulink>: 
+      </para>
+      
+      <screen><![CDATA[
+      C:>svn checkout http://ankhsvn.com/svn/masters/trunk/sscli/    
+      ]]></screen>
+      
+      <para>The repository can also be browsed in a regular web browser by pasting
+      the above URL into the address field.</para>
+    </sect2>
+    
+    <sect2>
+      <title>Viewing the log</title>
+      <para>Log messages for the changes made against the original SSCLI 
+      source code can be viewed using the <command>svn log</command> command:</para>
+      
+      <screen><![CDATA[
+      C:\sscli>svn log    
+      ]]></screen>
+    </sect2>  
+    
+    <sect2>
+      <title>Unified diff</title>
+      <para>The differences between the original SSCLI and my implementation can
+      be viewed in unified diff format:</para>
+      
+      <screen><![CDATA[
+      C:\sscli>svn diff -r 1:HEAD    
+      ]]></screen>
+    </sect2>   
+  </sect1>
+  
+  <sect1>
+    <title>Statistics</title>
+    <para>In the process of implementing reference counting in the CLR, I have
+    added 1604 lines to the source and removed 269. This does not include 
+    project files and other auxilliary files.</para>
+  </sect1>
+</appendix>

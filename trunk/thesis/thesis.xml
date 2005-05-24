@@ -8,6 +8,8 @@
 <!ENTITY chapter_4 SYSTEM "chapter_4.xml">
 <!ENTITY chapter_5 SYSTEM "chapter_5.xml">
 <!ENTITY chapter_6 SYSTEM "chapter_6.xml">
+<!ENTITY appa SYSTEM "appa.xml">
+<!ENTITY appb SYSTEM "appb.xml">
 <!ENTITY bibliography SYSTEM "bibliography.xml">
 ]>
 <book id="thesis">
@@ -39,6 +41,10 @@
   &chapter_5;
   
   &chapter_6;
+  
+  &appa;
+  
+  &appb;
   
   &bibliography;
     

@@ -10,7 +10,7 @@ IMAGES=*.png
 FOP=cmd.exe /c fop.bat
 
 SOURCES=thesis.xml chapter_1.xml chapter_2.xml chapter_3.xml chapter_4.xml \
-    chapter_5.xml chapter_6.xml bibliography.xml 
+    chapter_5.xml chapter_6.xml appa.xml appb.xml bibliography.xml 
     
 MAKEFILES=Makefile Makefile.xsltproc
     

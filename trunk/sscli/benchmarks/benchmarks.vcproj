@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.10"
+	Name="benchmarks"
+	ProjectGUID="{86CF33FD-69C1-497A-8228-9682E92D00B8}"
+	Keyword="MakeFileProj">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory="Debug"
+			IntermediateDirectory="Debug"
+			ConfigurationType="0">
+			<Tool
+				Name="VCNMakeTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory="Release"
+			IntermediateDirectory="Release"
+			ConfigurationType="0">
+			<Tool
+				Name="VCNMakeTool"/>
+		</Configuration>
+	</Configurations>
+	<References>
+	</References>
+	<Files>
+		<File
+			RelativePath=".\Fields.cs">
+		</File>
+		<File
+			RelativePath=".\LocalVariables.cs">
+		</File>
+		<File
+			RelativePath=".\MassiveAllocations.cs">
+		</File>
+		<File
+			RelativePath=".\readme.txt">
+		</File>
+		<File
+			RelativePath=".\Timer.cs">
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

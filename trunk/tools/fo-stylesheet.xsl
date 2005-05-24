@@ -23,4 +23,8 @@
     <xsl:attribute name="font-size">16pt</xsl:attribute>
   </xsl:attribute-set>
   
+  <xsl:attribute-set name="section.title.level4.properties">
+    <xsl:attribute name="font-size">14pt</xsl:attribute>
+  </xsl:attribute-set>
+  
 </xsl:stylesheet>

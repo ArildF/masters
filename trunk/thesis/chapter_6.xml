@@ -203,7 +203,7 @@ private static void DoBenchmark()
       reference counted mechanism:</para>
       
       <table>
-        <title>Results of benchmark</title>
+        <title>Results of benchmark 2</title>
         <tgroup cols="3">
           <thead>
             <row>
@@ -280,7 +280,7 @@ private static TracingGC gc, gc2, gc3;
     reference counting mechanism:</para>
     
     <table>
-        <title>Results of benchmark</title>
+        <title>Results of benchmark 3</title>
         <tgroup cols="3">
           <thead>
             <row>
